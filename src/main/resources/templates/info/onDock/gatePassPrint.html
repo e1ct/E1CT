@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+      
+      <style>
+			* {
+				font-size: 0.75rem;
+				-webkit-print-color-adjust: exact;
+				printer-colors: exact;
+				color-adjust: exact;
+			}
+			
+			table {
+				border-spacing: 0px;
+			}
+			
+			thead {
+				color: #fff;
+				background-color: #eb6800;
+			}
+			
+			@media print {
+				thead th {
+					color: #000;
+					border: 1px solid black;
+				}
+			}
+			
+			td {
+				border-left: 1px solid #aaa;
+				border-bottom: 1px solid #aaa;
+			}
+			
+			td:last-child {
+	 			border-right: 1px solid #aaa;
+			}
+		</style>
+
+	<table>
+		<thead>
+			<tr>
+				<th th:text="'No'"></th>
+				<th th:text="'컨테이너번호'"></th>
+				<th th:text="'등록일시'"></th>
+				<th th:text="'담당자'"></th>
+				<th th:text="'해제사유'"></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:if="!${#lists.isEmpty(list)}" th:each="list, i:${list}">
+				<td th:text="${i.index}+1"></td>
+				<td th:text="${list.cntrNo}"></td>
+				<td th:text="${list.updDt}"></td>
+				<td th:if="${#strings.substring(list.empNo, 0, 2)} == '20' or ${#strings.substring(list.empNo,0,2)} == '77'" th:text="'E1CT'"></td>
+				<td th:unless="${#strings.substring(list.empNo, 0, 2)} == '20' or ${#strings.substring(list.empNo,0,2)} == '77'" th:text="${list.empNo}"></td>
+				<td th:text="${list.rmk}"></td>
+			</tr>
+			<div th:if="${#lists.isEmpty(list)}" th:remove="tag">
+				<tr>
+					<td th:colspan="5">조회된 데이터가 존재하지 않습니다.</td>
+				</tr>
+			</div>
+		</tbody>
+	</table>
+	
+	<script type="text/javascript">
+		setTimeout( window.print(), 200 );
+	</script>
+		
+</html>

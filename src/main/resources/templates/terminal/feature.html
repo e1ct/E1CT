@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content" th:remove="tag">
+		<div class="sub-visual sub-vs-2">
+			<h1 th:text="#{header.terminal}">터미널소개</h1>
+			<p th:text="#{subvisual.subtitle.2}">최고의 물류서비스를 통해 고객 감동을 만들어갑니다.</p>
+		</div>
+		<div class="sub-nav">
+			<div class="wr"> 
+				<a href="/" class="sub-home"></a>
+				<div class="sub-depth">
+					<h3 th:text="#{header.terminal}">터미널소개</h3>
+					<ul>
+						<li><a href="/company/greeting" th:text="#{header.company}">회사소개</a></li>
+						<li><a href="/terminal/facilities" th:text="#{header.terminal}">터미널소개</a></li>
+						<li><a href="/info/terminal/berthText" th:text="#{header.info}">정보조회서비스</a></li>
+						<li><a href="/community/news" th:text="#{header.community}">커뮤니티</a></li> 
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3 th:text="#{menu.terminal.feature}">터미널특징</h3>
+					<ul>
+						<li><a href="/terminal/facilities" th:text="#{menu.terminal.facilities}">터미널시설</a></li>
+						<li><a href="/terminal/equipment" th:text="#{menu.terminal.equipment}">터미널장비</a></li>
+						<li><a href="/terminal/feature" th:text="#{menu.terminal.feature}">터미널특징</a></li>
+						<li><a href="/terminal/movie" th:text="#{menu.terminal.movie}">홍보동영상</a></li>
+						<li><a href="/terminal/brochure" th:text="#{menu.terminal.brochure}">온라인브로슈어</a></li>
+						<li><a href="/terminal/gallery" th:text="#{menu.terminal.gallery}">갤러리</a></li>
+					</ul>
+				</div>
+			</div> 
+		</div><!--sub-visual-->
+		<section id="wrap">
+			<h1 class="cont-tit" th:text="#{menu.terminal.feature}">터미널특징</h1>
+			<div id="tmnFeatures">    
+				<div class="cont-wr">     
+					<ul>
+						<li>
+							<img src="/static/img/sub/tmnFeatures-img-1.jpg" alt="황해권의 최첨단 Container Terminal"> 
+							<div class="txt">
+								<h2 th:utext="#{terminal.feature.h2.1}">황해권의 최첨단<br />Container Terminal</h2>
+								<p th:utext="#{terminal.feature.p.1}">
+									<span>The most advanced equipment</span>
+									정형화 된 첨단 운영시스템 구축으로 정확한 정보와 신속한 하역서비스를
+									제공합니다. 선박의 입출항 및 하역작업 현황을 인터넷으로 실시간 Monitoring
+									할 수 있어 터미널 정체 현상을 최소화하므로 선사와 화주에게 많은 혜택을
+									제공할 수 있습니다. 체계적인 운영계획, 통제 관리, 지원 시스템을 통하여
+									모든 고객의 One-Stop 서비스를 실현하고 있습니다.
+								</p> 
+							</div>
+						</li> 
+						<li>
+							<img src="/static/img/sub/tmnFeatures-img-2.jpg" alt="동북아시아의 물류중심 항만"> 
+							<div class="txt">
+								<h2 th:utext="#{terminal.feature.h2.2}">동북아시아의 물류중심 항만</h2>
+								<p th:utext="#{terminal.feature.p.2}">
+									<span>The best center of Northeast Asia</span>
+									최신 첨단 Container Crane 과 Transfer Crane 하역장비 도입으로 인천항에
+									기항하는 고객 선사의 원가절감을 실현하고 있습니다. 터미널 운영의 경험과
+									기술력이 풍부한 인적자원 활용으로 높은 생산성 및 선박 이접안의 정시성을
+									제공하는 인천항 최고의 컨테이너터미널 입니다.
+								</p> 
+							</div>
+						</li> 
+						<li>
+							<img src="/static/img/sub/tmnFeatures-img-3.jpg" alt="고객 감동 서비스"> 
+							<div class="txt">
+								<h2 th:utext="#{terminal.feature.h2.3}">고객 감동 서비스</h2>
+								<p th:utext="#{terminal.feature.p.3}">
+									<span>Oriented Service</span>
+									혁신적인 물류 서비스를 제공하며 고객의 비용절감에 기여하고 시대적
+									변화에 따른 지속적인 서비스 개선과 신기술 도입으로 고객의 요구를 항상
+									충족 시킬 수 있도록 하겠습니다.
+								</p> 
+							</div>
+						</li> 
+					</ul>
+				</div>
+			</div> 
+		</section> 
+	</div>
+</html>

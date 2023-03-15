@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/popup">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content">
+	
+		<section id="info_section">
+			<h1 class="title" th:text="'공지사항'" style="text-align: center; margin-bottom: 20px;"></h1>
+			<div class="tb_tmnl">
+				<table>
+					<thead>
+						<tr>
+							<th th:text="${board.MTitle}"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="popupContent" th:utext="${board.MContent}" style="font-size: 1rem; padding: 10px;"></td>
+						</tr>
+					</tbody>
+				</table>
+				<br/>
+				<div style="text-align: right">
+					<input type="checkbox" id="check" value="Y" style="width: 20px; height: 20px;"><label for="check">오늘 하루 보지않기</label>
+					<a href="#" id="closeBtn" style="background-color: #eb6800; padding: 5px 10px; color: #fff; cursor: pointer;">닫기</a>
+				</div>
+			</div>
+			<script type="text/javascript">
+				function setCookie( name, value, expiredays ) {
+					var todayDate = new Date();
+					todayDate.setDate( todayDate.getDate() + expiredays );
+					document.cookie = name + "=" + escape( value ) + ";expires=" + todayDate.toGMTString() + ";";
+				}
+				
+				$("#check").change(function() {
+					if( $(this).is(":checked") ) {
+						window.opener.setCookie( '[[${board.MSeq}]]' + (new Date()).format("yyyyMMdd") );
+					} else {
+						window.opener.deleteCookie( '[[${board.MSeq}]]' + (new Date()).format("yyyyMMdd") );
+					}
+				});
+				
+				$("#closeBtn").click(function() {
+					window.close();
+				});
+			</script>
+		</section>
+		
+	</div>
+</html>

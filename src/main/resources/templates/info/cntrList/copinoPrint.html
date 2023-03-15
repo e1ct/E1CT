@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<style>
+			* {
+				font-size: 0.75rem;
+				-webkit-print-color-adjust: exact;
+				printer-colors: exact;
+				color-adjust: exact;
+			}
+			
+			.title {
+				font-size: 16px;
+				font-weight: 700;
+			}
+			
+			.column-name {
+				background-color: #e7e7e7;
+				font-weight: 700;
+			}
+		</style>
+		<style>
+			* {
+				font-size: 0.75rem;
+			}
+			
+			table {
+				border-spacing: 0px;
+			}
+			
+			thead {
+				color: #fff;
+				background-color: #eb6800;
+			}
+			
+			@media print {
+				thead th {
+					color: #000;
+					border: 1px solid black;
+				}
+			}
+			
+			td {
+				border-left: 1px solid #aaa;
+				border-bottom: 1px solid #aaa;
+			}
+			
+			td:last-child {
+	 			border-right: 1px solid #aaa;
+			}
+		</style>
+	</head>
+	<body>
+		<table>
+			<thead>
+				<tr>
+					<th colspan="11" class="title">반출입예정 목록</th>
+				</tr>
+				<tr>
+					<th colspan="11" class="filter" th:text="'조회일자 : ' + ${searchParams.searchStartDt} + '  차량번호 : ' + ( ${searchParams.truckerCd} == null ? '' : ${searchParams.truckerCd} ) + '-' + ( ${searchParams.carNo} == null ? '' : ${searchParams.carNo} ) + '  컨테이너 번호 : ' + ( ${searchParams.cntrNo} == null ? '' : ${searchParams.cntrNo} )"></th>
+				</tr>
+				<tr class="column-name">
+					<th>구분</th>
+					<th>차량번호</th>
+					<th>컨테이너번호</th>
+					<th>Sz/Tp</th>
+					<th>모선항차</th>
+					<th>선사</th>
+					<th>F/M</th>
+					<th>무게</th>
+					<th>양하항</th>
+					<th>송신처</th>
+					<th>수신일자</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="list, i:${list}">
+					<div th:if="${i.index} >= 0" th:remove="tag">
+						<td th:if="${list.ioCd} == 'I'" th:text="'반입'" th:style="'color: #1e90ff'"></td>
+						<td th:unless="${list.ioCd} == 'I'" th:text="'반출'" th:style="'color: #ff6600'"></td>
+						<td th:text="${list.truckerCd} + '-' + ${list.carNo}"></td>
+						<td th:text="${list.cntrNo}"></td>
+						<td th:text="${list.szCd} + '/' + ${list.tyCd}"></td>
+						<td th:text="${list.shipCd} + '-' + ${#numbers.formatInteger(list.callNo, 3)} + '-' + ${list.callYy}"></td>
+						<td th:text="${list.operCd}"></td>
+						<td th:text="${list.fmCd}"></td>
+						<td th:text="${list.weight}"></td>
+						<td th:text="${list.pod}"></td>
+						<td th:text="${list.sendName}"></td>
+						<td th:text="${list.rcvDt}"></td>
+					</div>
+					<div th:unless="${i.index} >= 0" th:remove="tag">
+						<td th:colspan="10" th:text="'조회된 데이터가 없습니다.'"></td>
+					</div>
+				</tr>
+			</tbody>
+		</table>
+		
+		<script type="text/javascript">
+			setTimeout( window.print(), 2000 );
+		</script>
+	</body>
+</html>

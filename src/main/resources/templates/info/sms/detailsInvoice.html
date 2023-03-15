@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/popup">
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+	
+	
+
+	<div layout:fragment="content">
+		<style>
+			td {
+				border: 1px solid black;
+				text-align: center;
+				vertical-align: middle;
+				font-size: 11pt;
+				height: 30px;
+			}
+			
+			tr.content td {
+				font-size: 9pt;
+			}
+		</style>
+		<section id="invoice" style="padding-left: 20px; padding-right: 20px;">
+			<h2 style="text-align: center; padding-top: 40px; padding-bottom: 10px; font-size: 20pt;"><img src="/static/img/logo.png" style="float: left; width: 180px; position: absolute; left: 20px;">거&nbsp;&nbsp;래&nbsp;&nbsp;명&nbsp;&nbsp;세&nbsp;&nbsp;표</h2>
+			<table style="border: 3px solid black;">
+				<colgroup>
+					<col width="3%">
+					<col width="10%">
+					<col width="20%">
+					<col width="10%">
+					<col width="8%">
+					<col width="3%">
+					<col width="10%">
+					<col width="20%">
+					<col width="8%">
+					<col width="8%">
+				</colgroup>
+				<tbody>
+					<tr>
+						<td rowspan="4" style="font-weight: 600; border-bottom: 3px solid black;">공 급 자</td>
+						<td style="font-weight: 600;">등록번호</td>
+						<td th:text="${#strings.substring(tmnl.busiidNo,0,3)} + '-' + ${#strings.substring(tmnl.busiidNo, 3, 5)} + '-' + ${#strings.substring(tmnl.busiidNo, 5)}" colspan="3"></td>
+						<td rowspan="4" style="font-weight: 600; border-left: 3px solid black;">공 급 받 는 자</td>
+						<td style="font-weight: 600;">등록번호</td>
+						<td colspan="3" th:text="${#strings.substring(cust.cstNo, 0, 3)} + '-' + ${#strings.substring(cust.cstNo, 3, 5)} + '-' + ${#strings.substring(cust.cstNo, 5)}"></td>
+					</tr>
+					<tr>
+						<td style="font-weight: 600;">상&nbsp;&nbsp;&nbsp;호</td>
+						<td th:text="${tmnl.tmnlNm}"></td>
+						<td style="font-weight: 600;">대표자</td>
+						<td th:text="${tmnl.ownerNm}"></td>
+						<td style="font-weight: 600;">상&nbsp;&nbsp;&nbsp;호</td>
+						<td th:text="${cust.cstNm}"></td>
+						<td style="font-weight: 600;">대표자</td>
+						<td th:text="${cust.operOwnerNm}"></td>
+					</tr>
+					<tr>
+						<td style="font-weight: 600;">주&nbsp;&nbsp;&nbsp;소</td>
+						<td colspan="3" th:text="${tmnl.addr}"></td>
+						<td style="font-weight: 600;">주&nbsp;&nbsp;&nbsp;소</td>
+						<td colspan="3" th:text="${cust.addr}"></td>
+					</tr>
+					<tr>
+						<td style="font-weight: 600;">전화번호</td>
+						<td colspan="3" th:text="${tmnl.telNo}"></td>
+						<td style="font-size: 8pt; border-bottom: 3px solid black; font-weight: 600;">세금계산서<br/>메일주소</td>
+						<td colspan="3" th:text="${cust.email}" style=" border-bottom: 3px solid black;"></td>
+					</tr>
+					<tr>
+						<td colspan="6" style="font-weight: 600;">내&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;역</td>
+						<td style="font-weight: 600;">수량 / 일</td>
+						<td style="font-weight: 600;">단&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;가</td>
+						<td colspan="2" style="font-weight: 600;">금&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;액</td>
+					</tr>
+					<div th:each="invoice, i:${list}" th:remove="tag">
+						<tr th:if="${invoice.overAmt} != null and ${invoice.overAmt} != 0" class="content">
+							<td colspan="6" style="font-weight: 500;">
+								<th:block th:text="${invoice.shipCd} + '-' + ${#numbers.formatInteger(invoice.callNo, 3)} + '-' + ${invoice.callYy}"></th:block>
+								&nbsp;
+								<th:block th:text="${invoice.cntrNo}"></th:block>
+								&nbsp;&nbsp;
+								<th:block th:text="${invoice.szCd} + '/' + ${invoice.tyCd}"></th:block>
+								&nbsp;&nbsp;
+								<th:block th:text="${invoice.ixCd}"></th:block>
+								&nbsp;&nbsp;
+								경과보관료
+							</td>
+							
+							<td th:text="${invoice.overDay} < 100 ? ${invoice.overDay} : ${#numbers.formatInteger(invoice.overDay,3,'COMMA')}"></td>
+							
+							<td th:text="${invoice.overUt} < 100 ? ${invoice.overUt} : ${#numbers.formatInteger(invoice.overUt,3,'COMMA')}"></td>
+							
+							<td colspan="2" th:text="${invoice.overAmt} < 100 ? ${invoice.overAmt} : ${#numbers.formatInteger(invoice.overAmt,3,'COMMA')}"></td>
+						</tr>
+						
+						<tr th:if="${invoice.xrayAmt} != null and ${invoice.xrayAmt} != 0" class="content">
+							<td colspan="6" style="font-weight: 500;">
+								<th:block th:text="${invoice.shipCd} + '-' + ${#numbers.formatInteger(invoice.callNo, 3)} + '-' + ${invoice.callYy}"></th:block>
+								&nbsp;
+								<th:block th:text="${invoice.cntrNo}"></th:block>
+								&nbsp;&nbsp;
+								<th:block th:text="${invoice.szCd} + '/' + ${invoice.tyCd}"></th:block>
+								&nbsp;&nbsp;
+								<th:block th:text="${invoice.ixCd}"></th:block>
+								&nbsp;&nbsp;
+								X-Ray료
+							</td>
+							<td>-</td>
+							
+							<td>-</td>
+							
+							<td colspan="2" th:text="${invoice.xrayAmt} < 100 ? ${invoice.xrayAmt} : ${#numbers.formatInteger(invoice.xrayAmt,3,'COMMA')}"></td>
+						</tr>
+						
+						<tr th:if="${invoice.tempAmt} != null and ${invoice.tempAmt} != 0" class="content">
+							<td colspan="6" style="font-weight: 500;">
+								<th:block th:text="${invoice.shipCd} + '-' + ${#numbers.formatInteger(invoice.callNo, 3)} + '-' + ${invoice.callYy}"></th:block>
+								&nbsp;
+								<th:block th:text="${invoice.cntrNo}"></th:block>
+								&nbsp;&nbsp;
+								<th:block th:text="${invoice.szCd} + '/' + ${invoice.tyCd}"></th:block>
+								&nbsp;&nbsp;
+								<th:block th:text="${invoice.ixCd}"></th:block>
+								&nbsp;&nbsp;
+								냉동접속료
+							</td>
+							
+							<td th:text="${invoice.tempDay} < 100 ? ${invoice.tempDay} : ${#numbers.formatInteger(invoice.tempDay,3,'COMMA')}"></td>
+							
+							<td th:text="${invoice.tempUt} < 100 ? ${invoice.tempUt} : ${#numbers.formatInteger(invoice.tempUt,3,'COMMA')}"></td>
+							
+							<td colspan="2" th:text="${invoice.tempAmt} < 100 ? ${invoice.tempAmt} : ${#numbers.formatInteger(invoice.tempAmt,3,'COMMA')}"></td>
+						</tr>
+						
+						<tr th:if="${invoice.chkAmt} != null and ${invoice.chkAmt} != 0" class="content">
+							<td colspan="6" style="font-weight: 500;">
+								<th:block th:text="${invoice.shipCd} + '-' + ${#numbers.formatInteger(invoice.callNo, 3)} + '-' + ${invoice.callYy}"></th:block>
+								&nbsp;
+								<th:block th:text="${invoice.cntrNo}"></th:block>
+								&nbsp;&nbsp;
+								<th:block th:text="${invoice.szCd} + '/' + ${invoice.tyCd}"></th:block>
+								&nbsp;&nbsp;
+								<th:block th:text="${invoice.ixCd}"></th:block>
+								&nbsp;&nbsp;
+								세관검사료
+							</td>
+							
+							<td>-</td>
+							
+							<td>-</td>
+							
+							<td colspan="2" th:text="${invoice.chkAmt} < 100 ? ${invoice.chkAmt} : ${#numbers.formatInteger(invoice.chkAmt,3,'COMMA')}"></td>
+						</tr>
+						
+						<tr th:if="${invoice.returnAmt} != null and ${invoice.returnAmt} != 0">
+							<td colspan="6" style="font-weight: 500;">
+								<th:block th:text="${invoice.shipCd} + '-' + ${#numbers.formatInteger(invoice.callNo, 3)} + '-' + ${invoice.callYy}"></th:block>
+								&nbsp;
+								<th:block th:text="${invoice.cntrNo}"></th:block>
+								&nbsp;&nbsp;
+								<th:block th:text="${invoice.szCd} + '/' + ${invoice.tyCd}"></th:block>
+								&nbsp;&nbsp;
+								<th:block th:text="${invoice.ixCd}"></th:block>
+								&nbsp;&nbsp;
+								세관검사료
+							</td>
+							
+							<td>-</td>
+							
+							<td>-</td>
+							
+							<td colspan="2" th:text="${invoice.returnAmt} < 100 ? ${invoice.returnAmt} : ${#numbers.formatInteger(invoice.returnAmt,3,'COMMA')}"></td>
+						</tr>
+						
+						<tr th:if="${invoice.liftAmt} != null and ${invoice.liftAmt} != 0">
+							<td colspan="6" style="font-weight: 500;">
+								<th:block th:text="${invoice.shipCd} + '-' + ${#numbers.formatInteger(invoice.callNo, 3)} + '-' + ${invoice.callYy}"></th:block>
+								&nbsp;
+								<th:block th:text="${invoice.cntrNo}"></th:block>
+								&nbsp;&nbsp;
+								<th:block th:text="${invoice.szCd} + '/' + ${invoice.tyCd}"></th:block>
+								&nbsp;&nbsp;
+								<th:block th:text="${invoice.ixCd}"></th:block>
+								&nbsp;&nbsp;
+								상하차료
+							</td>
+							
+							<td th:text="${invoice.liftQty} < 100 ? ${invoice.liftQty} : ${#numbers.formatInteger(invoice.liftQty,3,'COMMA')}"></td>
+							
+							<td th:text="${invoice.liftUt} < 100 ? ${invoice.liftUt} : ${#numbers.formatInteger(invoice.liftUt,3,'COMMA')}"></td>
+							
+							<td colspan="2" th:text="${invoice.tempAmt} < 100 ? ${invoice.tempAmt} : ${#numbers.formatInteger(invoice.tempAmt,3,'COMMA')}"></td>
+						</tr>
+						
+						<tr th:if="${invoice.returnAmt} != null and ${invoice.returnAmt} != 0" class="content">
+							<td colspan="6" style="font-weight: 500;">
+								<th:block th:text="${invoice.shipCd} + '-' + ${#numbers.formatInteger(invoice.callNo, 3)} + '-' + ${invoice.callYy}"></th:block>
+								&nbsp;
+								<th:block th:text="${invoice.cntrNo}"></th:block>
+								&nbsp;&nbsp;
+								<th:block th:text="${invoice.szCd} + '/' + ${invoice.tyCd}"></th:block>
+								&nbsp;&nbsp;
+								<th:block th:text="${invoice.ixCd}"></th:block>
+								&nbsp;&nbsp;
+								RETURN
+							</td>
+							
+							<td>-</td>
+							
+							<td>-</td>
+							
+							<td colspan="2" th:text="${invoice.returnAmt} < 100 ? ${invoice.returnAmt} : ${#numbers.formatInteger(invoice.returnAmt,3,'COMMA')}"></td>
+						</tr>
+						
+						<tr th:if="${invoice.dgAmt} != null and ${invoice.dgAmt} != 0" class="content">
+							<td colspan="6" style="font-weight: 500;">
+								<th:block th:text="${invoice.shipCd} + '-' + ${#numbers.formatInteger(invoice.callNo, 3)} + '-' + ${invoice.callYy}"></th:block>
+								&nbsp;
+								<th:block th:text="${invoice.cntrNo}"></th:block>
+								&nbsp;&nbsp;
+								<th:block th:text="${invoice.szCd} + '/' + ${invoice.tyCd}"></th:block>
+								&nbsp;&nbsp;
+								<th:block th:text="${invoice.ixCd}"></th:block>
+								&nbsp;&nbsp;
+								DG이적료
+							</td>
+							
+							<td>-</td>
+							
+							<td>-</td>
+							
+							<td colspan="2" th:text="${invoice.dgAmt} < 100 ? ${invoice.dgAmt} : ${#numbers.formatInteger(invoice.dgAmt,3,'COMMA')}"></td>
+						</tr>
+					</div>
+					<tr>
+						<td colspan="6"></td>
+						<td></td>
+						<td></td>
+						<td colspan="2"></td>
+					</tr>
+					<tr>
+						<td colspan="6"></td>
+						<td></td>
+						<td></td>
+						<td colspan="2"></td>
+					</tr>
+					<tr>
+						<td colspan="6"></td>
+						<td></td>
+						<td></td>
+						<td colspan="2"></td>
+					</tr>
+					<tr>
+						<td colspan="6"></td>
+						<td></td>
+						<td></td>
+						<td colspan="2"></td>
+					</tr>
+					<tr>
+						<td colspan="6"></td>
+						<td></td>
+						<td></td>
+						<td colspan="2"></td>
+					</tr>
+					<tr>
+						<td rowspan="3" colspan="7" style="font-weight: bold; border-bottom: 3px solid black;">
+							<p style="padding-left: 40px; text-align: left;">※ 가상계좌번호 안내</p>
+							<p style="padding-left: 10px; text-align: left;">▣ 산업은행 : <span style="color: red;" th:text="${#strings.substring(params.vacctNo, 0,3)} + '-' + ${#strings.substring(params.vacctNo, 3,7)} + '-' + ${#strings.substring(params.vacctNo, 7, 11)} + '-' + ${#strings.substring(params.vacctNo, 11)}"></span></p>
+							<p style="padding-left: 85px; text-align: left;">(예금주가 E1컨테이너터미널로 조회 되지 않음)</p>
+							<p style="padding-left: 10px; text-align: left;">▣ 입금기한 : <span th:text="${params.closeDd}" style="color: red;"> </span> 까지 입금하셔야 합니다.</p>
+							<p style="padding-left: 85px; text-align: left;">(반출예정일 : <span th:text="${params.closeDd}"></span>)</p>
+							<p style="padding-left: 10px; text-align: left;">▣ 입금기한이 지나면 거래내역이 취소되서 입금이 불가함.</p>
+						</td>
+						<td>공급가액</td>
+						<td colspan="2" th:text="${totalInvoice} < 100 ? ${totalInvoice} : ${#numbers.formatInteger(totalInvoice, 3, 'COMMA')}"></td>
+					</tr>
+					<tr>
+						<td>부가세</td>
+						<td colspan="2" th:text="${totalTax} < 100 ? ${totalTax} : ${#numbers.formatInteger(totalTax, 3, 'COMMA')}"></td>
+					</tr>
+					<tr>
+						<td style="font-weight: 600;">합&nbsp;&nbsp;&nbsp;&nbsp;계</td>
+						<td colspan="2" th:text="${saleAmt} < 100 ? ${saleAmt} : ${#numbers.formatInteger(saleAmt, 3, 'COMMA')}" style="color: red; font-weight: 600;"></td>
+					</tr>
+					<tr>
+						<td colspan="10" style="padding-top: 20px; padding-bottom: 20px;">
+							<p style="font-size: 17pt; margin-bottom: 10px; font-weight: 600; color: red;">※ 아래 유의사항을 꼭 확인하신 후, 입금하여 주시기 바랍니다.</p>
+							<p style="text-align: left; padding-left: 10px; margin-top:10px; font-weight: 600;">1. 발행 완료된 세금계산서는 취소 및 변경이 불가하오니, 계산서 발행정보를 신중하게 확인하여 주시기 바랍니다.</p>
+							<p style="text-align: left; padding-left: 10px; margin-top:10px; font-weight: 600;">2. 업체정보 수정이 필요한 경우, 상단의 '거래처 관리' 메뉴에서 수정하신 후 진행하여 주시기 바랍니다. <span>(정보 미변경으로 인한 계산서 재발행 불가)</span></p>
+							<p style="text-align: left; padding-left: 10px; margin-top:10px; font-weight: 600;">3. 사전납부(선납) 후, 고객사에서 희망(지정)한 일자 이외 선반출시, 잔여기간에 대해서는 환불이 불가합니다.</p>
+							<p style="text-align: left; padding-left: 10px; margin-top:10px; font-weight: 600;">4. 가상계좌 입금 후 10분 이내 '정산완료 조회' 메뉴에서 정상처리여부 조회 가능하며, 입금확인이 되었으면 자동홀드해제가 완료된 것입니다. (이체증은 팩스로 받지 않습니다.)</p>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+	
+			<script type="text/javascript">
+// 				document.addEventListener("load", function() {
+// 					setTimeout( window.print(), 1000 );	
+// 				});
+				$(window).ready(function() {
+					window.print();
+				})
+			</script>
+		</section>
+	</div>
+</html>

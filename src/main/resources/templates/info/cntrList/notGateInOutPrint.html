@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<style>
+			* {
+				font-size: 0.75rem;
+				-webkit-print-color-adjust: exact;
+				printer-colors: exact;
+				color-adjust: exact;
+			}
+			
+			table {
+				border-spacing: 0px;
+			}
+			
+			thead {
+				color: #fff;
+				background-color: #eb6800;
+			}
+			
+			@media print {
+				thead th {
+					color: #000;
+					border: 1px solid black;
+				}
+			}
+			
+			td {
+				border-left: 1px solid #aaa;
+				border-bottom: 1px solid #aaa;
+			}
+			
+			td:last-child {
+	 			border-right: 1px solid #aaa;
+			}
+		</style>
+
+	<h1 class="title">미반출입 목록</h1>
+	
+	<div class="tb_tmnl">
+		<table th:if="${searchParams.gubun} == 'out'">
+			<thead>
+				<tr>
+					<th th:text="No"></th>
+					<th th:text="컨테이너번호"></th>
+					<th th:text="선사"></th>
+					<th th:text="'Sz/Tp'"></th>
+					<th th:text="'F/M'"></th>
+					<th th:text="DMG"></th>
+					<th th:text="장척"></th>
+					<th th:text="야드위치"></th>
+					<th th:text="'양하(반입)일시'"></th>
+				</tr>
+			</thead>
+			<tbody th:each="list, i:${list}">
+				<tr>
+					<td th:text="${i.index} + 1"></td>
+					<td th:text="${list.cntrNo}"></td>
+					<td th:text="${list.operCd}"></td>
+					<td th:text="${list.szCd} + '/' + ${list.tyCd}"></td>
+					<td th:text="${list.fmCd}"></td>
+					<td th:text="${list.dmgCd}"></td>
+					<td th:text="${list.hwlCd}"></td>
+					<td th:text="${list.yTblock} + '-' + ${list.yTbay} + '-' + ${list.yTrow} + '-' + ${list.yTtier}"></td>
+					<td th:if="${list.gcDdt} == '-'" th:text="'(' + ${list.ginDt} + ')'"></td>
+					<td th:unless="${list.gcDdt} == '-'" th:text="${list.gcDdt}"></td>
+				</tr>
+			</tbody>
+			<tbody th:if="${list} == null or ${#lists.size(list)} == 0">
+				<tr>
+					<td th:colspan="9" th:text="'데이터가 존재하지 않습니다.'"></td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<table th:unless="${searchParams.gubun} == 'out'">
+			<thead>
+				<tr>
+					<th th:text="No"></th>
+					<th th:text="컨테이너번호"></th>
+					<th th:text="선사"></th>
+					<th th:text="'Sz/Tp'"></th>
+					<th th:text="'F/M'"></th>
+					<th th:text="장척"></th>
+					<th th:text="양하항"></th>
+					<th th:text="무게"></th>
+					<th th:text="온도"></th>
+					<th th:text="IMDG"></th>
+				</tr>
+			</thead>
+			<tbody th:each="list, i:${list}">
+				<tr>
+					<td th:text="${i.index} + 1"></td>
+					<td th:text="${list.cntrNo}"></td>
+					<td th:text="${list.operCd}"></td>
+					<td th:text="${list.sztp}"></td>
+					<td th:text="${list.fmCd}"></td>
+					<td th:text="${list.hwlCd}"></td>
+					<td th:text="${list.pod}"></td>
+					<td th:text="${list.weight}"></td>
+					<td th:text="${list.temp}"></td>
+					<td th:text="${list.imdg}"></td>
+				</tr>
+			</tbody>
+			<tbody th:if="${list} == null or ${#lists.size(list)} == 0">
+				<tr>
+					<td th:colspan="10" th:text="'데이터가 존재하지 않습니다.'"></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	<script type="text/javascript">
+		setTimeout( window.print(), 2000 );
+	</script>
+</html>

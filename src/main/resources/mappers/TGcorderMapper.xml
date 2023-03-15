@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TGcorderRepository">
+	<select id="vesselInfoOkDt" parameterType="kr.co.e1ct.vo.TGcorderVo" resultType="kr.co.e1ct.vo.TGcorderVo">
+		<![CDATA[
+			SELECT 
+				NVL( MIN( TO_CHAR( ok_dt, 'yyyy-mm-dd hh24:mi') ), '-' ) ok_dt
+			FROM
+				t_gcorder
+			WHERE
+				ship_cd = #{shipCd}
+				AND call_yy = #{callYy}
+				AND call_no = #{callNo}
+				AND ok_dt IS NOT NULL
+		]]>
+	</select>
+	
+	<select id="vesselWorkSetCount" parameterType="kr.co.e1ct.vo.TVescallVo" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT
+				COUNT(*)* 3 CNT
+			FROM
+				T_GCORDER
+			WHERE
+				SHIP_CD =#{shipCd}
+				AND CALL_NO =#{callNo}
+				AND CALL_YY =#{callYy}
+				AND ok_dt IS NOT NULL
+				AND OK_DT >= SYSDATE-(1 / 24 / 3)
+				AND EQ_PLNO =#{eqPlno}
+		]]>
+	</select>
+	
+	<select id="cntrInfoWorkingTimeGetVanhour" parameterType="kr.co.e1ct.vo.TGcorderVo" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT
+				COUNT(*) * 3 CNT
+			FROM
+				T_GCORDER
+			WHERE
+				SHIP_CD = #{shipCd}
+				AND CALL_NO = #{callNo}
+				AND CALL_YY = #{callYy}
+				AND ok_dt IS NOT NULL
+				AND ok_dt >= sysdate-(1/24/3)
+				AND EQ_PLNO = #{eqPlno}
+		]]>
+	</select>
+	
+	<select id="cntrInfoWorkingTimeGetMaxOkDt" parameterType="kr.co.e1ct.vo.TGcorderVo" resultType="kr.co.e1ct.vo.TGcorderVo">
+		<![CDATA[
+			SELECT
+				MAX(ok_dt) ok_dt
+			FROM
+				T_GCORDER
+			WHERE
+				SHIP_CD = #{shipCd}
+				AND CALL_NO = #{callNo}
+				AND CALL_YY = #{callYy}
+				AND ok_dt IS NOT NULL
+				AND wk_cd = #{wkCd}
+				AND EQ_PLNO = #{eqPlno}
+		]]>
+	</select>
+	
+	<select id="cntrInfoWorkingGetCntrNoList" parameterType="kr.co.e1ct.vo.TGcorderVo" resultType="kr.co.e1ct.vo.TGcorderVo">
+		<![CDATA[
+			SELECT
+				rownum,
+				cntr_no
+			FROM
+				T_GCORDER
+			WHERE
+				SHIP_CD = #{shipCd}
+				AND CALL_NO = #{callNo}
+				AND CALL_YY = #{callYy}
+				AND ok_dt IS NULL
+				AND wk_cd = #{wkCd}
+				AND EQ_PLNO = #{eqPlno}
+			ORDER BY
+				eq_plno,
+				cc_seq
+		]]>
+	</select>
+	
+	<select id="cntrInfoWorkingTimeFindTGcorderInfo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TGcorderVo">
+		<![CDATA[
+			SELECT
+				NVL(wk_cd, ' ') wk_cd,
+				NVL(cur_stat, ' ') status,
+				NVL(cc_seq, 0) cc_seq,
+				NVL(eq_no, ' ') eq_no,
+				NVL(eq_plno, ' ') eq_plno,
+				NVL(sbay, ' ') sbay,
+				NVL(srow, 0) srow,
+				NVL(stier, 0) stier,
+				NVL(block, ' ') block,
+				NVL(bay, 0) bay ,
+				NVL(roww, 0) roww,
+				NVL(tier, 0) tier,
+				NVL(TO_CHAR(ok_dt, 'YYYY-MM-DD HH24:MI'), ' ') ok_dt,
+				NVL(ship_cd, ' ') ship_cd,
+				TO_CHAR(NVL(call_no, 0), '000') call_no,
+				NVL(call_yy, 0) call_yy
+			FROM
+				T_GCORDER
+			WHERE
+				cntr_no = #{cntrNo}
+				AND dup_no = (
+					SELECT
+						MAX(dup_no)
+					FROM
+						t_gcorder
+					WHERE
+						cntr_no = #{cntrNo} 
+				)
+		]]>
+	</select>
+	
+	<select id="intraVesselDetailGetBays" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TGcorderVo">
+		<![CDATA[
+			SELECT
+				eq_plseq
+			FROM
+				t_gcorder
+			WHERE
+				eq_plno = #{eqNo}
+				AND ok_dt IS NULL
+		]]>
+		<if test='ship != null and ship != ""'>
+			<![CDATA[
+				AND UPPER(ship_cd) = UPPER( SUBSTR( #{ship}, 0, 4 ) )
+				AND UPPER(call_no) = UPPER( SUBSTR( #{ship}, 6, 3 ) )
+				AND UPPER(call_yy) = UPPER( SUBSTR( #{ship}, 10, 4 ) )
+			]]>
+		</if>
+		<![CDATA[
+			GROUP BY eq_plseq
+			ORDER BY eq_plseq
+		]]>
+	</select>
+	
+	<select id="findSbayAndHDeckId" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TGcorderVo">
+		<![CDATA[
+			SELECT
+				a.sbay,
+				b.hdeck_id
+			FROM
+				t_gcorder a,
+				t_cntr b
+			WHERE
+				a.eq_plno = #{eqNo}
+				AND a.ok_dt IS NULL
+				AND a.eq_plseq = #{eqPlseq}
+				AND a.cntr_no = b.cntr_no
+				AND a.dup_no = b.dup_no
+		]]>
+		<if test='ship != null and ship != ""'>
+			<![CDATA[
+				AND UPPER(a.ship_cd) = UPPER( SUBSTR( #{ship}, 0, 4 ) )
+				AND UPPER(a.call_no) = UPPER( SUBSTR( #{ship}, 6, 3 ) )
+				AND UPPER(a.call_yy) = UPPER( SUBSTR( #{ship}, 10, 4 ) )
+			]]>
+		</if>
+		<![CDATA[
+			GROUP BY a.sbay, b.hdeck_id
+			ORDER BY a.sbay, b.hdeck_id
+		]]>
+	</select>
+	
+	<select id="intraVesselDetailLoad" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TGcorderVo">
+		<![CDATA[
+			SELECT
+				a.eq_plseq || '-' || a.gc_bseq seq,
+				a.sbay || '-' || DECODE(LENGTH(a.srow), 1, '0' || a.srow, a.srow)|| '-' || DECODE(LENGTH(a.stier), 1, '0' || a.stier, a.stier) spos,
+				a.cntr_no,
+				a.block || '-' || DECODE(LENGTH(a.bay), 1, '0' || a.bay, a.bay)|| '-' || a.roww || '-' || a.tier ypos,
+				b.temp || b.temp_id tempchk,
+				b.unno || b.imdg imdgchk,
+				b.insp_id,
+				b.ts_id,
+				a.remark,
+				b.dir_id,
+				b.y_tblock || '-' || DECODE(LENGTH(b.y_tbay), 1, '0' || b.y_tbay, b.y_tbay)|| '-' || b.y_trow || '-' || b.y_ttier ypos2,
+				a.cur_stat,
+				b.fm_cd,
+				b.hwl_cd,
+				SUBSTR(b.sz_cd, 1, 1) sz_cd,
+				NVL(c.cntr_no, ' ') cntr_no2 ,
+				NVL(c.ytno, ' ') ytno,
+				NVL(b.y_fblock, 'SL') fblock,
+				NVL(b.pod, '') pod
+			FROM
+				t_gcorder a,
+				t_cntr b,
+				t_tcorder c
+			WHERE
+				a.cntr_no = b.cntr_no
+				AND a.dup_no = b.dup_no
+		]]>
+		<if test='ship != null and ship != ""'>
+			<![CDATA[
+				AND UPPER(a.ship_cd) = UPPER( SUBSTR( #{ship}, 0, 4 ) )
+				AND LPAD(UPPER(a.call_no), 3, 0) = UPPER( SUBSTR( #{ship}, 6, 3 ) )
+				AND UPPER(a.call_yy) = UPPER( SUBSTR( #{ship}, 10, 4 ) )
+			]]>
+		</if>
+		<![CDATA[
+				AND a.cntr_no = c.cntr_no(+)
+				AND a.dup_no = c.dup_no(+)
+				AND c.wk_cd(+) = 'L'
+				AND c.ok_dt(+) IS NULL
+		]]>
+		<if test='gubun != null and gubun != ""'>
+			<![CDATA[
+				AND a.wk_cd = #{gubun}
+			]]>
+		</if>
+		<![CDATA[
+				AND a.eq_plno = #{eqNo}
+				AND a.ok_dt IS NULL
+		]]>
+		<if test='bays != null and bays != ""'>
+			<![CDATA[
+				AND a.sbay IN
+			]]>
+			<foreach collection="baysList" close=")" index="index" item="item" open="(" separator=",">
+				<![CDATA[
+					#{item}
+				]]>
+			</foreach>
+			<![CDATA[
+				AND b.hdeck_id = #{hdeckId}
+			]]>
+		</if>
+		<if test='chkEq != null and chkEq != ""'>
+			<![CDATA[
+			ORDER BY to_number( a.eq_plseq ), to_number( a.gc_bseq )
+			]]>
+		</if>
+		<if test='chkEq == null or chkEq == ""'>
+			<![CDATA[
+			ORDER BY c.od_dt, to_number( a.eq_plseq ), to_number( a.gc_bseq )
+			]]>
+		</if>
+	</select>
+</mapper>

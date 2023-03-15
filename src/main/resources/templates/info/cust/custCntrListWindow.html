@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+	    <meta charset="UTF-8" />
+	    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+	    
+	    <meta name="_csrf" th:content="${_csrf.token}">
+	    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+	    
+	    <meta http-equiv="X-UA-Compatible" content="IE=10" />
+	    
+	    <!-- 공통으로 쓰이는 css파일을넣는다.-->
+	    <link rel="stylesheet" href="/static/lib/air-datepicker/css/datepicker.min.css" />
+	    <link rel="stylesheet" href="/static/lib/iziModal/css/iziModal.css" />
+	    <link rel="stylesheet" href="/static/common/css/info.css"/>
+	    <!-- 컨텐츠페이지의 CSS 영역이 들어감 -->
+	    <!-- 공통으로 쓰이는 css파일을넣는다.-->
+	    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+	    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	    <script src="/static/lib/air-datepicker/js/datepicker.js"></script>
+	    <script src="/static/lib/air-datepicker/js/i18n/datepicker.en.js"></script>
+	    <script src="/static/lib/moment/moment.min.js"></script>
+	    <script src="/static/lib/iziModal/js/iziModal.js"></script>
+	    <script src="/static/common/js/function.js"></script>
+	    <!-- 컨텐츠페이지의 스크립트 영역이 들어감 -->
+	</head>
+
+	<body>
+		<section id="info_section">
+			
+			<form name="searchForm" method="post" action="/info/cust/cntrListWindow" onsubmit="return check();">
+				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+				
+				<div class="date_sch">
+					<input type="radio" name="gubun" value="1" th:text="'MRN-MSN-HSN'" th:checked="${searchParams.gubun} == null or ${searchParams.gubun} == '' or ${searchParams.gubun} == 1 ? 'true'">
+					<input type="text" name="mrn" th:value="${searchParams.mrn}" maxlength="11">
+					-
+					<input type="text" name="msn" th:value="${searchParams.msn}" maxlength="4">
+					-
+					<input type="text" name="hsn" th:value="${searchParams.hsn}" maxlength="4">
+					<br/>
+					<input type="radio" name="gubun" value="2" th:text="'Cntr No.'" th:checked="${searchParams.gubun} == 2 ? 'true'">
+					<input type="text" name="cntrNo" th:value="${searchParams.cntrNo}">
+					
+					<a id="searchBtn" class="btn_lookup">조회</a>
+				</div>
+				
+				<div class="tb_hd">
+					<div class="btn_right">
+						<a id="enrolBtn" href="#" th:text="'등록'"></a>
+					</div>
+				</div>
+				
+				<div class="tb_tmnl">
+					<table id="t1">
+						<thead>
+							<tr>
+								<th>
+									<input type="checkbox" id="checkAll">
+								</th>
+								<th th:text="'No'"></th>
+								<th th:text="'MRN'"></th>
+								<th th:text="'MSN'"></th>
+								<th th:text="'HSN'"></th>
+								<th th:text="'Cntr No.'"></th>
+								<th th:text="'Oper'"></th>
+								<th th:text="'ISO'"></th>
+							</tr>
+						</thead>
+						<tbody id="tb1">
+							<tr th:unless="${#lists.isEmpty(list)}" th:each="list, i:${list}">
+								<td>
+									<input type="checkbox" name="chk" th:value="${list.cargoNo} + '/' + ${list.banipCd} + '/' + ${list.cntrNo} + '/' + ${list.shipCd} + '/' + ${list.iso}">
+								</td>
+								<td th:text="${i.index}+1"></td>
+								<td th:text="${list.mrn}"></td>
+								<td th:text="${list.msn}"></td>
+								<td th:text="${list.hsn}"></td>
+								<td th:text="${list.cntrNo}"></td>
+								<td th:text="${list.shipCd}"></td>
+								<td th:text="${list.iso}"></td>
+							</tr>
+							<tr th:if="${#lists.isEmpty(list)}">
+								<td th:colspan="8" th:text="'조회된 데이터가 존재하지 않습니다.'"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</form>
+		</section>
+		
+		<script type="text/javascript">
+			$(function() {
+				$("#searchBtn").click(function() {
+					document.searchForm.submit();
+				});
+				
+				$("#checkAll").change( function() {
+					if( $("#checkAll").is(':checked') ) {
+						$("input[name='chk']").each(function(index, item){ item.checked = true; })
+					} else {
+						$("input[name='chk']").each(function(index, item){ item.checked = false; })
+					}
+				});
+				
+				$("#enrolBtn").click(function() {
+					goInput();
+				});
+			});
+			
+			function check() {	
+				var frm = document.searchForm;	
+				for (var i = 0; i < frm.gubun.length; i++) {
+					if (frm.gubun[i].checked == true) {
+						val = frm.gubun[i].value;
+					}		
+				}
+					
+				if (val == "1") {	
+					if (frm.mrn.value.length <  11) {
+						alert("MRN을 정확히 입력해주세요. MRN은 11자리입니다.");
+						frm.mrn.focus();
+						return false;
+					} else if (frm.msn.value.length <  4) {
+						alert("MSN을 정확히 입력해주세요. MSN은 4자리입니다.");
+						frm.msn.focus();
+						return false;
+					}
+				} else {
+					if (frm.cntr_no.value.length <  11) {
+						alert("컨테이너번호를 정확히 입력해주세요. 컨테이너번호는 11자리입니다.");
+						frm.cntr_no.focus();
+						return false;
+					} 	
+				}
+			}
+			
+			function goInput() {
+				var frm = document.searchForm;	
+				var str = "" ;
+				var iCnt = 0;
+				
+				//alert(frm.chk.length);
+				
+				if (frm.chk.length == undefined) {	// Row가 1개일때는 배열이 아니기 때문에 별도 처리
+					var arryStr = new Array(iCnt);
+					var ccc = 0;
+					iCnt = 1;
+					
+					if (frm.chk.checked == true) {	
+						arryStr[ccc] = "";	// 초기화
+						arryStr[ccc] = arryStr[ccc] + frm.chk.value;
+						// 선택된 것들은 선택 못하게 disabled
+						frm.chk.disabled = true;			
+						ccc = ccc + 1;
+					}			
+					frm.chk.checked = false;
+					
+				} else {	// Row가 여러개일때는 배열 처리
+					var arryStr = new Array(iCnt);
+					var ccc = 0;
+					
+					for (var i=0;i<frm.chk.length;i++)  {
+						if (frm.chk[i].checked == true) {	
+							iCnt = iCnt + 1;							
+						}
+					} 	
+					
+					for (var i=0;i<frm.chk.length;i++)  {
+						if (frm.chk[i].checked == true) {	
+							arryStr[ccc] = "";	// 초기화
+							arryStr[ccc] = arryStr[ccc] + frm.chk[i].value;
+							// 선택된 것들은 선택 못하게 disabled
+							frm.chk[i].disabled = true;			
+							ccc = ccc + 1;
+						}
+					}
+					
+					// 값 전달하고 모두 해제 초기화
+					for (var i=0; i <frm.chk.length;i++)  {	
+							frm.chk[i].checked = false;
+					}	
+					
+				 
+				}	
+				// 테이블 ID , tbody ID, value
+				opener.addRow('t1', 'tb1', arryStr);
+				frm.chkAll.checked = false	
+				window.close();
+				
+				//window.close();
+			}
+		</script>
+	</body>
+</html>

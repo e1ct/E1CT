@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.WSajunRepository">
+	<select id="ediCopinoGateInRsrvList" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.WSajunVo">
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				(
+				SELECT
+					T.*,
+					ROWNUM AS RNUM
+				FROM
+					(
+					SELECT
+						*
+					FROM
+						W_sajun
+					WHERE
+						est_day BETWEEN to_date( REPLACE( #{searchStartDt}, '-', '' ), 'yyyymmdd' )
+						AND to_date( REPLACE( #{searchEndDt}, '-', '' ), 'yyyymmdd' )
+					) T ) TT
+			WHERE
+				RNUM > ( ${pageNumber} * ${pageSize} )
+				AND RNUM <= ( ${pageNumber} + 1 ) * ${pageSize}
+		]]>
+		<if test='empNo != null and empNo != ""'>
+			<![CDATA[
+				AND emp_comp = #{empNo}
+			]]>
+		</if>
+		<![CDATA[
+			ORDER BY
+				est_day,
+				est_time,
+				est_min,
+				cntr_no
+		]]>
+	</select>
+	
+	<select id="ediCopinoGateInRsrvListCount" parameterType="kr.co.e1ct.vo.SearchVo" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT
+				COUNT(*) CNT
+			FROM
+				W_sajun
+			WHERE
+				est_day BETWEEN to_date( REPLACE( #{searchStartDt}, '-', '' ), 'yyyymmdd' )
+				AND to_date( REPLACE( #{searchEndDt}, '-', '' ), 'yyyymmdd' )
+		]]>
+		<if test='empNo != null and empNo != ""'>
+			<![CDATA[
+				AND emp_comp = #{empNo}
+			]]>
+		</if>
+	</select>
+	
+	<update id="copinoGateInRsrvListProcAccept" parameterType="kr.co.e1ct.vo.WSajunVo">
+		<![CDATA[
+			UPDATE
+				W_SAJUN
+			SET
+				io_chk = 'Y'
+			WHERE
+				sajun_id = #{sajunId}
+		]]>
+	</update>
+	
+	<update id="copinoGateInRsrvListProcCancel" parameterType="kr.co.e1ct.vo.WSajunVo">
+		<![CDATA[
+			UPDATE
+				W_SAJUN
+			SET
+				io_chk = 'N'
+			WHERE
+				sajun_id = #{sajunId}
+		]]>
+	</update>
+	
+	<update id="copinoGateInRsrvListProcDeny" parameterType="kr.co.e1ct.vo.WSajunVo">
+		<![CDATA[
+			UPDATE
+				W_SAJUN
+			SET
+				io_chk = 'D'
+			WHERE
+				sajun_id = #{sajunId}
+		]]>
+	</update>
+	
+	<delete id="copinoGateInRsrvListProcDelete" parameterType="kr.co.e1ct.vo.WSajunVo">
+		<![CDATA[
+			DELETE FROM
+				W_SAJUN
+			WHERE
+				sajun_id = #{sajunId}
+		]]>
+	</delete>
+	
+	<insert id="copinoGateInRsrvSave" parameterType="kr.co.e1ct.vo.WSajunVo">
+		<![CDATA[
+			INSERT INTO
+				W_SAJUN(
+					sajun_id,
+					emp_comp,
+					emp_nm,
+					emp_tel,
+					drv_tel,
+					io_stat,
+					fm_cd,
+					cntr_no,
+					est_day,
+					est_time,
+					est_min,
+					io_chk,
+					write_dt
+				) VALUES (
+					sajunid_seq.nextval,
+					#{reqId},
+					#{empNm},
+					#{empTel},
+					#{drvTel},
+					#{ioStat},
+					#{fmCd},
+					#{cntrNo},
+					#{estDay},
+					#{estTime} || '시',
+					#{estMin} || '분경',
+					'N',
+					SYSDATE
+				)
+		]]>
+	</insert>
+</mapper>

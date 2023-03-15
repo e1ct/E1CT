@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TPortRepository">
+
+	<select id="findTCodeListPageByPortNm" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TPortVo">
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				(
+				SELECT
+					T.*,
+					ROWNUM AS RNUM
+				FROM
+					(
+					SELECT
+						port_cd,
+						country_cd,
+						NVL( port_nm, ' ') port_nm,
+						NVL( port_cd1, ' ') port_cd1
+					FROM
+						T_PORT
+		]]>
+		<if test="search != null and search != ''">
+			<![CDATA[
+					WHERE
+						PORT_NM like '%' || #{search} || '%'
+			]]>
+		</if>
+		<![CDATA[
+					ORDER BY ${orderCd}
+				) T 
+			) TT
+			WHERE
+				RNUM > ( ${pageNumber} * ${pageSize} )
+				AND RNUM <= ( ${pageNumber} + 1 ) * ${pageSize}
+		]]>
+	</select>
+	
+	<select id="findTCodeCountPageByPortNm" parameterType="kr.co.e1ct.vo.SearchVo" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT
+				COUNT(*)
+			FROM
+				T_PORT
+		]]>
+		<if test="search != null and search != ''">
+			<![CDATA[
+				WHERE
+					${orderCd} like '%' || #{search} || '%'
+			]]>
+		</if>
+	</select>
+	
+	<select id="ediCopinoPortList" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TPortVo">
+		<![CDATA[
+			SELECT * FROM T_PORT
+		]]>
+		<if test='portNm != null and portNm != ""'>
+			<![CDATA[
+				WHERE port_cd1 LIKE concat( #{portNm}, '%' )
+			]]>
+		</if>
+		<![CDATA[
+			ORDER BY port_cd1 asc
+		]]>
+	</select>
+	
+	<select id="findCountrycdByPortCd1" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TPortVo">
+		<![CDATA[
+			SELECT NVL(country_cd, '') country_cd from t_port where port_cd1 = #{podCd}
+		]]>
+	</select>
+</mapper>

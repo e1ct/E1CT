@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content">
+
+	    <section id="main-visual">
+	    	<div class="main-visual-left">
+		    	<div class="main-slide swiper-container" style="margin: 0;">
+		    		<div class="swiper-wrapper">
+		    			<div class="swiper-slide" th:each="slide, i:${slideList}" th:style="'background-image: url(/file/' + ${slide.mFilename} + ')'">
+		    				<p th:text="${slide.mContent}"></p>
+		    				<h1 th:text="${slide.mTitle}"></h1>
+		    			</div>
+		    		</div>
+		    		<div class="swiper-pagination"></div>
+		    		
+		    	</div>
+	    	</div>
+	    	<div class="main-visual-right">
+		    	<div class="main-favorite">
+		    		<p th:text="#{index.favorite}" class="main-favorite-title"></p>
+		    		<ul>
+		    			<li onclick="javascript:location.href='/info/sms/details'">
+		    				<a href="/info/sms/details" th:text="#{index.favorite.sms.details}"></a>
+		    			</li>
+		    			<li onclick="javascript:location.href='/info/edi/copinoList'">
+		    				<a href="/info/edi/copinoList" th:text="#{index.favorite.edi.copinolist}"></a>
+		    			</li>
+		    			<li onclick="javascript:location.href='/info/cust/inspection'">
+		    				<a href="/info/cust/inspection" th:text="#{index.favorite.cust.inspection}"></a>
+		    			</li>
+		    			<li onclick="javascript:location.href='/info/cust/insPvnt'">
+		    				<a href="/info/cust/insPvnt" th:text="#{index.favorite.cust.inspvnt}"></a>
+		    			</li>
+		    			<li onclick="javascript:location.href='/info/edi/copinoGateInRsrv'">
+		    				<a href="/info/edi/copinoGateInRsrv" th:text="#{index.favorite.edi.copinogateinrsrv}"></a>
+		    			</li>
+		    		</ul>
+		    	</div>
+	    	
+		    	<script type="text/javascript">
+		    		$(function() {
+		    			var swiper = new Swiper(".swiper-container", {
+		    				spaceBetween: 30,
+		    				autoplay: {
+		    					delay: 2500,
+		    					disableOnInteraction: false
+		    				},
+		    				pagination: {
+		    					el: '.swiper-pagination',
+		    					clickable: true
+		    				}
+		    			});
+		    			
+		    			$(".main-favorite li").hover(function(){
+		    				$(this).find("a").css("color", "#e76500");
+		    			}, function(){
+		    				$(this).find("a").css("color", "#000" );
+		    			})
+		    		});
+		    	</script>
+		    </div>
+	    </section>
+	    
+	    <section id="main-search">
+	    	<div class="main-search-container">
+	    		<div class="main-search-container-left">
+	    			<a href="#">
+	    				<span id="search-text-cntr" class="checked" th:text="#{index.search.container}"></span>
+	    			</a>
+	    			<span class="icon-vertical-dots"></span>
+	    			<a href="#">
+	    				<span id="search-text-freetime" th:text="#{index.search.freetime}"></span>
+	    			</a>
+	    		</div>
+		    	<div class="main-search-container-right">
+		    		<input id="search-text" type="text" name="searchValue" th:placeholder="#{index.search.placeholder}">
+			    	<button id="main-search-btn" class="main-search-btn" th:utext="#{index.search.btn}"></button>
+			    	
+			    	<script type="text/javascript">
+			    		$(function() {
+			    			$("#search-text-cntr").click(function() {
+			    				if( $("#search-text-freetime").hasClass('checked') ) {
+			    					$("#search-text-freetime").removeClass('checked');
+			    					$(this).addClass('checked');
+			    				}
+			    			});
+			    			
+			    			$("#search-text-freetime").click(function() {
+			    				if( $("#search-text-cntr").hasClass('checked') ) {
+			    					$("#search-text-cntr").removeClass('checked');
+			    					$(this).addClass('checked');
+			    				}
+			    			});
+			    			
+			    			$("#main-search-btn").click(function() {
+			    				var rtnUrl = "/info/cntrInfo/details";
+			    				if( $("#search-text-freetime").hasClass("checked") ) {
+			    					rtnUrl = "/info/cntrInfo/workingTime?cntrNo=" + $("#search-text").val();
+			    				} else if( $("#search-text-cntr").hasClass("checked") ) {
+			    					rtnUrl = "/info/cntrInfo/details?search=" + $("#search-text").val();
+			    				}
+			    				
+			    				location.href = rtnUrl;
+			    			});
+			    		});
+			    	</script>
+		    	</div>
+		    </div>
+	    </section>
+	    
+	    <section id="main-board">
+	    	<div class="main-board-container">
+		    	<div class="main-board-left">
+			    	<div id="main-complexity">
+		    			<p class="main-board-title" th:text="#{index.complexity}"></p>
+		    			
+		    			<div class="main-complexity-content" th:with="complexity=( ${yardWorkCount.truckCnt} < 45 ? 'green' : ( ${yardWorkCount.truckCnt} >= 45 and ${yardWorkCount.truckCnt} < 80 ? 'yellow' : 'red' ) )">
+		    				<div th:class="'complexity-chart complexity-' + ${complexity}" th:style="'background-image: url(/static/img/main-complexity-' + ${complexity} + '-' + ${i18n} + '.png)'">
+		    					<div th:if="${yardWorkCount.truckCnt} < 45" th:text="#{index.complexity.good}" style="color: #8ec555;"></div>
+		    					<div th:if="${yardWorkCount.truckCnt} >= 45 and ${yardWorkCount.truckCnt} < 80" th:text="#{index.complexity.normal}" style="color: #f7bb3b;"></div>
+		    					<div th:if="${yardWorkCount.truckCnt} >= 80" th:text="#{index.complexity.bad}" style="color: #f6392a;"></div>
+		    				</div>
+		    				<div th:class="'complexity-desc'">
+		    					<p th:text="#{index.complexity.yardstatus}"></p>
+		    					<span style="color: red;" th:utext="#{index.complexity.income} + '<strong>[' + ${yardWorkCount.inCnt} + ']</strong>'"></span>
+		    					|
+		    					<span style="color: blue;" th:utext="#{index.complexity.export} + '<strong>[' + ${yardWorkCount.outCnt} + ']</strong>'"></span>
+		    					<div class="yard-status-container">
+		    						<div class="yard-status yard-green" th:text="#{index.complexity.good}"></div>
+		    						<div class="yard-status yard-yellow" th:text="#{index.complexity.normal}"></div>
+		    						<div class="yard-status yard-red" th:text="#{index.complexity.bad}"></div>
+		    					</div>
+		    				</div>
+		    			</div>
+			    	</div>
+			    	
+			    	<div id="main-news">
+			    		<div class="main-board-title-container">
+			    			<p class="main-board-title" th:utext="'News/Notice' + '<span class=\'main-board-pagination\'></span>'"></p>
+			    		</div>
+			    		<div class="main-news-container">
+			    			<div class="swiper-wrapper">
+			    				<input type="hidden" id="popupCnt" value="0">
+				    			<div class="main-news-article swiper-slide" th:each="board, i:${boardList}" th:attr="'data-mseq'=${board.mSeq}" style="cursor: pointer;">
+				    				<a th:href="@{ '/community/' + ( ${board.MType} == 'NT' ? 'notice' : 'reference' ) + '/view'(MSeq=${board.mSeq})  }">
+					    				<div class="news-article-head">
+					    					<span class="news-type" th:if="${board.MType} == 'NT'" th:text="'NOTICE'"></span>
+					    					<span class="news-type" th:if="${board.MType} != 'NT'" th:text="'자료실'"></span>
+					    					<span class="icon-plus"></span>
+					    				</div>
+					    				<div class="news-article-body">
+					    					<p th:text="${board.mTitle}"></p>
+					    				</div>
+					    				<div class="news-article-footer">
+					    					<p th:text="'20' + ${#strings.replace(board.mWriteday, '/', '.')}"></p>
+					    				</div>
+				    				</a>
+				    				
+				    				<script type="text/javascript" th:if="${board.mPop} == 'Y'" th:with="width=${board.MPwidth} == null or ${board.MPwidth} == 0 ? '600' : ${board.MPwidth}, height=${board.MPheight} == null or ${board.MPheight} == 0 ? '500' : ${board.MPheight}">
+				    					if( $.cookie('[[${board.mSeq}]]' + (new Date()).format("yyyyMMdd")) == undefined && moment( '[[${board.mPfrom}]]', 'YYYY-MM-DD' ) <= new Date() && moment( '[[${board.mPto}]]', 'YYYY-MM-DD' ) >= new Date() ) {
+						    				var _left = Math.ceil( ( window.screen.availWidth - Number('[[${width}]]') ) / 2 ) + $("#popupCnt").val() * 30;
+						    				var _top = Math.ceil( ( window.screen.availHeight - Number('[[${height}]]') ) / 2 ) + $("#popupCnt").val() * 30;
+						    				var _option = 'width=' + '[[${width}]]' + ',height=' + '[[${height}]]' + ',left=' + _left + ',top=' + _top + ",scrollbars=yes";
+						    				window.open( '/noticePopup/' + '[[${board.mSeq}]]', "[[${board.mSeq}]]" , _option );
+						    				$("#popupCnt").val( Number( $("#popupCnt").val() ) + 1 );
+				    					}
+				    				</script>
+				    			</div>
+			    			</div>
+			    		</div>
+			    		
+			    		<script type="text/javascript">
+			    			function setCookie( mSeq ) {
+			    				$.cookie( mSeq, 'on', { expires: 1 } );
+			    			}
+			    			
+			    			function deleteCookie( mSeq ) {
+			    				$.removeCookie( mSeq );
+			    			}
+			    		</script>
+			    	</div>
+			    	
+			    	<script type="text/javascript">
+			    		$(function() {
+			    			var boardSwiper = new Swiper(".main-news-container", {
+			    				slidesPerView: 2,
+			    				spaceBetween: 30,
+			    				pagination: {
+			    					el: '.main-board-pagination',
+			    					clickable: true
+			    				}
+			    			});
+			    		});
+			    	</script>
+		    	</div>
+		    	<div class="main-board-right">
+		    		<p class="main-board-title" th:text="#{index.quick}">
+		    		
+		    		<ul>
+		    			<li class="berth">
+		    				<a href="/info/terminal/berthText" th:text="#{index.quick.berth}"></a>
+		    			</li>
+		    			<li class="work">
+		    				<a href="/info/terminal/vesselWork" th:text="#{index.quick.vessel}"></a>
+		    			</li>
+		    			<li class="yard">
+		    				<a href="/info/terminal/yardStack" th:text="#{index.quick.yardstack}"></a>
+		    			</li>
+		    			<li class="empty">
+		    				<a href="/info/terminal/emptyContainer" th:text="#{index.quick.emptyContainer}"></a>
+		    			</li>
+		    			<li class="contact">
+		    				<a href="/company/organization" th:text="#{index.quick.contact}"></a>
+		    			</li>
+		    		</ul>
+		    	</div>
+		    </div>
+	    </section>
+	    
+	    <section id="main-introduce">
+	    	<div class="main-introduce-container">
+		    	<div class="main-introduce-terminal">
+		    		<p class="main-introduce-terminal-title" th:utext="#{index.introduce.terminal.title}"></p>
+		    		<p class="main-introduce-terminal-subtitle" th:utext="#{index.introduce.terminal.subtitle}"></p>
+		    		
+		    		<ul>
+		    			<li>
+		    				<a href="/terminal/facilities" th:text="#{index.introduce.terminal.facilities}"></a>
+		    			</li>
+		    			<li>
+		    				<a href="/terminal/equipment" th:text="#{index.introduce.terminal.equipment}"></a>
+		    			</li>
+		    			<li>
+		    				<a href="/terminal/feature" th:text="#{index.introduce.terminal.feature}"></a>
+		    			</li>
+		    		</ul>
+		    	</div>
+		    	<div class="main-introduce-gallery" style="cursor: pointer;" onclick="javascript:location.href='/terminal/gallery'">
+		    		<img class="main-introduce-gallery-behind" src="/static/img/main-gallery-behind.png">
+		    		<span class="main-introduce-gallery-behind-text" th:text="#{index.introduce.gallery}"></span>
+		    		<img class="main-introduce-gallery-above" src="/static/img/main-gallery-above.png">
+		    		<span class="main-introduce-gallery-above-text" th:text="#{index.introduce.crane}"></span>
+		    		<img class="main-introduce-gallery-icon-plus" src="/static/img/icon-plus.png">
+		    	</div>
+		    	<div class="main-introduce-safe">
+		    		<div class="upper-block">
+		    			<div class="brochure" onclick="javascript:location.href='/terminal/brochure'" style="cursor: pointer;">
+		    				<img src="/static/img/icon-brochure.png">
+		    				<p th:text="#{index.introduce.brochure}"></p>
+		    			</div>
+		    			<div class="icon-dot-line"></div>
+		    			<div class="tmnl-movie" onclick="javascript:location.href='/terminal/movie'" style="cursor: pointer;">
+		    				<img src="/static/img/icon-tmnl-movie.png">
+		    				<p th:text="#{index.introduce.movie}"></p>
+		    			</div>
+		    		</div>
+		    		<div class="safety-service">
+		    			<a href="/company/safeservice"><p th:text="#{index.introduce.safeservice}"></p></a>
+		    		</div>
+		    	</div>
+		    </div>
+	    </section>
+	</div>
+</html>

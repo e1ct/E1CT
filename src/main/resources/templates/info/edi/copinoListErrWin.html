@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/popup">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content">
+	
+		<section id="info_section">
+			<h1 class="title">E1CT - 반출입계 사전정보 에러</h1>
+			<div class="tb_tmnl">
+				<table>
+					<tbody>
+						<div th:if="#{data} != null" th:remove="tag">
+							<tr>
+								<th>컨테이너번호</th>
+								<td th:text="${data.cntrNo}"></td>
+								<th>차량번호</th>
+								<td th:text="${data.truckerCd}"></td>
+							</tr>
+							<tr>
+								<th>에러내용</th>
+								<td colspan="3" th:text="${data.errDes}"></td>
+							</tr>
+						</div>
+						<div th:if="${data} == null" th:remove="tag">
+							<tr>
+								<td>조회된 데이터가 존재하지 않습니다.</td>
+							</tr>
+						</div>
+					</tbody>
+				</table>
+			</div>
+			<script type="text/javascript">
+				$(function(){
+				});
+				
+			</script>
+		</section>
+		
+	</div>
+</html>

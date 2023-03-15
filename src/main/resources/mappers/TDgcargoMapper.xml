@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TDgcargoRepository">
+
+	<select id="findByCntrNoAndShipCdAndCallYyAndCallNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TDgcargoVo">
+		<![CDATA[
+			SELECT * FROM t_dgcargo WHERE cntr_no = #{cntrNo} and ship_cd = #{shipCd} and call_yy = #{callYy} and call_no = #{callNo}
+		]]>
+	</select>
+	
+	<update id="updateImdg1ByCntrNoAndShipCdAndCallYyAndCallNo" parameterType="kr.co.e1ct.vo.SearchVo">
+		<![CDATA[
+			UPDATE t_dgcarfo SET imdg1 = #{dgCode} WHERE cntr_no = #{cntrNo} and ship_cd = #{shipCd} and call_yy = #{callYy} and call_no = #{callNo}
+		]]>
+	</update>
+	
+</mapper>

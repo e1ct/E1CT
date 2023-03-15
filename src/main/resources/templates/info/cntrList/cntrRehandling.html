@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content">
+		<div class="sub-visual sub-vs-3">
+			<h1>정보조회서비스</h1>
+			<p>E1컨테이너터미널은 세계를 목표로 나아갑니다.</p>
+		</div><!--sub-visual-->
+		<div class="sub-nav">
+			<div class="wr"> 
+				<a href="/" class="sub-home"></a>
+				<div class="sub-depth">
+					<h3>정보조회서비스</h3>
+					<ul>
+						<li><a href="/company/greeting">회사소개</a></li>
+						<li><a href="/terminal/facilities">터미널소개</a></li>
+						<li><a href="/info/terminal/berthText">정보조회서비스</a></li>
+						<li><a href="/community/news">커뮤니티</a></li>
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3>컨테이너목록</h3>
+					<ul>
+						<li th:each="submenu, i:${subMenuList}">
+							<a th:href="${submenu.url}" th:text="${i18n} == 'en' ? ${submenu.menuNameEn} : ${submenu.menuNameKo}"></a>
+						</li>
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3>재조작 목록</h3>
+					<ul>
+						<li><a href="/info/cntrList/copino">반출입 예정 목록</a></li>
+						<li><a href="/info/cntrList/gateInOut">반출입 목록</a></li>
+						<li><a href="/info/cntrList/notGateInOut">미반출 목록</a></li>
+						<li><a href="/info/cntrList/byVslDisLod">모선별 양적하 목록</a></li>
+						<li><a href="/info/cntrList/cllOverStorage">CLL 경과 목록</a></li>
+						<li><a href="/info/cntrList/longStack">장기체화목록</a></li>
+						<li><a href="/info/cntrList/cntrCancel">선적취소 목록</a></li>
+						<li><a href="/info/cntrList/cntrRehandling">재조작 목록</a></li>
+						<li><a href="/info/cntrList/reeferCargo">냉동 목록</a></li>
+						<li><a href="/info/cntrList/cntrDanger">위험물 목록</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<section id="info_section">
+			<h1 class="title">재조작 목록</h1>
+			<form id="form" name="searchForm" action="/info/cntrList/cntrRehandling" method="POST">
+				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+				<div class="date_sch">
+					<label for="" th:text="선사"></label>
+					<select name="oper">
+						<div th:each="oper, i:${operList}" th:remove="tag">
+							<option th:value="${oper}" th:text="${oper}" th:selected="${searchParams.oper} == ${oper} ? 'true'"></option>
+						</div>
+					</select>
+					<label for="" th:text="모선항차"></label>
+					<input type="text" name="shipCd" th:value="${searchParams.shipCd}" maxlength="4">
+					<input type="text" name="callNo" th:value="${searchParams.callNo}" maxlength="3">
+					<input type="text" name="callYy" th:value="${searchParams.callYy}" maxlength="4">
+					<a id="searchBtn" class="btn_lookup">조회</a>
+				</div>
+			</form>
+			
+			<div class="tb_tmnl">
+				<table>
+					<thead>
+						<tr>
+							<th>No</th>
+							<th>컨테이너번호</th>
+							<th>Sz/Tp</th>
+							<th>상태코드</th>
+							<th>직송</th>
+							<th>무게</th>
+							<th>양하항</th>
+							<th>초기양하항</th>
+							<th>초기모선항차</th>
+							<th>선내위치</th>
+							<th>반입(양하)일시</th>
+							<th>반출(적하)일시</th>
+							<th>보세구분</th>
+						</tr>
+					</thead>
+					<tbody th:if="${#lists.isEmpty(list)}">
+						<tr>
+							<td colspan="13">조회된 데이터가 존재하지 않습니다.</td>
+						</tr>
+					</tbody>
+					<tbody th:unless="${#lists.isEmpty(list)}">
+						<tr th:each="list, i:${list}">
+							<td th:text="${i.index}+1">
+							<td th:text="${list.cntrNo}"></td>
+							<td th:text="${list.szCd} + '/' + ${list.tyCd}"></td>
+							<td th:text="${list.curStat} + ${list.fmCd} + '-' + ${list.tsId} + ${list.rtnCd}"></td>
+							<td th:text="${list.dirId}"></td>
+							<td th:text="${list.weight}"></td>
+							<td th:text="${list.pod}"></td>
+							<td th:text="${list.exPod}"></td>
+							<td th:text="${list.exShipCall}"></td>
+							<td th:text="${list.shipLoca}"></td>
+							<td th:if="${list.ginDt} != null and ${list.ginDt} != ''" th:text="${list.ginDt}"></td>
+							<td th:unless="${list.ginDt} != null and ${list.ginDt} != ''" th:text="${list.gcDdt} == null ? '' : ( '(' + ${list.gcDdt} + ')' )"></td>
+							<td th:if="${list.goutDt} != null and ${list.goutDt} != ''" th:text="${list.goutDt}"></td>
+							<td th:unless="${list.goutDt} != null and ${list.goutDt} != ''" th:text="${list.gcLdt} == null ? '' : ( '(' + ${list.gcLdt} + ')' ) "></td>
+							<td th:text="${list.bondId}"></td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<div id="paging" class="paging"></div>
+			</div>
+			<script type="text/javascript">
+				$(function(){
+					$("#searchBtn").click(function() {
+						var f = $("#form").serializeObject();
+						if( f.shipCd.trim().length == 0 || f.callNo.trim().length == 0 || f.callYy.trim().length == 0 ) {
+							alert( '모선항차를 입력해주세요.' );
+						} else {
+							document.searchForm.submit();
+						}
+					});
+					
+					$("#printBtn").click( function() {
+					});
+				});
+			</script>
+		</section>
+		
+	</div>
+</html>

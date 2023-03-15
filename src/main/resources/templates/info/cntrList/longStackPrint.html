@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<style>
+			* {
+				font-size: 0.75rem;
+				-webkit-print-color-adjust: exact;
+				printer-colors: exact;
+				color-adjust: exact;
+			}
+			
+			table {
+				border-spacing: 0px;
+			}
+			
+			thead {
+				color: #fff;
+				background-color: #eb6800;
+			}
+			
+			@media print {
+				thead th {
+					color: #000;
+					border: 1px solid black;
+				}
+			}
+			
+			td {
+				border-left: 1px solid #aaa;
+				border-bottom: 1px solid #aaa;
+			}
+			
+			td:last-child {
+	 			border-right: 1px solid #aaa;
+			}
+		</style>
+
+		<table>
+			<thead>
+				<tr>
+					<th>No</th>
+					<th>컨테이너번호</th>
+					<th>Sz/Tp</th>
+					<th>상태코드</th>
+					<th>장치위치</th>
+					<th>선사</th>
+					<th>모선항차</th>
+					<th>반입|양하일시</th>
+					<th>경과일수</th>
+					<th>장치일수</th>
+					<th>Booking No</th>
+					<th>M. B/L No</th>
+				</tr>
+			</thead>
+			<tbody th:if="${list} != null">
+				<tr th:each="list, i:${list}" th:if="${searchParams.yardDay} <= ${list.yardDay}">
+					<td th:text="${i.index}+1"></td>
+					<td th:text="${list.cntrNo}" th:style="'cursor: pointer'" th:onclick="javascript:cntrDetailModal([[${list.cntrNo}]])"></td>
+					<td th:text="${list.szCd} + '/' + ${list.tyCd}"></td>
+					<td th:text="${list.curStat} + '' + ( ${list.fmCd} == null ? '' : ${list.fmCd} ) + '-' + ( ${list.tsId} == null ? '' : ${list.tsId} ) + '' + ( ${list.rtnCd} == null ? '' : ${list.rtnCd} )"></td>
+					<td th:text="${list.yTblock} + '-' + ${list.yTbay} + '-' + ${list.yTrow} + '-' + ${list.yTtier}"></td>
+					<td th:text="${list.operCd}"></td>
+					<td th:text="${list.shipCd} + '-' + ${#numbers.formatInteger(list.callNo, 3)} + '-' + ${list.callYy}"></td>
+					<td th:text="${list.ginDt}"></td>
+					<td th:text="${list.overdays}"></td>
+					<td th:text="${list.yardDay}"></td>
+					<td th:text="${list.bkNo}"></td>
+					<td>
+						<div th:each="cargoNo, j:${list.cargoNoList}" th:remove="tag" th:utext="'<span>' + ${cargoNo} + '</span><br/>'"></div>
+						<div th:each="cargoNo1, j:${list.cargoNo1List}" th:remove="tag">
+							<span style="color: #66cc33;" th:utext="${cargoNo1}"></span>
+							<br/>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+			<tbody th:if="${#lists.isEmpty(list)}">
+				<tr>
+					<td th:colspan="12">조회된 데이터가 존재하지 않습니다.</td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<script type="text/javascript">
+			setTimeout(window.print(), 200);
+		</script>
+</html>

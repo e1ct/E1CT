@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TVescallRepository">
+
+	<select id="berthText" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TVescallVo">
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				(
+				SELECT
+					T.*,
+					ROWNUM AS RNUM
+				FROM
+					(
+					SELECT
+						NVL(c.berth_no, c.pl_berth_no) BERTH_NO,
+						NVL(c.ps_id, c.pl_ps_id) PS_ID,
+						NVL(c.ship_cd, '') SHIP_CD,
+						TO_CHAR(NVL(c.call_no, 0), '000') CALL_NO,
+						NVL(c.call_yy, 0) CALL_YY,
+						NVL(v.ship_nm, '') SHIP_NM,
+						NVL(TO_CHAR(c.atb_dt, 'yyyy-mm-dd hh24:mi'), '') ATB_DT,
+						NVL(TO_CHAR(c.etb_dt, 'yyyy-mm-dd hh24:mi'), '') ETB_DT,
+						NVL(TO_CHAR(c.closing_dt, 'yyyy-mm-dd hh24:mi'), '') CLOSING_DT,
+						NVL(TO_CHAR(c.atd_dt, 'yyyy-mm-dd hh24:mi'), '') ATD_DT,
+						NVL(TO_CHAR(c.etd_dt, 'yyyy-mm-dd hh24:mi'), '') ETD_DT,
+						NVL(c.oper_cd, '') OPER_CD,
+						NVL(c.dis_cnt, 0) DIS_CNT,
+						NVL(c.cdis_cnt, 0) CDIS_CNT,
+						NVL(c.lod_cnt, 0) LOD_CNT,
+						NVL(c.sft_cnt, 0) SFT_CNT,
+						NVL(c.ts_cnt, 0) TS_CNT,
+						NVL(TO_CHAR(c.dis_end_dt, 'yyyy-mm-dd hh24:mi'), '') DIS_END_DT,
+						NVL(TO_CHAR(c.lod_end_dt, 'yyyy-mm-dd hh24:mi'), '') LOD_END_DT,
+						NVL(ib_voy, ' ') IB_VOY,
+						NVL(ob_voy, ' ') OB_VOY,
+						NVL(bit_pos, '') BIT_POS,
+						NVL(deck_pos, 0) DECK_POS
+					FROM
+						t_vescall c,
+						t_vessel v
+					WHERE
+						(NVL(c.ata_dt, c.eta_dt) BETWEEN TO_DATE(#{searchStartDt} || '000001' , 'yyyymmddhh24miss') AND TO_DATE(#{searchEndDt} || '235959' , 'yyyymmddhh24miss')
+						OR NVL(c.atd_dt, c.etd_dt) BETWEEN TO_DATE(#{searchStartDt} || '000001' , 'yyyymmddhh24miss') AND TO_DATE(#{searchEndDt} || '235959' , 'yyyymmddhh24miss')
+						OR c.closing_dt BETWEEN TO_DATE(#{searchStartDt} || '000001' , 'yyyymmddhh24miss') AND TO_DATE(#{searchEndDt} || '235959', 'yyyymmddhh24miss'))
+						AND C.ctp_cd IS NULL
+						AND (c.cancel_yn = 'D'
+						OR c.cancel_yn IS NULL)
+						AND c.ship_cd = v.ship_cd
+					ORDER BY
+						NVL(c.ata_dt, c.etb_dt),
+						c.closing_dt ) T ) TT
+			WHERE
+				RNUM > ( ${pageNumber} * ${pageSize} )
+				AND RNUM <= ( ${pageNumber} + 1 ) * ${pageSize}
+		]]>
+	</select>
+	
+	<select id="berthTextPrint" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TVescallVo">
+		<![CDATA[
+			SELECT
+				NVL(c.berth_no, c.pl_berth_no) BERTH_NO,
+				NVL(c.ps_id, c.pl_ps_id) PS_ID,
+				NVL(c.ship_cd, '') SHIP_CD,
+				TO_CHAR(NVL(c.call_no, 0), '000') CALL_NO,
+				NVL(c.call_yy, 0) CALL_YY,
+				NVL(v.ship_nm, '') SHIP_NM,
+				NVL(TO_CHAR(c.atb_dt, 'yyyy-mm-dd hh24:mi'), '') ATB_DT,
+				NVL(TO_CHAR(c.etb_dt, 'yyyy-mm-dd hh24:mi'), '') ETB_DT,
+				NVL(TO_CHAR(c.closing_dt, 'yyyy-mm-dd hh24:mi'), '') CLOSING_DT,
+				NVL(TO_CHAR(c.atd_dt, 'yyyy-mm-dd hh24:mi'), '') ATD_DT,
+				NVL(TO_CHAR(c.etd_dt, 'yyyy-mm-dd hh24:mi'), '') ETD_DT,
+				NVL(c.oper_cd, '') OPER_CD,
+				NVL(c.dis_cnt, 0) DIS_CNT,
+				NVL(c.cdis_cnt, 0) CDIS_CNT,
+				NVL(c.lod_cnt, 0) LOD_CNT,
+				NVL(c.sft_cnt, 0) SFT_CNT,
+				NVL(c.ts_cnt, 0) TS_CNT,
+				NVL(TO_CHAR(c.dis_end_dt, 'yyyy-mm-dd hh24:mi'), '') DIS_END_DT,
+				NVL(TO_CHAR(c.lod_end_dt, 'yyyy-mm-dd hh24:mi'), '') LOD_END_DT,
+				NVL(ib_voy, ' ') IB_VOY,
+				NVL(ob_voy, ' ') OB_VOY,
+				NVL(bit_pos, '') BIT_POS,
+				NVL(deck_pos, 0) DECK_POS
+			FROM
+				t_vescall c,
+				t_vessel v
+			WHERE
+				(NVL(c.ata_dt, c.eta_dt) BETWEEN TO_DATE(#{searchStartDt} || '000001' , 'yyyymmddhh24miss') AND TO_DATE(#{searchEndDt} || '235959' , 'yyyymmddhh24miss')
+				OR NVL(c.atd_dt, c.etd_dt) BETWEEN TO_DATE(#{searchStartDt} || '000001' , 'yyyymmddhh24miss') AND TO_DATE(#{searchEndDt} || '235959' , 'yyyymmddhh24miss')
+				OR c.closing_dt BETWEEN TO_DATE(#{searchStartDt} || '000001' , 'yyyymmddhh24miss') AND TO_DATE(#{searchEndDt} || '235959', 'yyyymmddhh24miss'))
+				AND C.ctp_cd IS NULL
+				AND (c.cancel_yn = 'D'
+				OR c.cancel_yn IS NULL)
+				AND c.ship_cd = v.ship_cd
+			ORDER BY
+				NVL(c.ata_dt, c.etb_dt),
+				c.closing_dt
+		]]>
+	</select>
+	
+	<select id="berthTextCnt" parameterType="kr.co.e1ct.vo.SearchVo" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT
+				COUNT(*)
+			FROM
+				t_vescall c,
+				t_vessel v
+			WHERE
+				(NVL(c.ata_dt, c.eta_dt) BETWEEN TO_DATE(#{searchStartDt} || '000001' , 'yyyymmddhh24miss') AND TO_DATE(#{searchEndDt} || '235959' , 'yyyymmddhh24miss')
+				OR NVL(c.atd_dt, c.etd_dt) BETWEEN TO_DATE(#{searchStartDt} || '000001' , 'yyyymmddhh24miss') AND TO_DATE(#{searchEndDt} || '235959' , 'yyyymmddhh24miss')
+				OR c.closing_dt BETWEEN TO_DATE(#{searchStartDt} || '000001' , 'yyyymmddhh24miss') AND TO_DATE(#{searchEndDt} || '235959', 'yyyymmddhh24miss'))
+				AND C.ctp_cd IS NULL
+				AND (c.cancel_yn = 'D'
+				OR c.cancel_yn IS NULL)
+				AND c.ship_cd = v.ship_cd
+		]]>
+	</select>
+
+	<select id="berthTextSum" parameterType="kr.co.e1ct.vo.TVescallVo" resultType="kr.co.e1ct.vo.TVescallVo">
+		<![CDATA[
+			Select 
+				sum(decode(substr(cur_stat,1,1),'I',1,0)) IV, 
+				sum(decode(cur_stat,'XD',1,0)) XV, 
+				sum(decode(cur_stat,'SD',1,0)) S2V 
+			from 
+				t_cntr a, 
+				t_vescall b 
+			Where 
+				b.ship_cd=#{shipCd} 
+				and b.call_no=#{callNo} 
+				and b.call_yy=#{callYy} 
+				and a.ship_cd = b.ship_cd 
+				and a.call_no = b.call_no 
+				and a.call_yy = b.call_yy 
+				and rtn_cd is null 
+				AND CUR_STAT <> 'IB'
+		]]>
+	</select>
+	
+	<select id="vesselInfo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TVescallVo">
+		<![CDATA[
+			SELECT
+				NVL(v.berth_no, '-') BERTH_NO,
+				NVL(v.ship_cd, ' ') SHIP_CD,
+				TO_CHAR(v.call_no, '000') CALL_NO,
+				v.call_yy CALL_YY,
+				NVL(v.oper_cd, '-') OPER_CD,
+				NVL(TO_CHAR(v.etb_dt, 'yyyy-mm-dd hh24:mi:ss'), '-') ETB_DT,
+				NVL(TO_CHAR(v.atb_dt, 'yyyy-mm-dd hh24:mi:ss'), '-') ATB_DT,
+				NVL(TO_CHAR(v.stv_begin_dt, 'yyyy-mm-dd hh24:mi:ss'), '-') STV_BEGIN_DT,
+				NVL(TO_CHAR(v.etd_dt, 'yyyy-mm-dd hh24:mi:ss'), '-') ETD_DT,
+				NVL(SUM(DECODE(ok_dt, NULL, DECODE(wk_cd, 'U', 1, 'D', 1))), '0') DIS_REST,
+				NVL(SUM(DECODE(ok_dt, NULL, 0, DECODE(wk_cd, 'U', 1, 'D', 1))), '0') DIS_FIN,
+				NVL(SUM(DECODE(ok_dt, NULL, DECODE(wk_cd, 'L', 1, 'R', 1))), '0') LOD_REST,
+				NVL(SUM(DECODE(ok_dt, NULL, 0, DECODE(wk_cd, 'L', 1, 'R', 1))), '0') LOD_FIN
+			FROM
+				t_gcorder g,
+				(
+				SELECT
+					berth_no,
+					ship_cd,
+					call_no,
+					call_yy,
+					oper_cd,
+					etb_dt,
+					atb_dt,
+					stv_begin_dt,
+					etd_dt
+				FROM
+					t_vescall
+				WHERE
+					atb_dt IS NOT NULL
+					AND atd_dt IS NULL
+					AND ctp_cd IS NULL	
+		]]>
+		<if test="searchType != null and searchType != '' and searchType != 'ALL'">
+			<![CDATA[
+					AND berth_no = #{search}
+			]]>
+		</if>
+		<![CDATA[
+			) v
+			WHERE
+				v.ship_cd = g.ship_cd(+)
+				AND v.call_no = g.call_no(+)
+				AND v.call_yy = g.call_yy(+)
+			GROUP BY
+				v.berth_no,
+				v.ship_cd,
+				v.call_no,
+				v.call_yy,
+				v.oper_cd,
+				v.etb_dt ,
+				v.atb_dt,
+				v.stv_begin_dt,
+				v.etd_dt
+			ORDER BY
+				v.berth_no
+		]]>
+	</select>
+	
+	<select id="vesselWorkDetail" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TVescallVo">
+		<![CDATA[
+			SELECT
+				eq_plno,
+				DECODE(V.SHIP_CD || V.CALL_YY || V.CALL_NO, E.SHIP_CD || E.CALL_YY || E.CALL_NO , e.gc_bay, ' ') GC_BAY ,
+				NVL(v.berth_no, '-') berth_no,
+				NVL(v.ship_cd, ' ') ship_cd,
+				TO_CHAR(v.call_no, '000') call_no,
+				v.call_yy call_yy,
+				NVL(v.oper_cd, '-') oper_cd,
+				NVL(SUM(DECODE(ok_dt, NULL, DECODE(wk_cd, 'U', 1, 'D', 1))), '0') dis_rest,
+				NVL(SUM(DECODE(ok_dt, NULL, 0, DECODE(wk_cd, 'U', 1, 'D', 1))), '0') dis_fin,
+				NVL(SUM(DECODE(ok_dt, NULL, DECODE(wk_cd, 'L', 1, 'R', 1))), '0') lod_rest,
+				NVL(SUM(DECODE(ok_dt, NULL, 0, DECODE(wk_cd, 'L', 1, 'R', 1))), '0') lod_fin
+			FROM
+				t_gcorder g,
+				(
+				SELECT
+					berth_no,
+					ship_cd,
+					call_no,
+					call_yy,
+					oper_cd
+				FROM
+					t_vescall
+				WHERE
+					atb_dt IS NOT NULL
+					AND atd_dt IS NULL
+		]]>
+		<if test="search != 'ALL'">
+		<![CDATA[
+					AND berth_no = #{search}
+		]]>
+		</if>
+		<![CDATA[
+				) v,
+				(
+				SELECT
+					eq_no,
+					ship_cd,
+					call_no,
+					call_yy,
+					gc_bay
+				FROM
+					t_eqpos
+				WHERE
+					EQ_NO LIKE '1%' ) e
+			WHERE
+				v.ship_cd = g.ship_cd(+)
+				AND v.call_no = g.call_no(+)
+				AND v.call_yy = g.call_yy(+)
+				AND G.EQ_PLNO = E.EQ_NO
+			GROUP BY
+				v.berth_no,
+				g.eq_plno ,
+				v.ship_cd,
+				v.call_no,
+				v.call_yy,
+				v.oper_cd ,
+				e.gc_bay,
+				E.ship_cd,
+				E.call_no,
+				E.call_yy
+			ORDER BY
+				v.berth_no,
+				V.SHIP_cD ,
+				V.CALL_YY,
+				V.CALL_NO ,
+				G.EQ_PLNO
+		]]>
+	</select>
+	
+	<select id="vesselWorkFindAtbDt" parameterType="kr.co.e1ct.vo.TVescallVo" resultType="kr.co.e1ct.vo.TVescallVo">
+		<![CDATA[
+			SELECT
+				NVL(TO_CHAR(atb_dt, 'yyyy-mm-dd hh24:mi:ss'), '-') atb_dt
+			FROM
+				T_VESCALL
+			WHERE
+				SHIP_CD =#{shipCd}
+				AND CALL_NO =#{callNo}
+				AND CALL_YY =#{callYy}
+		]]>
+	</select>
+	
+	<select id="codeVesselData" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TVescallVo">
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				(
+				SELECT
+					T.*,
+					ROWNUM AS RNUM
+				FROM
+					(
+					SELECT
+						b.ship_cd SHIP_CD,
+						TO_CHAR(b.call_no, '000') CALL_NO,
+						NVL(a.ship_nm, ' ') SHIP_NM,
+						NVL(b.oper_cd, ' ') OPER_CD,
+						NVL(TO_CHAR(b.atb_dt, 'yyyy-mm-dd'), ' ') ATB_DT,
+						NVL(TO_CHAR(b.etb_dt, 'yyyy-mm-dd'), ' ') ETB_DT,
+						NVL(b.ib_voy, ' ') IB_VOY,
+						NVL(b.ob_voy, ' ') OB_VOY
+					FROM
+						t_vessel a,
+						t_vescall b
+					WHERE
+						((b.atb_dt BETWEEN TO_DATE( CONCAT( #{strYear}, #{strMonth} ), 'YYYYMM') AND ADD_MONTHS(TO_DATE( CONCAT( #{strYear}, #{strMonth} ), 'YYYYMM'), 1))
+						OR (etb_dt BETWEEN TO_DATE( CONCAT( #{strYear}, #{strMonth} ), 'YYYYMM') AND ADD_MONTHS(TO_DATE( CONCAT( #{strYear}, #{strMonth} ), 'YYYYMM'), 1)))
+						AND a.ship_cd = b.ship_cd
+		]]>
+		<if test="shipNm != null and shipNm != ''">
+			<![CDATA[
+						AND REPLACE(a.ship_nm, ' ', '') = REPLACE( #{shipNm}, ' ', '')
+			]]>
+		</if>
+		<if test="oper != null and oper != ''">
+			<![CDATA[
+						AND b.oper_cd = #{oper}
+			]]>
+		</if>
+		<![CDATA[
+						ORDER BY
+							etb_dt ASC
+					 ) T ) TT
+			WHERE
+				RNUM > ( ${pageNumber} * ${pageSize} )
+				AND RNUM <= ( ${pageNumber} + 1 ) * ${pageSize}
+		]]>
+	</select>
+	
+	<select id="codeVesselDataCount" parameterType="kr.co.e1ct.vo.SearchVo" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT
+				COUNT(*)
+			FROM
+				t_vessel a,
+				t_vescall b
+			WHERE
+				((b.atb_dt BETWEEN TO_DATE( CONCAT( #{strYear}, #{strMonth} ), 'YYYYMM') AND ADD_MONTHS(TO_DATE( CONCAT( #{strYear}, #{strMonth} ), 'YYYYMM'), 1))
+				OR (etb_dt BETWEEN TO_DATE( CONCAT( #{strYear}, #{strMonth} ), 'YYYYMM') AND ADD_MONTHS(TO_DATE( CONCAT( #{strYear}, #{strMonth} ), 'YYYYMM'), 1)))
+				AND a.ship_cd = b.ship_cd
+		]]>
+		<if test="shipNm != null and shipNm != ''">
+			<![CDATA[
+				AND REPLACE(a.ship_nm, ' ', '') = REPLACE( #{shipNm}, ' ', '')
+			]]>
+		</if>
+	</select>
+	
+	<select id="terminalBerthGraphic" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TVescallVo">
+		<![CDATA[
+			SELECT
+				NVL(A.ship_cd, ' ') ship_cd,
+				NVL(A.call_yy, 0) call_yy,
+				NVL(A.call_no, 0) call_no,
+				NVL(A.berth_no, ' ') berth_no,
+				NVL(A.ps_id, ' ') ps_id,
+				NVL(TO_CHAR(A.etb_dt, 'yyyy-mm-dd hh24:mi'), ' ') etb_dt,
+				NVL(TO_CHAR(A.etd_dt, 'yyyy-mm-dd hh24:mi'), ' ') etd_dt,
+				NVL(A.oper_cd, ' ') oper_cd,
+				NVL(A.bit_pos, ' ') bit_pos,
+				NVL(A.deck_pos, 0) deck_pos,
+				NVL(A.dis_cnt, 0) dis_cnt,
+				NVL(A.cdis_cnt, 0) cdis_cnt,
+				NVL(A.lod_cnt, 0) lod_cnt,
+				NVL(A.sft_cnt, 0) sft_cnt,
+				NVL(A.ts_cnt, 0) ts_cnt,
+				NVL(B.ship_nm, ' ') ship_nm,
+				NVL(TO_CHAR(A.closing_dt, 'yyyy-mm-dd hh24:mi'), ' ') closing_dt,
+				NVL(TO_CHAR(A.dis_end_dt, 'yyyy-mm-dd hh24:mi:ss'), ' ') dis_end_dt,
+				NVL(TO_CHAR(A.lod_end_dt, 'yyyy-mm-dd hh24:mi:ss'), ' ') lod_end_dt,
+				NVL(c.backcolor, 16777215) backcolor,
+				NVL(c.forecolor, 0) forecolor,
+				NVL(ib_voy, ' ') ib_voy,
+				NVL(ob_voy, ' ') ob_voy,
+				NVL(TO_CHAR(A.atb_dt, 'yyyy-mm-dd hh24:mi'), ' ') atb_dt,
+				NVL(TO_CHAR(A.atd_dt, 'yyyy-mm-dd hh24:mi'), ' ') atd_dt,
+				NVL(a.remark, ' ') remark
+			FROM
+				t_vescall A,
+				t_vessel B,
+				t_oper C
+			WHERE
+				A.eta_dt <= TO_DATE(#{searchStartDt}, 'yyyymmdd') + 7
+				AND A.etd_dt >= TO_DATE(#{searchStartDt}, 'yyyymmdd')
+				AND A.ctp_cd IS NULL
+				AND (A.cancel_yn = 'D'
+				OR A.cancel_yn IS NULL)
+				AND A.berth_no IN ('01', '02')
+				AND A.ship_cd = B.ship_cd(+)
+				AND a.oper_cd = c.oper_cd
+			ORDER BY
+				A.berth_no ,
+				A.eta_dt
+		]]>
+	</select>
+	
+	<select id="cntrInfoWorkingTimeGetAtbDt" parameterType="kr.co.e1ct.vo.TGcorderVo" resultType="kr.co.e1ct.vo.TVescallVo">
+		<![CDATA[
+			SELECT
+				atb_dt
+			FROM
+				t_vescall
+			WHERE
+				ship_cd = #{shipCd}
+				AND call_no = #{callNo}
+				AND call_yy = #{callYy}
+		]]>
+	</select>
+	
+	<select id="findOperCdAndStvEndDtByShipCdAndCallNoAndCallYy" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TVescallVo">
+		<![CDATA[
+			SELECT
+				NVL( OPER_CD, '' ) oper_cd,
+				NVL( TO_CHAR( STV_END_DT, 'yyyymmddhh24mi' ), '' ) stv_end_dt
+			FROM
+				t_vescall
+			WHERE
+				ship_cd = #{shipCd}
+				AND call_no = #{callNo}
+				AND call_yy = #{callYy}
+		]]>
+	</select>
+	
+	<select id="findAtbDtByShipCdAndCallNoAndCallYy" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TVescallVo">
+		<![CDATA[
+			SELECT
+				atb_dt
+			FROM
+				t_vescall
+			WHERE
+				ship_cd = #{shipCd}
+				AND call_no = #{callNo}
+				AND call_yy = ${callYy}
+		]]>
+	</select>
+	
+	<select id="yardWorkService" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TVescallVo">
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				(
+				SELECT
+					NVL(c.berth_no, c.pl_berth_no)|| '(' || NVL(c.ps_id, c.pl_ps_id)|| ')' berth_no,
+					NVL(c.ship_cd, ' ') ship_cd,
+					TO_CHAR(NVL(c.call_no, 0), '000') call_no,
+					NVL(c.call_yy, 0) call_yy,
+					NVL(TO_CHAR(c.atb_dt, 'yyyy-mm-dd hh24:mi'), ' ') atb_dt,
+					NVL(TO_CHAR(c.etb_dt, 'yyyy-mm-dd hh24:mi'), ' ') etb_dt,
+					NVL(TO_CHAR(c.atd_dt, 'yyyy-mm-dd hh24:mi'), ' ') atd_dt,
+					NVL(TO_CHAR(c.etd_dt, 'yyyy-mm-dd hh24:mi'), ' ') etd_dt
+				FROM
+					t_vescall c,
+					t_vessel v
+				WHERE
+					(NVL(c.ata_dt, c.eta_dt) BETWEEN TO_DATE(#{searchStartDt} || '000001' , 'yyyymmddhh24miss') AND TO_DATE(#{searchEndDt} || '235959' , 'yyyymmddhh24miss')
+					OR NVL(c.atd_dt, c.etd_dt) BETWEEN TO_DATE(#{searchStartDt} || '000001' , 'yyyymmddhh24miss') AND TO_DATE(#{searchEndDt} || '235959' , 'yyyymmddhh24miss')
+					OR c.closing_dt BETWEEN TO_DATE(#{searchStartDt} || '000001' , 'yyyymmddhh24miss') AND TO_DATE(#{searchEndDt} || '235959', 'yyyymmddhh24miss'))
+					AND C.ctp_cd IS NULL
+					AND (c.cancel_yn = 'D'
+					OR c.cancel_yn IS NULL)
+					AND c.ship_cd = v.ship_cd
+				ORDER BY
+					NVL(c.ata_dt, c.etb_dt) ASC,
+					c.closing_dt ASC )
+			WHERE
+				rownum < 7
+		]]>
+	</select>
+	
+	<select id="intraVesselDetailGetShip" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TVescallVo">
+		<![CDATA[
+			SELECT
+				a.ship_cd,
+				TO_CHAR(a.call_no, '000') call_no,
+				a.call_yy,
+				a.atb_dt || a.ata_dt
+			FROM
+				t_vescall a,
+				t_gcorder b
+			WHERE
+				a.ship_cd = b.ship_cd
+				AND a.call_no = b.call_no
+				AND a.call_yy = b.call_yy
+				AND b.ok_dt IS NULL
+				AND b.eq_plno = #{eqNo}
+			GROUP BY
+				a.ship_cd,
+				a.call_no,
+				a.call_yy,
+				a.atb_dt || a.ata_dt
+		]]>
+	</select>
+	
+	<select id="findShipCdByShipCdAndCallNoAndCallYy" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TVescallVo">
+		<![CDATA[
+			SELECT SHIP_CD FROM t_vescall WHERE ship_cd = #{shipCd} AND call_no = #{callNo} AND call_yy = #{callYy}
+		]]>
+	</select>
+	
+	<select id="findClosingDtAndAtdDtByShipCdAndCallNoAndCallYy" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TVescallVo">
+		<![CDATA[
+			SELECT NVL(to_char(closing_dt, 'yyyymmddhh24miss'),'') closingDt, NVL(to_char(atd_dt, 'yyyymmddhh24miss'),'') atdDt, NVL(ctp_cd,'') ctpCd  FROM t_vescall
+			WHERE ship_cd = #{shipCd}
+			AND call_no = #{callNo}
+			AND call_yy = #{callYy}
+		]]>
+	</select>
+	
+	<select id="findByShipCdAndCallNoAndCtpCd" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TVescallVo">
+		<![CDATA[
+			SELECT * FROM t_vescall WHERE ship_cd = #{shipCd} AND call_no = #{callNo} AND ctp_cd = '1'
+		]]>
+	</select>
+	
+	<select id="findAdtDtByBkNoAndOperCd" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TVescallVo">
+		<![CDATA[
+			SELECT DECODE(A.ATD_DT,NULL,'N','Y') atd_dt FROM T_VESCALL A, T_BKMST B
+			  WHERE B.bk_no = #{orderNo}
+			  AND B.oper_cd = #{operCd}
+			  AND A.SHIP_CD = B.SHIP_CD 
+			  AND A.CALL_NO = B.CALL_NO 
+			  AND A.CALL_YY = B.CALL_YY
+		]]>
+	</select>
+	
+	<select id="findAdtDtByShipCdAndCallNoAndCallYy" parameterType="kr.co.e1ct.vo.TBkmstVo" resultType="kr.co.e1ct.vo.TVescallVo">
+		<![CDATA[
+			SELECT NVL( TO_CHAR( ATD_DT ), ' ' ) atd_dt FROM T_VESCALL WHERE ship_cd = #{shipCd} AND call_no = #{callNo} AND call_yy = #{callYy}
+		]]>
+	</select>
+	
+	<select id="findReturnDate" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TVescallVo">
+		<![CDATA[
+			SELECT to_char(NVL(ata_dt,eta_dt)+11,'yyyy-mm-dd') rtn_dt  FROM T_VESCALL
+			WHERE SHIP_CD = #{shipCd} and CALL_NO = #{callNo} and CALL_YY = #{callYy}
+		]]>
+	</select>
+</mapper>

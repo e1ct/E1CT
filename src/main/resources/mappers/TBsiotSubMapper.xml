@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TBsiotSubRepository">
+
+	<select id="findSealNoByShipCdAndCallNoAndCallYyAndCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.TBsiotSubVo" resultType="kr.co.e1ct.vo.TBsiotSubVo">
+		<![CDATA[
+			Select 
+				seal_no 
+			from 
+				t_bsiot_sub 
+			where 
+				ship_cd = #{shipCd}
+				and call_no = #{callNo} 
+				and call_yy = #{callYy}
+				and cntr_no = #{cntrNo}
+				and dup_no  = #{dupNo}
+				
+		]]>
+	</select>
+	
+	<select id="findCargoNoListByCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.TCntrVo" resultType="kr.co.e1ct.vo.TBsiotSubVo">
+		<![CDATA[
+			SELECT
+				cargo_no
+			FROM
+				t_bsiot_sub
+			WHERE
+				cntr_no = #{cntrNo}
+				AND dup_no = #{dupNo}
+		]]>
+	</select>
+	
+	<select id="custCntrListWindow" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TBsiotSubVo">
+		<![CDATA[
+			SELECT
+				NVL(SUBSTR(a.cargo_no, 1, 11), '') AS mrn,
+				NVL(SUBSTR(a.cargo_no, 12, 4), '') AS msn,
+				NVL(SUBSTR(a.cargo_no, 16, 4), '') AS hsn,
+				a.cargo_no,
+				a.banip_cd,
+				a.cntr_no,
+				a.ship_cd,
+				a.sz_cd || a.ty_cd AS iso
+			FROM
+				T_BSIOT_SUB a
+			WHERE
+				1=1
+		]]>
+		<if test='gubun == "1"'>
+			<![CDATA[
+				AND cargo_no = #{mrn} || LPAD(#{msn}, 4, '0') || LPAD(#{hsn}, 4, '0')
+			]]>
+		</if>
+		<if test='gubun != "1"'>
+			<![CDATA[
+				AND cntr_no = #{cntrNo}
+			]]>
+		</if>
+		<![CDATA[
+			ORDER BY cntr_no, dup_no DESC
+		]]>
+	</select>
+	
+	<select id="cntrListLongStackCargoNoList" parameterType="kr.co.e1ct.vo.TCntrVo" resultType="kr.co.e1ct.vo.TBsiotSubVo">
+		<![CDATA[
+			select cargo_no from t_bsiot_sub where cntr_no = #{cntrNo} and dup_no = #{dupNo}
+		]]>
+	</select>
+	
+	<select id="findByCntrNoAndDupNoAndBanchCd" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TBsiotSubVo">
+		<![CDATA[
+			select * from t_bsiot_sub where cntr_no = #{cntrNo} and dup_no = #{pcDupno} and banch_cd = '60'
+		]]>
+	</select>
+	
+	<select id="findCntrNoFromSlcBycntrNoAndDupNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TBsiotSubVo">
+		<![CDATA[
+			SELECT NVL(cntr_no, '') cntr_no from SLC.t_bsiot_sub a, 
+			(select count(*) cnt from SLC.t_bsiot_sub where cntr_no = #{cntrNo} and dup_no = FN_GET_OTHER_CY_DUPNO(#{cntrNo}) and banch_cd is not null) b, 
+			(select count(*) cnt from SLC.t_bsiot_sub where cntr_no = #{cntrNo} and dup_no = FN_GET_OTHER_CY_DUPNO(#{cntrNo})) c 
+			where b.cnt = c.cnt and cntr_no = #{cntrNo} and dup_no =FN_GET_OTHER_CY_DUPNO( #{cntrNo} ) 
+		]]>
+	</select>
+	
+	<select id="findCntrNoByCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TBsiotSubVo">
+		<![CDATA[
+			SELECT NVL(cntr_no, '') cntr_no from t_bsiot_sub a, 
+			(select count(*) cnt from t_bsiot_sub where cntr_no = #{cntr_no} and dup_no = #{pcDupno} and banch_cd is not null) b, 
+			(select count(*) cnt from t_bsiot_sub where cntr_no = #{cntr_no} and dup_no = #{pcDupno} ) c 
+			where b.cnt = c.cnt and cntr_no = #{cntr_no} and dup_no = #{pcDupno}
+		]]>
+	</select>
+	
+	<select id="findCntrNoWmConcatByCargoNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TBsiotSubVo">
+		<![CDATA[
+			SELECT nvl(to_char(wm_concat(distinct(cntr_no))),'0') cntr_no FROM T_BSIOT_SUB
+			 WHERE CARGO_NO IN (SELECT CARGO_NO FROM T_BSIOT WHERE MSTBL_NO = #{cntrNo} ) 
+		]]>
+	</select>
+</mapper>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content" th:remove="tag">
+		<div class="sub-visual sub-vs-2">
+			<h1 th:text="#{header.terminal}">터미널소개</h1>
+			<p th:text="#{subvisual.subtitle.2}">최고의 물류서비스를 통해 고객 감동을 만들어갑니다.</p>
+		</div>
+		<div class="sub-nav">
+			<div class="wr"> 
+				<a href="/" class="sub-home"></a>
+				<div class="sub-depth">
+					<h3 th:text="#{header.terminal}">터미널소개</h3>
+					<ul>
+						<li><a href="/company/greeting" th:text="#{header.company}">회사소개</a></li>
+						<li><a href="/terminal/facilities" th:text="#{header.terminal}">터미널소개</a></li>
+						<li><a href="/info/terminal/berthText" th:text="#{header.info}">정보조회서비스</a></li>
+						<li><a href="/community/news" th:text="#{header.community}">커뮤니티</a></li> 
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3 th:text="#{menu.terminal.gallery}">갤러리</h3>
+					<ul>
+						<li><a href="/terminal/facilities" th:text="#{menu.terminal.facilities}">터미널시설</a></li>
+						<li><a href="/terminal/equipment" th:text="#{menu.terminal.equipment}">터미널장비</a></li>
+						<li><a href="/terminal/feature" th:text="#{menu.terminal.feature}">터미널특징</a></li>
+						<li><a href="/terminal/movie" th:text="#{menu.terminal.movie}">홍보동영상</a></li>
+						<li><a href="/terminal/brochure" th:text="#{menu.terminal.brochure}">온라인브로슈어</a></li>
+						<li><a href="/terminal/gallery" th:text="#{menu.terminal.gallery}">갤러리</a></li>
+					</ul>
+				</div>
+			</div> 
+		</div><!--sub-visual-->
+		<section id="wrap">
+			<h1 class="cont-tit" th:text="#{menu.terminal.gallery}">갤러리</h1> 
+			<div class="cont-wr"> 
+				<div id="gallery-list"> 
+					<ul>
+						<li th:each="list, i:${list}" style="cursor: pointer;">
+							<a th:onclick="javascript:openModal([[${list.mTitle}]], [[${list.mFilename}]])">
+								<img th:src="'/file/' + ${list.mFilename}" alt="">
+								<div class="txt">
+									<p sec:authorize="hasAnyRole('S')">
+										<a th:onclick="javascript:boardDelete([[${list.MSeq}]])" style="float:right; font-size: 0.8rem;">삭제</a>
+									</p>
+									<p th:text="${list.mTitle}"></p>
+									<p class="date" th:text="${#strings.substring( list.mWriteday, 0, 10 )}"></p>
+								</div>
+							</a>
+						</li>
+					</ul>
+					<div class="paging">
+						<a th:href="'?page=0'" class="first"></a>
+						<a th:if="${pager.get('pageNumber')} > 0" th:href="'?page=' +  ( ${pager.get('pageNumber')} - 1 )" class="prev"></a>
+						<a th:each="page : ${ #numbers.sequence( pager.get('sequenceStart'), pager.get('sequenceEnd') ) }" th:text="${page}+1" th:class="${page} == ${pager.get('pageNumber')} ? 'active'" th:href="'?page=' + ${page}"></a>
+						<a th:if=" ${pager.get('pageNumber')} + 1 <= ${pager.get('maxPage')}" th:href="'?page=' + (${pager.get('pageNumber')} + 1)" class="next"></a>
+						<a th:href="'?page=' + ${pager.get('maxPage')}" class="last"></a>
+					</div>
+					<div class="board-btn-wrap" sec:authorize="hasAnyRole('G', 'S')">
+						<a th:href="@{'/terminal/gallery/write'(page=${pager.get('pageNumber')})}" class="btn-enrol" th:text="'글쓰기'"></a>
+					</div>
+				</div>
+			</div>
+			
+			<div id="detailModal" style="display: none"></div>
+			
+			<script type="text/javascript">
+				$(function() {
+					$("#detailModal").iziModal({
+						width: 1000,
+						headerColor: '#eb6800'
+					});
+				});
+			
+				function openModal( mTitle, mSeq ) {
+					$("#detailModal").iziModal('setTitle', mTitle );
+					$("#detailModal").iziModal( 'setContent', '<img src="/file/' + mSeq + '">' );
+					$("#detailModal").iziModal( 'open' );
+				}
+			</script>
+			
+			<script type="text/javascript" sec:authorize="hasAnyRole('S')">
+				function boardDelete( mSeq ) {
+					if( confirm( "삭제하시겠습니까?" ) ) {
+						$.ajax({
+							type: 'POST',
+							url: '/terminal/gallery/delete',
+							data: {
+								'mSeq': mSeq,
+								'[[${_csrf.parameterName}]]': '[[${_csrf.token}]]'
+							},
+							success: function( d ) {
+								alert( d.msg );
+								if( d.code == 200 ) {
+									location.reload();
+								}
+							}
+						});
+					}
+				}
+			</script>
+		</section> 
+	</div>
+</html>

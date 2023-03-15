@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content" th:remove="tag">
+		<div class="sub-visual sub-vs-1">
+			<h1>회사소개</h1>
+			<p>E1컨테이너터미널은 세계를 목표로 나아갑니다.</p>
+		</div>
+		<div class="sub-nav">
+			<div class="wr"> 
+				<a href="/" class="sub-home"></a>
+				<div class="sub-depth">
+					<h3>회사소개</h3>
+					<ul>
+						<li><a href="/company/greeting">회사소개</a></li>
+						<li><a href="/terminal/facilities">터미널소개</a></li>
+						<li><a href="/info/terminal/berthText">정보조회서비스</a></li>
+						<li><a href="/community/news">커뮤니티</a></li> 
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3>공고</h3>
+					<ul>
+						<li><a href="/company/greeting">인사말</a></li>
+						<li><a href="/company/history">연혁</a></li>
+						<li><a href="/company/organization">조직 및 연락처</a></li>
+						<li><a href="/company/ci">CI</a></li>
+						<li><a href="/company/notice">공고</a></li>
+						<li><a href="/company/location">오시는길</a></li>
+						<li><a href="/company/safeservice">안전서비스</a></li>
+						<li><a href="/company/hr">인사제도</a></li>
+						<li><a href="/company/recruit">채용정보</a></li>
+						<li><a href="/company/support">관련사이트</a></li>
+					</ul>
+				</div>
+			</div>
+		</div><!--sub-visual-->
+		<section id="wrap">
+			<h1 class="cont-tit">공고</h1>
+			<div class="cont-wr">
+				<div id="board-view">
+					<form name="form" id="form" enctype="multipart/form-data" method="POST" action="/company/notice/save">
+						<input type="hidden" name="mSeq" th:value="${board} != null ? ${board.mSeq} : ''">
+						<input type="hidden" name="MType" th:value="'AT'">
+						<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+						<table>
+							<colgroup>
+								<col width="15%">
+								<col width="85%">
+							</colgroup>
+							<tbody th:with="sdf=${ new java.text.SimpleDateFormat('yyyy-MM-dd')}">
+								<tr>
+									<th th:text="'제목'"></th>
+									<td>
+										<input type="text" name="mTitle" th:value="${board} != null ? ${board.mTitle} : ''" style="width: 100%;">
+									</td>
+								</tr>
+								<tr>
+									<th th:text="'작성자'"></th>
+									<td>
+										<input type="text" name="mName" th:value="${board} != null ? ${board.mName} : ''" style="width: 100%;">
+									</td>
+								</tr>
+								<tr>
+									<th th:text="'E-MAIL'"></th>
+									<td>
+										<input type="text" name="mEmail" th:value="${board} != null ? ${board.mEmail} : ''" style="width: 100%;">
+									</td>
+								</tr>
+								<tr>
+									<th th:text="'내용'"></th>
+									<td>
+										<textarea name="mContent" class="editor" th:text="${board} != null ? ${board.mContent} : ''"></textarea>
+									</td>
+								</tr>
+								<tr>
+									<th th:text="'파일첨부'"></th>
+									<td>
+										<input type="file" name="attachFile"> (최대 4M)
+									</td>
+								</tr>
+								<tr>
+									<th th:text="'팝업여부'"></th>
+									<td>
+										<input type="checkbox" name="mPop" value="Y" id="mPop" style="width: 25px; height: 25px;" th:checked="${board} != null and ${board.mPop} == 'Y' ? 'true'"><label for="pop" style="margin-right: 20px;">팝업</label>
+										<input type="text" class="datepicker-here" data-language="en" name="mPfrom" id="mPfrom"> ~ <input type="text" class="datepicker-here" data-language="en" name="mPto" id="mPto">
+										<label for="">팝업 가로길이</label> <input type="number" name="mPwidth" th:value="${board} != null and ${board.mPwidth} != null ? ${board.mPwidth} : 600">
+										<label for="">팝업 세로길이</label> <input type="number" name="mPheight" th:value="${board} != null and ${board.mPheight} != null ? ${board.mPheight} : 800">
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="list-btn">
+							<a id="enrolBtn" class="enrol-btn" th:text="'글쓰기'"></a>
+							<a th:href="@{'/company/notice'(page=${params.pageNumber})}" th:text="'목록'"></a>
+						</div>
+					</form>
+				</div>
+			</div>
+			
+			<script type="text/javascript">
+				$(".editor").summernote({
+	        		height: 300,
+	        		maxHeight: 300,
+	        		callbacks: {
+	        			onImageUpload: function( files, editor, welEditable ) {
+	        				for( var i = files.length - 1; i>=0; i-- ) {
+	        					sendFile( files[i], this );
+	        				}
+	        			}
+	        		}
+	        	});
+				
+				function sendFile( file, el ) {
+	        		var form_data = new FormData();
+	        		form_data.append( 'file', file );
+	        		form_data.append( '[[${_csrf.parameterName}]]', '[[${_csrf.token}]]' )
+	        		$.ajax({
+	        			data: form_data,
+	        			type: 'POST',
+	        			url: '/file/upload',
+	        			cache: false,
+	        			contentType: false,
+	        			encType: 'multipart/form-data',
+	        			processData: false,
+	        			success: function( url ) {
+	        				$(el).summernote( 'editor.insertImage', url );
+	        				$( "#imageBoard > ul").append( "<li><img src='" + url + "' height='auto'/></li>" );
+	        			}
+	        		});
+	        	}
+				
+				$("#enrolBtn").click(function() {
+					var f = $("#form").serializeObject();
+					if( f.mTitle == null || f.mTitle.trim().length == 0 ) {
+						alert( '제목을 입력하세요' )
+					} else if( f.mName == null || f.mName.trim().length == 0 ) {
+						alert( '작성자를 입력하세요.' );
+					} else if( f.mEmail == null || f.mEmail.trim().length == 0 ) {
+						alert( 'E-MAIL을 입력하세요.' );
+					} else {
+						var form_data = new FormData( document.getElementById( "form" ) );
+						
+						$.ajax({
+							data: form_data,
+							type: 'POST',
+							url: '/company/notice/save',
+							cache: false,
+							contentType: false,
+							encType: 'multipart/form-data',
+							processData: false,
+							success: function(d) {
+								console.log(d);
+								alert( d.msg );
+								if( d.code == 200 ) {
+									location.href="/company/notice";
+								}
+							}
+						});
+					}
+				});
+				
+				var mPfrom = '[[${params.mPfrom}]]';
+				var mPto = '[[${params.mPto}]]';
+				
+				if( !mPfrom ) {
+					$("#mPfrom").val( moment().format('YYYY-MM-DD') );	
+				} else {
+					$("#mPfrom").val( moment( mPfrom, 'YYYYMMDD').format('YYYY-MM-DD') );
+				}
+				
+				if( !mPto ) {
+					$("#mPto").val( moment().add(7, 'days').format( 'YYYY-MM-DD' ) );
+				} else {
+					$("#mPto").val( moment( mPto, 'YYYYMMDD').format('YYYY-MM-DD') );
+				}
+			</script>
+		</section>
+	</div>
+</html>

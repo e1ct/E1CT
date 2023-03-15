@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content" th:remove="tag">
+		<div class="sub-visual sub-vs-1">
+			<h1 th:text="#{header.company}">회사소개</h1>
+			<p th:text="#{header.company.subtit}">E1컨테이너터미널은 세계를 목표로 나아갑니다.</p>
+		</div>
+		<div class="sub-nav">
+			<div class="wr"> 
+				<a href="/" class="sub-home"></a>
+				<div class="sub-depth">
+					<h3 th:text="#{header.company}">회사소개</h3>
+					<ul>
+						<li><a href="/company/greeting" th:text="#{header.company}">회사소개</a></li>
+						<li><a href="/terminal/facilities" th:text="#{header.terminal}">터미널소개</a></li>
+						<li><a href="/info/terminal/berthText" th:text="#{header.info}">정보조회서비스</a></li>
+						<li><a href="/community/news" th:text="#{header.community}">커뮤니티</a></li> 
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3 th:text="#{menu.company.greeting}">인사말</h3>
+					<ul>
+						<li><a href="/company/greeting" th:text="#{menu.company.greeting}">인사말</a></li>
+						<li><a href="/company/history" th:text="#{menu.company.history}">연혁</a></li>
+						<li><a href="/company/organization" th:text="#{menu.company.organization}">조직 및 연락처</a></li>
+						<li><a href="/company/ci" th:text="#{menu.company.ci}">CI</a></li>
+						<li><a href="/company/notice" th:text="#{menu.company.notice}">공고</a></li>
+						<li><a href="/company/location" th:text="#{menu.company.location}">오시는길</a></li>
+						<li><a href="/company/safeservice" th:text="#{menu.company.safeservice}">안전서비스</a></li>
+						<li><a href="/company/hr" th:Text="#{menu.company.hr}">인사제도</a></li>
+						<li><a href="/company/recruit" th:text="#{menu.company.recruit}">채용정보</a></li>
+						<li><a href="/company/support" th:text="#{menu.company.support}">관련사이트</a></li>
+					</ul>
+				</div>
+			</div> 
+		</div><!--sub-visual-->
+		<section id="wrap">
+			<h1 class="cont-tit" th:text="#{menu.company.greeting}">인사말</h1>
+			<div id="greeting"> 
+				<div class="cont-wr"> 
+					<div class="insa-tit">
+						<h2>Energy First!!</h2>
+						<p th:utext="#{company.greeting.slogan}">2008년 국내 에너지 사업의 선도 기업인
+						E1이 물류사업에 진출하고자
+						E1컨테이너터미널을 설립하였습니다.</p>
+						<small>E1 Container Terminal Good Partners Dreams Together</small>
+						<img src="/static/img/sub/greeting-img.png" alt="김대근대표이사">
+					</div>
+					<div class="insa-con">
+						<div class="left">
+							<h4>CEO MESSAGE</h4>
+							<p th:utext="#{company.greeting.hello}">안녕하십니까<br />E1컨테이너터미널 대표이사<br />김대근입니다.</p>
+						</div>
+						<div class="right">
+							<p th:utext="#{company.greeting.insacon.right}">E1컨테이너터미널은 최첨단 물류장비 및 시스템을 기반으로 
+							‘고객과 함께 하는 기업'이라는 경영이념 아래, 고객 여러분의 작은 
+							목소리에도 귀 기울여 큰 만족을 드리는 물류시스템을 만들기 위해
+							최선의 노력을 다하고 있습니다.<br />어제보다는 오늘, 오늘보다는 내일, 
+							보다 더 나은 서비스로 고객 여러분의 만족을 최우선 가치로 지속적인 
+							서비스 개선과 신기술의 도입으로 고객만족을 너머 고객 감동을 실현하는
+							최고 수준의 파트너가 될 것을 약속 드립니다.<br /><br />
+		
+							감사합니다.
+							</p>
+						</div>
+					</div>
+				</div>
+			</div> 
+		</section>
+	</div>
+</html>

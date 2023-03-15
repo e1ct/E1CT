@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content" th:remove="tag">
+		<div class="sub-visual sub-vs-1">
+			<h1>회사소개</h1>
+			<p>E1컨테이너터미널은 세계를 목표로 나아갑니다.</p>
+		</div>
+		<div class="sub-nav">
+			<div class="wr"> 
+				<a href="/" class="sub-home"></a>
+				<div class="sub-depth">
+					<h3>회사소개</h3>
+					<ul>
+						<li><a href="/company/greeting">회사소개</a></li>
+						<li><a href="/terminal/facilities">터미널소개</a></li>
+						<li><a href="/info/terminal/berthText">정보조회서비스</a></li>
+						<li><a href="/community/news">커뮤니티</a></li> 
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3>인사제도</h3>
+					<ul>
+						<li><a href="/company/greeting">인사말</a></li>
+						<li><a href="/company/history">연혁</a></li>
+						<li><a href="/company/organization">조직 및 연락처</a></li>
+						<li><a href="/company/ci">CI</a></li>
+						<li><a href="/company/notice">공고</a></li>
+						<li><a href="/company/location">오시는길</a></li>
+						<li><a href="/company/safeservice">안전서비스</a></li>
+						<li><a href="/company/hr">인사제도</a></li>
+						<li><a href="/company/recruit">채용정보</a></li>
+						<li><a href="/company/support">관련사이트</a></li>
+					</ul>
+				</div>
+			</div>
+		</div><!--sub-visual-->
+		<section id="wrap">
+			<h1 class="cont-tit">인사제도</h1>
+			<div id="hrsystem">  
+				<div class="cont-wr">     
+					<h2>새롭게 출발하는 E1CT는<br />
+						<span>유능한 인력개발</span>을 위해 노력하겠습니다.
+						<small>E1CT는 여러분을 향해 항상 열려 있습니다. 당당히 도전하십시오.</small>
+					</h2>
+					<ul class="circle"> 
+						<li>
+							<span class="num">1</span>
+							<p>공평한<br />기회제공</p>
+						</li>
+						<li>
+							<span class="num">2</span>
+							<p>능력과 성과에<br />따른 보상</p>
+						</li>
+						<li>
+							<span class="num">3</span>
+							<p>객관적이고<br />공정한 인사관리</p>
+						</li>
+						<li>
+							<span class="num">4</span>
+							<p>우수<br />인재 양성</p>
+						</li>
+					</ul> 
+					<ul class="system three">
+						<li>
+							<img src="/static/img/sub/hr-icon-1.png" alt="학자금 제도">
+							<h3>학자금 제도</h3>
+							<p>임직원 자녀 고교, 전문대, 대학 학자금 지원</p>
+						</li>
+						<li>
+							<img src="/static/img/sub/hr-icon-2.png" alt="경조금 제도">
+							<h3>경조금 제도</h3>
+							<p>각종 경조사별 경조금(화환포함) 및 경조휴가 부여</p>
+						</li>
+						<li>
+							<img src="/static/img/sub/hr-icon-3.png" alt="의료지원 제도">
+							<h3>의료지원 제도</h3>
+							<p>전 직원 공단 일반검진 및 만 35세 이상 격년재 종합검진 지원</p>
+						</li>
+					</ul>
+					<ul class="system two">
+						<li>
+							<img src="/static/img/sub/hr-icon-4.png" alt="여가지원 제도">
+							<h3>여가지원 제도</h3>
+							<p>하계휴가 및 Refresh휴가 연속 3일 이상 부여 (연차휴가 사용)<br />
+							동호회 활동 분기별 지원<br />
+							하계휴양소 설치 및 주주사 콘도 회원권 이용 가능
+							</p>
+						</li>
+						<li>
+							<img src="/static/img/sub/hr-icon-5.png" alt="기타 제도">
+							<h3>기타 제도</h3>
+							<p>4대 보험(국민, 건강, 산재, 고용) 가입 및 퇴직금 지급<br />
+							기념일 지원 : 생일, 회사창립기념일, 근로자의 날, 명절(설, 추적)<br />
+							구내식당 식사제공 및 매점 운영<br />
+							국내외 출장비 및 장기근속자 포상<br />
+							각종 교육훈련비 지원(법정교육, 직무교육 등)<br />
+							체력단련실 운영 
+							</p>
+						</li>
+					</ul>
+				</div>
+			</div> 
+		</section>
+	</div>
+</html>

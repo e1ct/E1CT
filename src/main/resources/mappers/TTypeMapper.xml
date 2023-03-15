@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TTypeRepository">
+	<select id="findTyGrpCdByTyCd" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TTypeVo">
+		<![CDATA[
+			SELECT ty_grp_cd FROM t_type WHERE ty_cd = #{tyCd}
+		]]>
+	</select>
+</mapper>

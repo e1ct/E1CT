@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content" th:remove="tag">
+		<div class="sub-visual sub-vs-1">
+			<h1 th:text="#{header.company}">회사소개</h1>
+			<p th:text="#{subvisual.subtitle.1}">E1컨테이너터미널은 세계를 목표로 나아갑니다.</p>
+		</div>
+		<div class="sub-nav">
+			<div class="wr"> 
+				<a href="/" class="sub-home"></a>
+				<div class="sub-depth">
+					<h3 th:text="#{header.company}">회사소개</h3>
+					<ul>
+						<li><a href="/company/greeting" th:text="#{header.company}">회사소개</a></li>
+						<li><a href="/terminal/facilities" th:text="#{header.terminal}">터미널소개</a></li>
+						<li><a href="/info/terminal/berthText" th:text="#{header.info}">정보조회서비스</a></li>
+						<li><a href="/community/news" th:text="#{header.community}">커뮤니티</a></li> 
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3 th:text="#{menu.company.safeservice}">안전서비스</h3>
+					<ul>
+						<li><a href="/company/greeting" th:text="#{menu.company.greeting}">인사말</a></li>
+						<li><a href="/company/history" th:text="#{menu.company.history}">연혁</a></li>
+						<li><a href="/company/organization" th:text="#{menu.company.organization}">조직 및 연락처</a></li>
+						<li><a href="/company/ci" th:text="#{menu.company.ci}">CI</a></li>
+						<li><a href="/company/notice" th:text="#{menu.company.notice}">공고</a></li>
+						<li><a href="/company/location" th:text="#{menu.company.location}">오시는길</a></li>
+						<li><a href="/company/safeservice" th:text="#{menu.company.safeservice}">안전서비스</a></li>
+						<li><a href="/company/hr" th:Text="#{menu.company.hr}">인사제도</a></li>
+						<li><a href="/company/recruit" th:text="#{menu.company.recruit}">채용정보</a></li>
+						<li><a href="/company/support" th:text="#{menu.company.support}">관련사이트</a></li>
+					</ul>
+				</div>
+			</div> 
+		</div><!--sub-visual-->
+		<section id="wrap">
+			<h1 class="cont-tit" th:text="#{menu.company.safeservice}">안전서비스</h1>
+			<div id="safety">  
+				<div class="cont-wr">   
+					<div class="big-img">
+						<div class="txt">
+							<h2 th:text="#{company.safe.h2}">안전경영</h2>
+							<p th:text="#{company.safe.p}">자신에 대한, 가족에 대한, 동료에 대한 사랑이라는 기본정신을 바탕으로 하고 있습니다.</p>
+						</div>
+					</div>
+					<ul class="download" th:utext="#{company.safe.download}">
+						<li>안전수칙 가이드 다운로드<a href="/static/file/safety.ppt" target="_blank" download="E1CT safety">다운로드</a></li> 
+					</ul>
+				</div>
+			</div> 
+		</section>
+	</div>
+</html>

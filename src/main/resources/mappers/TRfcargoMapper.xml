@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TRfcargoRepository">
+
+	<select id="findReqTempAndPlinDtByShipCdAndCallYyAndCallNoAndCntrNo" parameterType="kr.co.e1ct.vo.TCntrVo" resultType="kr.co.e1ct.vo.TRfcargoVo">
+		<![CDATA[
+			SELECT
+				NVL( req_temp, ' ') req_temp,
+				plin_dt,
+				plout_dt
+			FROM
+				t_rfcargo
+			WHERE
+				ship_cd = #{shipCd}
+				AND call_yy = #{callYy}
+				AND call_no = #{callNo}
+				AND cntr_no = #{cntrNo}
+		]]>
+	</select>
+	
+	<select id="findByCntrNoAndDupNoAndPloutDt" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TRfcargoVo">
+		<![CDATA[
+			SELECT * from t_rfcargo 
+            WHERE cntr_no = #{cntrNo}
+            AND dup_no = FN_GET_OTHER_CY_DUPNO(#{cntrNo}) 
+            AND plout_dt IS NOT NULL
+		]]>
+	</select>
+</mapper>

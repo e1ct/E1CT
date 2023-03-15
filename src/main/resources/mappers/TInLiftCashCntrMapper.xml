@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TInLiftCashCntrRepository">
+	<select id="findCntrNoAndDupNoAndFnGetOverpriceExNewByCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="java.util.HashMap">
+		<![CDATA[
+			select CNTR_NO, DUP_NO, FN_GET_IN_RPRICE_NEW(CNTR_NO, DUP_NO) cash
+			from T_IN_LIFT_CASH_CNTR A
+			WHERE DUP_NO = (SELECT MAX(DUP_NO) FROM T_IN_LIFT_CASH_CNTR B WHERE B.CNTR_NO = A.CNTR_NO )
+			AND CNTR_NO IN
+		]]>
+		<foreach collection="cntrList" index="index" item="item" open="(" close=")" separator=",">
+			<![CDATA[
+					#{item}
+			]]>
+		</foreach>
+	</select>
+	
+	<select id="findOneCntrNoAndDupNoAndFnGetOverpriceExNewByCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="java.util.HashMap">
+		<![CDATA[
+			select CNTR_NO, DUP_NO, FN_GET_IN_RPRICE_NEW(CNTR_NO, DUP_NO) CASH
+			from T_IN_LIFT_CASH_CNTR A
+			WHERE DUP_NO = (SELECT MAX(DUP_NO) FROM T_IN_LIFT_CASH_CNTR B WHERE B.CNTR_NO = A.CNTR_NO )
+			AND CNTR_NO = #{cntrNo}
+		]]>
+	</select>
+</mapper>

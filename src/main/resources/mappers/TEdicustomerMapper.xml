@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TEdicustomerRepository">
+	<select id="cntrListCopinoGetSender" parameterType="kr.co.e1ct.vo.TGateVo" resultType="kr.co.e1ct.vo.TEdicustomerVo">
+		<![CDATA[
+			SELECT
+				NVL(cst_nm, ' ') cst_nm
+			FROM
+				t_edicustomer
+			WHERE
+				UPPER( cst_id ) = UPPER( #{sndId} )
+				AND docu = 'COPINO'
+				AND terminal_id = 'E1CTC030'
+		]]>
+	</select>
+	
+	<select id="findCstNmByDocuAndTerminalIdAndCstId" parameterType="kr.co.e1ct.vo.TBklstVo" resultType="kr.co.e1ct.vo.TEdicustomerVo">
+		<![CDATA[
+			Select 
+				NVL(cst_nm, ' ') cst_nm 
+			FROM 
+				t_edicustomer 
+			where 
+				docu = 'COPINO' 
+				and terminal_id = 'E1CTC030' 
+				and cst_id = #{truckerCd}
+		]]>
+	</select>
+	
+	<select id="findByCstId" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TEdicustomerVo">
+		<![CDATA[
+			SELECT * FROM t_edicustomer WHERE docu = 'COPINO' AND cst_id = #{transId}
+		]]>
+	</select>
+</mapper>

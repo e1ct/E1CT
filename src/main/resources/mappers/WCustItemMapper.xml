@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.WCustItemRepository">
+	
+	<delete id="custInspectionDeleteItem" parameterType="kr.co.e1ct.vo.SearchVo">
+		<![CDATA[
+			DELETE FROM
+				W_CUST_Item
+			WHERE
+				cust_id = #{custId}
+		]]>
+	</delete>
+	
+	<select id="custInspectionCustItemList" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.WCustItemVo">
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				W_CUST_ITEM
+			WHERE
+				cust_id = #{custId}
+		]]>
+	</select>
+	
+	<select id="findCountByItemIdAndCustId" parameterType="kr.co.e1ct.vo.SearchVo" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT COUNT(*) FROM W_CUST_ITEM
+			WHERE item_id = #{itemId}
+			AND cust_id = #{custId}
+		]]>
+	</select>
+	
+	<update id="updateByItemIdAndCustId" parameterType="kr.co.e1ct.vo.SearchVo">
+		<![CDATA[
+			UPDATE
+				W_CUST_ITEM
+			SET
+				item_nm = #{itemNm}
+				, unit = #{unit}
+				, qty = #{qty}
+				, weight = #{weight}
+				, model_no = #{modelNo}
+				, carton_no = #{cartonNo}
+				, package_no = #{packageNo}
+			WHERE
+				item_id = #{itemId}
+				AND cust_id = #{custId}
+		]]>
+	</update>
+	
+	<select id="findMaxItemIdByCustId" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.WCustItemVo">
+		<![CDATA[
+			SELECT 
+				NVL( MAX( item_id ), 0 ) item_id
+			FROM
+				W_CUST_ITEM
+			WHERE
+				cust_id = #{custId}
+		]]>
+	</select>
+	
+	<insert id="insertWCustItem" parameterType="kr.co.e1ct.vo.SearchVo">
+		<![CDATA[
+			INSERT
+				INTO
+					W_CUST_ITEM (
+						item_id,
+						cust_id,
+						item_nm,
+						unit,
+						qty,
+						weight,
+						model_no,
+						carton_no,
+						package_no
+					) VALUES (
+						#{itemId},
+						#{custId},
+						#{itemNm},
+						#{unit},
+						#{qty},
+						#{weight},
+						#{modelNo},
+						#{cartonNo},
+						#{packageNo}
+					)
+				
+		]]>
+	</insert>
+	
+	<delete id="deleteByItemIdAndCustId" parameterType="kr.co.e1ct.vo.SearchVo">
+		<![CDATA[
+			DELETE FROM
+				W_CUST_ITEM
+			WHERE
+				item_id = #{itemId}
+				AND cust_id = #{custId}
+		]]>
+	</delete>
+	
+	<select id="findCountByCustId" parameterType="kr.co.e1ct.vo.SearchVo" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT 
+				COUNT(item_id) as cntr
+			FROM
+				W_CUST_ITEM
+			WHERE
+				cust_id = #{custId}
+		]]>
+	</select>
+	
+	<select id="custInspectionViewItem" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.WCustItemVo">
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				W_CUST_ITEM
+			WHERE
+				cust_id = #{custId}
+		]]>
+	</select>
+</mapper>

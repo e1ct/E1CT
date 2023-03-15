@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TCashPlanRepository">
+	<select id="findByCntrNoAndDupNoAndDealDdAndCstNoAndVacctNoAndCloseDd" parameterType="kr.co.e1ct.vo.TCashPlanVo" resultType="kr.co.e1ct.vo.TCashPlanVo">
+		<![CDATA[
+			SELECT 
+				*
+			FROM
+				T_CASH_PLAN
+			WHERE
+				CNTR_NO = #{cntrNo}
+				AND DUP_NO = #{dupNo}
+				AND DEAL_DD = TO_CHAR( SYSDATE, 'yyyy-mm-dd' )
+				AND CST_NO = #{cstNo}
+				AND VACCT_NO = #{vacctNo}
+				AND CLOSE_DD = #{closeDd}
+		]]>
+	</select>
+	
+	<insert id="smsDetailSubmitTCashPlanInsert" parameterType="kr.co.e1ct.vo.TCashPlanVo">
+		<![CDATA[
+			INSERT INTO 
+				T_CASH_PLAN  
+				( 
+					CNTR_NO, DUP_NO, DEAL_DD, SZ_CD, TY_CD, 
+					CUR_STAT, CST_NO, VACCT_NO, CLOSE_DD, STAT_CD, 
+					REMARK, 
+					TAX_YN, SALE_AMT, TAX_AMT, 
+					IO_CD, 
+					CST_NO_SUB 
+				) 
+				VALUES 
+				( 
+				    #{cntrNo}, #{dupNo}, TO_CHAR(SYSDATE, 'yyyy-mm-dd'), #{szCd}, #{tyCd},
+				    #{curStat}, #{cstNo}, #{vacctNo}, #{closeDd}, #{statCd},
+				    #{remark},
+				    #{taxYn}, #{saleAmt}, #{taxAmt},
+				    #{ioCd},
+				    #{cstNoSub}
+				)
+		]]>
+	</insert>
+	
+	<update id="smsDetailSubmitTCashPlanUpdate" parameterType="java.util.HashMap">
+		<![CDATA[
+			UPDATE T_CASH_PLAN SET
+		]]>
+		<if test='overDaysMoney == "Y" and OverDays_Money != 0'>
+			<![CDATA[
+				OVER_YN = 'Y',
+				OVER_DAY = #{OverDays_Day},
+				OVER_AMT = #{OverDays_Money},
+				OVER_CASH = #{OverDays_Money},
+			]]>
+		</if>
+		<if test='overDaysMoney == "N" or OverDays_Money == 0'>
+			<![CDATA[
+				OVER_YN = 'N',
+				OVER_DAY = 0,
+				OVER_AMT = 0,
+				OVER_CASH = 0,
+			]]>
+		</if>
+		<if test='refferMoney == "Y" and Reffer_Money != 0'>
+			<![CDATA[
+				TEMP_YN = 'Y',
+				TEMP_DAY = #{Reffer_Day},
+				TEMP_AMT = #{Reffer_Money},
+				TEMP_CASH = #{Reffer_Money},
+			]]>
+		</if>
+		<if test='refferMoney == "N" or Reffer_Money == 0'>
+			<![CDATA[
+				TEMP_YN = 'N',
+				TEMP_DAY = 0,
+				TEMP_AMT = 0,
+				TEMP_CASH = 0,
+			]]>
+		</if>
+		<if test='bondMoney == "Y" and Chk_Money != 0'>
+			<![CDATA[
+				CHK_AMT = #{Chk_Money},
+				CHK_CASH = #{Chk_Money},
+			]]>
+		</if>
+		<if test='bondMoney == "N" or Chk_Money == 0'>
+			<![CDATA[
+				CHK_AMT = 0,
+				CHK_CASH = 0,
+			]]>
+		</if>
+		<if test='xrayMoney == "Y" and Xray_Money != 0'>
+			<![CDATA[
+				XRAY_AMT = #{Xray_Money},
+				XRAY_CASH = #{Xray_Money},
+			]]>
+		</if>
+		<if test='xrayMoney == "N" or Xray_Money == 0'>
+			<![CDATA[
+				XRAY_AMT = 0,
+				XRAY_CASH = 0,
+			]]>
+		</if>
+		<if test='rtnMoney == "Y" and Rtn_Money != 0'>
+			<![CDATA[
+				RETURN_YN = 'Y',
+				RETURN_AMT = #{Rtn_Money},
+				RETURN_CASH = #{Rtn_Money},
+			]]>
+		</if>
+		<if test='rtnMoney == "N" or Rtn_Money == 0'>
+			<![CDATA[
+				RETURN_YN = 'N',
+				RETURN_AMT = 0,
+				RETURN_CASH = 0,			
+			]]>
+		</if>
+		<if test='sanMoney == "Y" and Lift_Money != 0'>
+			<![CDATA[
+				LIFT_YN = 'Y',
+				LIFT_QTY = #{Lift_qty},
+				LIFT_AMT = #{Lift_Money},
+				LIFT_CASH = #{Lift_Money}
+			]]>
+		</if>
+		<if test='sanMoney == "N" or Lift_Money == 0'>
+			<![CDATA[
+				LIFT_YN = 'N',
+				LIFT_QTY = 0,
+				LIFT_AMT = 0,
+				LIFT_CASH = 0,
+			]]>
+		</if>
+		<if test='dgMoney == "Y" and Dg_Money != 0'>
+			<![CDATA[
+				CAR_AMT = #{Dg_Money},
+				CAR_CASH = #{Dg_Money}
+			]]>
+		</if>
+		<if test='dgMoney == "N" or Dg_Money == 0'>
+			<![CDATA[
+				CAR_AMT = 0,
+				CAR_CASH = 0
+			]]>
+		</if>
+		<![CDATA[
+			WHERE
+				CNTR_NO = #{cntrNo}
+				AND DUP_NO = #{dupNo}
+				AND DEAL_DD = TO_CHAR(SYSDATE, 'yyyy-mm-dd')
+				AND CST_NO = #{reqId}
+				AND VACCT_NO = #{vacctNo}
+				AND CLOSE_DD = #{closeDd}
+		]]>
+	</update>
+	
+	<delete id="deleteTcashPlanByCntrNoAndDupNoAndDealDdAndCstNoAndVacctNoAndCloseDd" parameterType="kr.co.e1ct.vo.TCashPlanVo">
+		<![CDATA[
+			DELETE FROM T_CASH_PLAN
+			WHERE
+				CNTR_NO = #{cntrNo}
+				AND DUP_NO = #{dupNo}
+				AND DEAL_DD = TO_CHAR(SYSDATE, 'yyyy-mm-dd')
+				AND CST_NO = #{cstNo}
+				AND VACCT_NO = #{vacctNo}
+				AND CLOSE_DD = #{closeDd}
+		]]>
+	</delete>
+	
+	<update id="updateTcashPlanByCntrNoAndDupNoAndDealDdAndCstNoAndVacctNoAndCloseDd" parameterType="kr.co.e1ct.vo.TCashPlanVo">
+		<![CDATA[
+			UPDATE
+				T_CASH_PLAN
+			SET
+				TAX_YN = #{taxYn},
+				SALE_AMT = #{saleAmt},
+				TAX_AMT = #{taxAmt}
+			WHERE
+				CNTR_NO = #{cntrNo}
+				AND DUP_NO = #{dupNo}
+				AND DEAL_DD = TO_CHAR(SYSDATE, 'yyyy-mm-dd')
+				AND CST_NO = #{cstNo}
+				AND VACCT_NO = #{vacctNo}
+				AND CLOSE_DD = #{closeDd}
+		]]>
+	</update>
+</mapper>

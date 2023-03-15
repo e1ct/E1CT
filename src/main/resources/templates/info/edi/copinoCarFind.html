@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/popup">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content">
+	
+		<section id="info_section">
+			<h1 class="title">차량등록확인</h1>
+			<div class="date_sch">
+				<p th:if="${list} != null" th:text="'정상등록된 차량입니다.'">
+				<p th:unless="${list} != null" th:text="'등록된 차량정보가 없습니다.'">
+			</div>
+			
+			<div class="tb_tmnl">
+				<table th:if="${list} != null">
+					<thead>
+						<tr>
+							<th th:colspan="2" th:text="'차량 등록정보'">
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th th:text="'차량번호'"></th>
+							<td th:text="${list.truckerCd} + '' + ${list.carNo}"></td>
+						</tr>
+						<tr>
+							<th th:text="'실차량번호'"></th>
+							<td th:text="${list.carNm}"></td>
+						</tr>
+						<tr>
+							<th th:text="'운전자'"></th>
+							<td th:text="${list.drvNm}"></td>
+						</tr>
+						<tr>
+							<th th:text="'기사연락처'"></th>
+							<td th:text="${list.carTel}"></td>
+						</tr>
+					</tbody>
+				</table>
+				<table th:unless="${list} != null">
+					<thead>
+						<tr>
+							<th th:text="'차량등록절차'"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>
+								&nbsp;1. 관리자에게 <font color="blue">차량등록신청서</font>를 요청합니다.<br><br>
+				                 
+				              	&nbsp;2. 전달받은 파일의 <b>차량등록신청서</b>를 작성하시어<br>
+				                &nbsp;&nbsp;&nbsp;&nbsp;당사 온독사무실 <u>FAX : 032-XXX-XXXX</u> 로 <b>팩스를 전송합니다.</b><br><br>
+				                 
+				              	&nbsp;3. 차량기사님은 E1CT게이트 진입전 온독사무실로 차량등록증과<br>
+				                &nbsp;&nbsp;&nbsp;&nbsp;차량카드(타터미널)소지, 당사 카드발급 또는 등록하시면 됩니다.<br><br>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+		
+	</div>
+</html>

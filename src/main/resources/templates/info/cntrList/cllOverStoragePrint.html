@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<style>
+			* {
+				font-size: 0.75rem;
+				-webkit-print-color-adjust: exact;
+				printer-colors: exact;
+				color-adjust: exact;
+			}
+			
+			table {
+				border-spacing: 0px;
+			}
+			
+			thead {
+				color: #fff;
+				background-color: #eb6800;
+			}
+			
+			@media print {
+				thead th {
+					color: #000;
+					border: 1px solid black;
+				}
+			}
+			
+			td {
+				border-left: 1px solid #aaa;
+				border-bottom: 1px solid #aaa;
+			}
+			
+			td:last-child {
+	 			border-right: 1px solid #aaa;
+			}
+		</style>
+	<table>
+		<thead>
+			<tr>
+				<th>No</th>
+				<th>Cntr No</th>
+				<th>Sz/Tp</th>
+				<th>상태</th>
+				<th>F/M</th>
+				<th>POD</th>
+				<th>무게</th>
+				<th>반입일시</th>
+				<th>기준일시</th>
+				<th>경과일수</th>
+			</tr>
+		</thead>
+		<tbody th:if="${list} != null">
+			<tr th:each="list, i:${list}">
+				<td th:text="${i.index}+1"></td>
+				<td th:text="${list.cntrNo}"></td>
+				<td th:text="${list.szCd} + '/' + ${list.tyCd}"></td>
+				<td th:text="${list.status}"></td>
+				<td th:text="${list.fmCd}"></td>
+				<td th:text="${list.pod}"></td>
+				<td th:text="${list.weight}"></td>
+				<td th:text="${list.ginDt}"></td>
+				<td th:text="${list.ibaseDay}"></td>
+				<td th:text="${list.iovDay}"></td>
+			</tr>
+		</tbody>
+		<tbody th:if="${#lists.isEmpty(list)}">
+			<tr th:if="${errorCode} == 0">
+				<td th:colspan="10">모선항차를 입력하신 후 조회해주세요</td>
+			</tr>
+			<tr th:if="${errorCode} == 1">
+				<td th:colspan="10">아직 CLL이 접수되지 않았습니다. (CLL 접수확인 후 다시 조회해주세요)</td>
+			</tr>
+			<tr th:if="${errorCode} == 2">
+				<td th:colspan="10">해당 모선의 경과보관 컨테이너가 없습니다.</td>
+			</tr>
+			<tr th:if="${errorCode} == null or ${errorCode} > 2">
+				<td th:colspan="10">조회된 데이터가 없습니다.</td>
+			</tr>
+		</tbody>
+	</table>
+<script type="text/javascript">
+	setTimeout( window.print(), 2000 );
+</script>
+</html>

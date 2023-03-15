@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TFreevanpoolRepository">
+	<select id="findFullQtAndFullUnitAndEmptyQtAndEmptyUnit" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TFreevanpoolVo">
+		<![CDATA[
+			SELECT NVL(full_qt,0) full_qt, NVL(full_unit,'') full_unit, NVL(empty_qt,0) empty_qt, NVL(empty_unit,'') empty_unit FROM t_freevanpool
+			WHERE OPER_CD IN 
+		]]>
+		<foreach collection="operList" item="item" close=")" index="index" open="(" separator=",">
+			<![CDATA[
+				#{item}
+			]]>
+		</foreach>
+	</select>
+</mapper>

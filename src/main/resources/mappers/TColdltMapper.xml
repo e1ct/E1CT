@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TColdltRepository">
+	<select id="cllOverStorageCheckCll" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TColdltVo">
+		<![CDATA[
+			SELECT
+				cntr_no
+			FROM
+				t_coldlt
+			WHERE
+				ship_cd = #{shipCd}
+				AND call_no = #{callNo}
+				AND call_yy = #{callYy}
+		]]>
+	</select>
+	
+	<select id="ediByVslCll" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TColdltVo">
+		<![CDATA[
+			SELECT
+				a.oper_cd,
+				a.pod,
+				SUM(DECODE(SUBSTR(a.sz_cd, 1, 1)|| a.fm_cd, '2F', 1, 0)) F20,
+				SUM(DECODE(SUBSTR(a.sz_cd, 1, 1)|| a.fm_cd, '4F', 1, 0)) F40,
+				SUM(DECODE(SUBSTR(a.sz_cd, 1, 1)|| a.fm_cd, '9F', 1, 'LF', 1, 0)) F45,
+				SUM(DECODE(SUBSTR(a.sz_cd, 1, 1)|| a.fm_cd, '2M', 1, 0)) M20,
+				SUM(DECODE(SUBSTR(a.sz_cd, 1, 1)|| a.fm_cd, '4M', 1, 0)) M40,
+				SUM(DECODE(SUBSTR(a.sz_cd, 1, 1)|| a.fm_cd, '9M', 1, 'LM', 1, 0)) M45,
+				COUNT(*) van,
+				SUM(DECODE(SUBSTR(a.sz_cd, 1, 1), '2', 1, 2)) teu
+			FROM
+				t_coldlt a
+			WHERE
+				a.ship_cd = #{shipCd}
+				AND a.call_yy = #{callYy} 
+				AND a.call_no = #{callNo}
+				AND a.oper_cd IN 
+		]]>
+		<foreach collection="operList" close=")" index="index" item="item" open="(" separator=",">
+			<![CDATA[
+					#{item}
+			]]>
+		</foreach>
+		<![CDATA[
+			GROUP BY
+				a.oper_cd,
+				a.pod
+		]]>
+	</select>
+	
+	<select id="ediByVslCllDetail" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TColdltVo">
+		<![CDATA[
+			SELECT 
+				cntr_no, 
+				NVL(sz_cd, '') sz_cd, 
+				NVL(ty_cd, '') ty_cd, 
+				NVL(to_char(weight), '') weight, 
+				NVL(ts_id, '') ts_id
+			FROM 
+				t_coldlt
+			WHERE 
+				ship_cd = #{shipCd} 
+				AND call_no = #{callNo} 
+				AND call_yy = #{callYy}
+				AND oper_cd = #{operCd} 
+				AND fm_cd = #{fmCd} 
+				AND sz_cd like #{size} || '_'
+				AND pod= #{pod}
+		]]>
+	</select>
+</mapper>

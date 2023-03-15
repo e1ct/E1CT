@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<style>
+			* {
+				font-size: 0.75rem;
+				-webkit-print-color-adjust: exact;
+				printer-colors: exact;
+				color-adjust: exact;
+			}
+			
+			table {
+				border-spacing: 0px;
+			}
+			
+			thead {
+				color: #fff;
+				background-color: #eb6800;
+			}
+			
+			@media print {
+				thead th {
+					color: #000;
+					border: 1px solid black;
+				}
+			}
+			
+			td {
+				border-left: 1px solid #aaa;
+				border-bottom: 1px solid #aaa;
+			}
+			
+			td:last-child {
+	 			border-right: 1px solid #aaa;
+			}
+		</style>
+	</head>
+	<body>
+		<table>
+			<thead>
+				<tr>
+					<th colspan="12" th:text="선석배정현황"></th>
+				</tr>
+				<tr>
+					<th colspan="12" th:text="${ '검색기간 : ' + searchParams.searchStartDt + ' ~ ' + searchParams.searchEndDt }"></th>
+				</tr>
+				<tr>
+					<th>No</th>
+					<th>선석</th>
+					<th>모선항차<br/>입항차/출항차</th>
+					<th>연도</th>
+					<th>선박명<br/>Bitt</th>
+					<th>접안(예정)일시</th>
+					<th>반입마감시간<br/>(작업완료일시)</th>
+					<th>출항(예정)일시</th>
+					<th>선사</th>
+					<th>양하수량</th>
+					<th>적하수량</th>
+					<th>Shift</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="berth, i:${berthList}" th:style="( ${berth.atbDt} != null and ${berth.atdDt} == null ) ? 'background-color: #ccffff' : ( ( ${berth.atbDt} != null and ${berth.atdDt} != null ) ? 'background-color: #ffff99' : 'background-color: #ffffff' )">
+					<td th:text="${i.index + 1}"></td> <!-- No -->
+					<td th:text="${berth.berthNo} + '(' + ${berth.psId} + ')'"></td> <!-- 선석 -->
+					<td th:utext="${berth.shipCd} + '-' + ${berth.callNo} + '<br/>' + ${berth.ibVoy} + '/' + ${berth.obVoy}"></td> <!-- 모선항차 -->
+					<td th:text="${berth.callYy}"></td> <!-- 연도 -->
+					<td th:utext="${berth.shipNm} + '<br/>' + ${berth.bitPos} + '(+' + ${berth.deckPos} + 'm)'"></td> <!-- 선박명 -->
+					<td th:if="${berth.atbDt} != null" th:text="${berth.atbDt}"></td>
+					<td th:unless="${berth.atbDt} != null" th:text="${berth.etbDt}"></td>
+					<td th:text="${berth.depDt}"></td>
+					<td th:if="${berth.atdDt} != null and ${berth.atdDt} != ''" th:text="${berth.atdDt}">
+					<td th:unless="${berth.atdDt} != null and ${berth.atdDt} != ''" th:text="'(' + ${berth.etdDt} + ')'">
+					<td th:text="${berth.operCd}">
+					<td th:text="${berth.iv}"></td>
+					<td th:text="${berth.xv}"></td>
+					<td th:text="${berth.s2v}"></td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<script type="text/javascript">
+			setTimeout( window.print(), 2000 );
+		</script>
+	</body>
+</html>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TDodtlRepository">
+
+	<select id="findDoNoByCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.TDodtlVo" resultType="kr.co.e1ct.vo.TDodtlVo">
+		<![CDATA[
+			SELECT
+				do_no
+			FROM
+				t_dodtl
+			WHERE
+				cntr_no = #{cntrNo}
+				AND dup_no = #{dupNo}
+				AND ROWNUM <= 1
+		]]>
+	</select>
+	
+	<insert id="insert" parameterType="kr.co.e1ct.vo.TDodtlVo">
+		<![CDATA[
+			INSERT INTO t_dodtl(  do_no, cntr_no, dup_no, sz_cd, ty_cd, fm_cd, rls_dt
+		]]>
+		<if test='demurChk == "Y"'>
+			<![CDATA[
+				, closing_dt
+			]]>
+		</if>
+		<![CDATA[
+			) VALUES( #{doNo}, #{cntrNo}, #{dupNo}, #{szCd}, #{tyCd}, 'F', SYSDATE
+		]]>
+		<if test='demurChk == "Y"'>
+			<![CDATA[
+				, TO_DATE(#{closingDt} || '00', 'yyyymmddhh24miss' )
+			]]>
+		</if>
+		<if test='demurChk != "Y"'>
+			<![CDATA[
+				, SYSDATE
+			]]>
+		</if>
+		<![CDATA[
+			)
+		]]>
+	</insert>	
+	
+	<select id="findByDoNoAndCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.TDodtlVo" resultType="kr.co.e1ct.vo.TDodtlVo">
+		<![CDATA[
+			SELECT * FROM t_dodtl WHERE do_no = #{doNo} AND cntr_no = #{cntrNo} and dup_no = #{dupNo}
+		]]>
+	</select>
+	
+	<delete id="delete" parameterType="kr.co.e1ct.vo.TDodtlVo">
+		<![CDATA[
+			DELETE FROM T_DODTL WHERE do_no = #{doNo} AND cntr_no = #{cntrNo} AND dup_no = #{dupNo}
+		]]>
+	</delete>
+	
+	<select id="findByDoNo" parameterType="kr.co.e1ct.vo.TDodtlVo" resultType="kr.co.e1ct.vo.TDodtlVo">
+		<![CDATA[
+			SELECT * FROM t_dodtl WHERE do_no = #{doNo}
+		]]>
+	</select>
+</mapper>

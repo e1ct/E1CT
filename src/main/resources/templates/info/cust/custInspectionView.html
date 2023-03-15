@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+	    <meta charset="UTF-8" />
+	    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+	    
+	    <meta name="_csrf" th:content="${_csrf.token}">
+	    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+	    
+	    <meta http-equiv="X-UA-Compatible" content="IE=10" />
+	    
+	    <!-- 공통으로 쓰이는 css파일을넣는다.-->
+	    <link rel="stylesheet" href="/static/lib/air-datepicker/css/datepicker.min.css" />
+	    <link rel="stylesheet" href="/static/lib/iziModal/css/iziModal.css" />
+	    <link rel="stylesheet" href="/static/common/css/info.css"/>
+	    <!-- 컨텐츠페이지의 CSS 영역이 들어감 -->
+	    <!-- 공통으로 쓰이는 css파일을넣는다.-->
+	    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+	    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	    <script src="/static/lib/air-datepicker/js/datepicker.js"></script>
+	    <script src="/static/lib/air-datepicker/js/i18n/datepicker.en.js"></script>
+	    <script src="/static/lib/moment/moment.min.js"></script>
+	    <script src="/static/lib/iziModal/js/iziModal.js"></script>
+	    <script src="/static/common/js/function.js"></script>
+	    <!-- 컨텐츠페이지의 스크립트 영역이 들어감 -->
+	</head>
+
+	<body>
+		<section id="info_section">
+		
+			<div class="tb_tmnl">
+				<table>
+					<thead>
+						<tr>
+							<th th:colspan="8" th:text="'세관검사 품목 리스트'"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th th:text="'신청기관'"></th>
+							<td th:colspan="3" th:text="${data.reqComp}"></td>
+							<th th:text="'신청인'"></th>
+							<td th:text="${data.reqEmp}"></td>
+							<th th:text="'연락처'"></th>
+							<td th:text="${data.reqTel}"></td>
+						</tr>
+						<tr>
+							<th th:text="'MRN'"></th>
+							<td th:text="${data.mrn}"></td>
+							<th th:text="'MSN'"></th>
+							<td th:text="${data.msn}"></td>
+							<th th:text="'HSN'"></th>
+							<td th:text="${data.hsn}"></td>
+							<th th:text="'Cntr No.'"></th>
+							<td th:text="${data.cntrNo}"></td>
+						</tr>
+						<tr>
+							<th th:text="'란'"></th>
+							<td th:text="${data.space}"></td>
+							<th th:text="'Oper'"></th>
+							<td th:text="${data.operCd}"></td>
+							<th th:text="'검사방법'"></th>
+							<td th:if="${data.inspType} == 1" th:text="'앞면발췌'"></td>
+							<td th:if="${data.inspType} == 2" th:text="'내장(통로)발췌'"></td>
+							<td th:if="${data.inspType} == 3" th:text="'전량적출'"></td>
+							<td th:if="${data.inspType} == 4" th:text="'기타(분석검사)'"></td>
+							<td th:if="${data.inspType} == 5" th:text="'내장통로발췌'"></td>
+							<td th:if="${data.inspType} == 7" th:text="'X-ray'"></td>
+							<td th:if="${data.inspType} == 6" th:text="'내장발췌'"></td>
+							<th th:text="'ISO'"></th>
+							<td th:text="${data.iso}"></td>
+						</tr>
+					</tbody>
+				</table>
+				<br/>
+				<div class="tb_hd">
+					<div class="btn_left">
+						<p th:text="'검사 통보일자 : ' + ${data.admDt} + ' (' + ${data.noticeDt} + ' )'"></p>
+					</div>
+					<div class="btn_right">
+						<a id="printBtn" href="#" th:text="'인쇄'"></a>
+					</div>
+				</div>
+				<table>
+					<thead>
+						<tr>
+							<th th:text="'순번'"></th>
+							<th th:text="'품명'"></th>
+							<th th:text="'단위'"></th>
+							<th th:text="'수량'"></th>
+							<th th:text="'중량'"></th>
+							<th th:text="'Model No.'"></th>
+							<th th:text="'Car Ton No.'"></th>
+							<th th:text="'검사참관여부'"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="list, i:${item}">
+							<td th:text="${i.index}+1"></td>
+							<td th:text="${list.itemNm}"></td>
+							<td th:text="${list.unit}"></td>
+							<td th:text="${list.qty}"></td>
+							<td th:text="${list.weight}"></td>
+							<td th:text="${list.modelNo}"></td>
+							<td th:text="${list.cartonNo}"></td>
+							<td th:if="${list.packageNo} == 1" th:text="'미신청'"></td>
+							<td th:if="${list.packageNo} == 2" th:text="'화주'"></td>
+							<td th:if="${list.packageNo} == 3" th:text="'관세사'"></td>
+							<td th:if="${list.packageNo} == 4" th:text="'포워더'"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+		
+		<script type="text/javascript">
+			$(function() {
+				$("#saveBtn").click(function() {
+					document.frm.submit();
+				});
+				
+				$("#printBtn").click(function() {
+					window.print();
+				})
+			});
+		</script>
+	</body>
+</html>

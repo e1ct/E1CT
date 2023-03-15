@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TYpmasterRepository">
+
+	<select id="findPlanAmtAndStackAmtAndCopinoAmtByShipCdAndCallYyAndCallNoAndPodAndSzCdAndFmCd" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TYpmasterVo">
+		<![CDATA[
+			SELECT NVL(plan_amt, 0) plan_amt, NVL(stack_amt, 0) stack_amt, NVL(copino_amt, 0) copino_amt
+			FROM t_ypmaster
+			WHERE ship_cd = #{shipCd}
+			AND call_yy = #{callYy}
+			AND call_no = #{callNo}
+			AND pod = #{pod}
+			AND sz_cd = #{cSzCd}
+			AND fm_cd = #{fmCd}
+		]]>
+	</select>	
+</mapper>

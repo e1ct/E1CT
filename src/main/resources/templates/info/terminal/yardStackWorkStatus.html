@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/popup">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content">
+	
+		<section id="info_section">
+			<h1 class="title">야드작업현황</h1>
+
+			<div class="tb_tmnl">
+				<table>
+					<thead>
+						<tr>
+							<th></th>
+							<th>양하</th>
+							<th>적하</th>
+							<th>반입</th>
+							<th>반출</th>
+							<th>이적F</th>
+							<th>이적T</th>
+							<th>VAN</th>
+							<th>TEU</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:if="!${#lists.isEmpty(list)}" th:each="list, i:${list.resultList}">
+							<th th:text="${list.get('block')}"></th>
+							<div th:each="cnt, c:${list.get('cnt')}" th:remove="tag">
+								<td th:text="${cnt}"></td>
+							</div>
+							<td th:text="${list.get('van')}"></td>
+							<td th:text="${list.get('teu')}"></td>
+						</tr>
+						<tr>
+							<th>TOTAL</th>
+							<th th:each="cnt, c:${list.total}" th:text="${cnt} >= 100 ? ${#numbers.formatInteger(cnt, 3, 'COMMA')} : ${cnt}"></th>
+						</tr>
+						<div th:if="${#lists.isEmpty(list)}" th:remove="tag">
+							<tr>
+								<td th:colspan="11">조회된 데이터가 존재하지 않습니다.</td>
+							</tr>
+						</div>
+					</tbody>
+				</table>
+			</div>
+			<script type="text/javascript">
+				$(function(){
+					
+				});
+			</script>
+		</section>
+		
+	</div>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content">
+		<div class="sub-visual sub-vs-3">
+			<h1>정보조회서비스</h1>
+			<p>E1컨테이너터미널은 세계를 목표로 나아갑니다.</p>
+		</div><!--sub-visual-->
+		<div class="sub-nav">
+			<div class="wr"> 
+				<a href="/" class="sub-home"></a>
+				<div class="sub-depth">
+					<h3>정보조회서비스</h3>
+					<ul>
+						<li><a href="/company/greeting">회사소개</a></li>
+						<li><a href="/terminal/facilities">터미널소개</a></li>
+						<li><a href="/info/terminal/berthText">정보조회서비스</a></li>
+						<li><a href="/community/news">커뮤니티</a></li>
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3>컨테이너정보</h3>
+					<ul>
+						<li th:each="submenu, i:${subMenuList}">
+							<a th:href="${submenu.url}" th:text="${i18n} == 'en' ? ${submenu.menuNameEn} : ${submenu.menuNameKo}"></a>
+						</li>
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3>재고현황</h3>
+					<ul>
+						<li><a href="/info/cntrInfo/details">컨테이너 명세/이력</a></li>
+						<li><a href="/info/cntrInfo/stock">재고현황</a></li>
+						<li><a href="/info/cntrInfo/workingTime">양적하 예상시간 조회</a></li>
+						<li><a href="/info/cntrInfo/freeTime">양하 Free Time 일시조회</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<section id="info_section">
+			<h1 class="title">재고현황</h1>
+			<form name="searchForm" action="/info/cntrInfo/stock" method="POST">
+				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+				<div class="date_sch">
+					<label for="" th:text="'선사'"></label>
+					<select name="oper">
+						<div th:each="oper, i:${operList}" th:remove="tag">
+							<option th:value="${oper}" th:text="${oper}" th:selected="${searchParams.oper} == ${oper} ? 'true'"></option>
+						</div>
+					</select>
+					
+					<label for="" th:text="모선항차"></label>
+					<input type="text" name="shipCd" th:value="${searchParams.shipCd}">
+					-
+					<input type="text" name="callNo" th:value="${searchParams.callNo}">
+					-
+					<input type="text" name="callYy" th:value="${searchParams.callYy}">
+					<a id="searchBtn" class="btn_lookup">조회</a>
+				</div>
+			</form>
+			
+			<div class="tb_hd">
+				<div class="btn_left">
+				</div>
+				<div class="btn_right">
+					<a id="printBtn" target="_blank" th:href="@{ /info/cntrInfo/stockPrint(oper=${searchParams.oper}, shipCd=${searchParams.shipCd}, callNo=${searchParams.callNo}, callYy=${searchParams.callYy} ) }">인쇄하기</a>
+					<a id="exportBtn" th:href="@{ /excel/cntrInfo/stock(oper=${searchParams.oper}, shipCd=${searchParams.shipCd}, callNo=${searchParams.callNo}, callYy=${searchParams.callYy} ) }">엑셀저장</a>
+				</div>
+			</div>
+			
+			<div class="tb_tmnl">
+				<table>
+					<thead>
+						<tr>
+							<th th:rowspan="2">모선항차</th>
+							<th th:colspan="3" th:text="'FULL'"></th>
+							<th th:colspan="3" th:text="'EMPTY'"></th>
+							<th th:colspan="3" th:text="'TOTAL'"></th>
+							<th th:rowspan="2" th:text="'TEU'"></th>
+						</tr>
+						<tr>
+							<th th:text="'20'"></th>
+							<th th:text="'40'"></th>
+							<th th:text="'45'"></th>
+							<th th:text="'20'"></th>
+							<th th:text="'40'"></th>
+							<th th:text="'45'"></th>
+							<th th:text="'20'"></th>
+							<th th:text="'40'"></th>
+							<th th:text="'45'"></th>
+						</tr>
+					</thead>
+					<tbody th:if="${!#lists.isEmpty(list)}">
+						<tr th:each="list, i:${list}">
+							<td th:text="${list.shipCd} + '-' + ${#numbers.formatInteger(list.callNo, 3)} + '-' + ${list.callYy}"></td>
+							<td th:text="${list.f20} != 0 ? ${list.f20} : '-'"></td>
+							<td th:text="${list.f40} != 0 ? ${list.f40} : '-'"></td>
+							<td th:text="${list.f45} != 0 ? ${list.f45} : '-'"></td>
+							
+							<td th:text="${list.m20} != 0 ? ${list.m20} : '-'"></td>
+							<td th:text="${list.m40} != 0 ? ${list.m40} : '-'"></td>
+							<td th:text="${list.m45} != 0 ? ${list.m45} : '-'"></td>
+							
+							<td th:text="${list.t20}"></td>
+							<td th:text="${list.t40}"></td>
+							<td th:text="${list.t45}"></td>
+							
+							<td th:text="${list.teu}"></td>
+						</tr>
+						<tr>
+							<th th:text="'합계'"></th>
+							<th th:text="${sumMap.f20}"></th>
+							<th th:text="${sumMap.f40}"></th>
+							<th th:text="${sumMap.f45}"></th>
+							
+							<th th:text="${sumMap.m20}"></th>
+							<th th:text="${sumMap.m40}"></th>
+							<th th:text="${sumMap.m45}"></th>
+							
+							<th th:text="${sumMap.t20}"></th>
+							<th th:text="${sumMap.t40}"></th>
+							<th th:text="${sumMap.t45}"></th>
+							
+							<th th:text="${sumMap.teu}"></th>
+						</tr>
+					</tbody>
+					<tbody th:if="${#lists.isEmpty(list)}">
+						<tr>
+							<td th:colspan="11">조회된 데이터가 존재하지 않습니다.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<script type="text/javascript">
+				$(function(){
+					$("#searchBtn").click(function() {
+						document.searchForm.submit();
+					});
+				});
+			</script>
+		</section>
+		
+	</div>
+</html>

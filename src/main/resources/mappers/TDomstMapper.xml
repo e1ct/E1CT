@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TDomstRepository">
+	<select id="findCopinoErrCheck" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TDomstVo">
+		<![CDATA[
+			SELECT CASE WHEN (A.OPER_CD ='KMD' OR A.OPER_CD = 'HJS') THEN A.OPER_DO ELSE A.DO_NO END do_no, 
+			TO_CHAR(NVL(B.CLOSING_DT,'11111111'),'YYYYMMDD') - TO_CHAR(SYSDATE,'YYYYMMDD') closing_dt, NVL(B.car_nm,'') car_nm
+			FROM T_DOMST A, T_DODTL B 
+			WHERE B.cntr_no = #{cntrNo}
+			AND B.dup_no = #{pcDupno}
+			AND A.DO_NO = B.DO_NO ORDER BY NVL(TO_CHAR(B.RLS_DT,'yyyymmddhh24miss'),'11111111') DESC
+		]]>
+	</select>
+	
+	<select id="findSelfTransByDoNoAndOperCd" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TDomstVo">
+		<![CDATA[
+			SELECT NVL(self_trans, 'IT') self_trans FROM t_domst WHERE do_no = #{doNo} AND oper_cd IN 
+		]]>
+		<foreach collection="operList" item="item" close=")" index="index" open="(" separator=",">
+			<![CDATA[
+				#{item}
+			]]>
+		</foreach>
+	</select>
+	
+	<select id="findByDoNoAndOperCd" parameterType="kr.co.e1ct.vo.TDomstVo" resultType="kr.co.e1ct.vo.TDomstVo">
+		<![CDATA[
+			SELECT
+				NVL(tel_no, ' ') tel_no,
+				NVL(factor_nm, ' ') factor_nm,
+				NVL(factor_loc, ' ') factor_loc,
+				NVL(ship_cd, ' ') ship_cd,
+				NVL(call_no, 0) call_no,
+				NVL(call_yy, 0) call_yy,
+				NVL(voyage_no, ' ') voyage_no,
+				NVL(consgn_nm, ' ') consgn_nm,
+				NVL(oper_do, ' ') oper_do
+			FROM
+				t_domst
+			WHERE
+				do_no = #{doNo}
+				AND oper_cd IN ( #{operCd} )
+		]]>
+	</select>
+	
+	<update id="updateByDoNoAndOperCd" parameterType="kr.co.e1ct.vo.TDomstVo">
+		<![CDATA[
+			UPDATE t_domst set oper_do = #{operDo}, self_trans = #{selfTrans} WHERE do_no = #{doNo} AND oper_cd in (#{operCd}) 
+		]]>
+	</update>
+	
+	<update id="updateSelfTransByDoNoAndOperCd" parameterType="kr.co.e1ct.vo.TDomstVo">
+		<![CDATA[
+			UPDATE t_domst SET self_trans = #{selfTrans} WHERE do_no = #{doNo} AND oper_cd IN ( #{operCd} )
+		]]>
+	</update>
+	
+	<insert id="insertDelivery" parameterType="kr.co.e1ct.vo.TDomstVo">
+		<![CDATA[
+			INSERT INTO T_DOMST (do_no, do_dt, oper_cd, ship_cd, call_no, call_yy, voyage_no, oper_do, emp_no, self_trans )
+			VALUES ( #{doNo}, sysdate, #{operCd}, #{shipCd}, #{callNo}, #{callYy}, '', #{operDo}, 'WEB', #{selfTrans} )
+		]]>
+	</insert>
+	
+	<delete id="deleteByDoNo" parameterType="kr.co.e1ct.vo.TDomstVo">
+		<![CDATA[
+			DELETE t_domst WHERE do_no = #{doNo}
+		]]>
+	</delete>
+</mapper>

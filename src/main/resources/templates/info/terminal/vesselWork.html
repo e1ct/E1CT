@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content">
+		<div class="sub-visual sub-vs-3">
+			<h1>정보조회서비스</h1>
+			<p>E1컨테이너터미널은 세계를 목표로 나아갑니다.</p>
+		</div><!--sub-visual-->
+		<div class="sub-nav">
+			<div class="wr"> 
+				<a href="/" class="sub-home"></a>
+				<div class="sub-depth">
+					<h3>정보조회서비스</h3>
+					<ul>
+						<li><a href="/company/greeting">회사소개</a></li>
+						<li><a href="/terminal/facilities">터미널소개</a></li>
+						<li><a href="/info/terminal/berthText">정보조회서비스</a></li>
+						<li><a href="/community/news">커뮤니티</a></li>
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3>터미널정보</h3>
+					<ul>
+						<li th:each="submenu, i:${subMenuList}">
+							<a th:href="${submenu.url}" th:text="${i18n} == 'en' ? ${submenu.menuNameEn} : ${submenu.menuNameKo}"></a>
+						</li>
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3>본선작업현황</h3>
+					<ul>
+						<li><a href="/info/terminal/berthText">선석배정현황(T)</a></li>
+						<li><a href="/info/terminal/berthGraphic">선석배정현황(G)</a></li>
+						<li><a href="/info/terminal/vesselWork">본선작업현황</a></li>
+						<li><a href="/info/terminal/yardStack">야드장치현황</a></li>
+						<li><a href="/info/terminal/byOperYard">선사별 야드 장치현황</a></li>
+						<li><a href="/info/terminal/codeVessel">모선코드조회</a></li>
+						<li><a href="/info/terminal/codePort">포트코드조회</a></li>
+						<li><a href="/info/terminal/codeShipper">선사코드조회</a></li>
+						<li><a href="/info/terminal/codeDanger">위험물코드 조회</a></li>
+						<li><a href="/info/terminal/emptyContainer">공컨테이너 반출 가능 수량</a></li>
+					</ul>
+				</div>
+			</div>
+		</div><!--sub-nav-->
+		<section id="info_section">
+			<h1 class="title">본선작업현황</h1>
+			<form name="searchForm" action="/info/terminal/vesselWork" method="POST">
+				<div class="date_sch">
+					<div class="form-group">
+						<input id="searchTypeAll" type="radio" name="searchType" value="ALL" th:checked="${searchParams.searchType} == 'ALL' or ${searchParams.searchType} == null ? 'true'">
+						<label for="searchTypeAll" th:text="전체선석"></label>
+						<input id="searchType01" type="radio" name="searchType" value="01" th:checked="${searchParams.searchType} == '01' ? 'true'">
+						<label for="searchType01" th:text="'#선석 01'"></label>
+					</div>
+					<a id="searchBtn" class="btn_lookup">조회</a>
+				</div>
+			</form>
+			
+			<div class="tb_tmnl">
+				<div class="row">
+					<div class="col-lg-8 col-md-4 col-sm-12">
+						<table>
+							<tbody th:if="${vesselInfo} != null" th:with="sdf=${new java.text.SimpleDateFormat('yyyy-MM-dd HH:mm:ss')}">
+								<tr>
+									<th>선석</th>
+									<td th:colspan="3" th:text="'#' + ${vesselInfo.berthNo}"></td>
+								</tr>
+								<tr>
+									<th>모선항차</th>
+									<td th:colspan="3" th:text="${vesselInfo.shipCd} + '-' + ${vesselInfo.callNo} + '-' + ${vesselInfo.callYy}">
+								</tr>
+								<tr>
+									<th>선사</th>
+									<td th:colspan="3" th:text="${vesselInfo.operCd}">
+								</tr>
+								<tr>
+									<th>ETB</th>
+									<td th:text="${ #dates.format( sdf.parse( vesselInfo.etbDt ), 'yyyy-MM-dd HH:mm')}"></td>
+									<th>작업시작</th>
+									<td th:Text="${vesselInfo.stvBeginDt}"></td>
+<!-- 									<td th:text="${ #dates.format( sdf.parse( vesselInfo.stvBeginDt ), 'yyyy-MM-dd HH:mm')}"></td> -->
+								</tr>
+								<tr>
+									<th>ATB</th>
+									<td th:text="${ #dates.format( sdf.parse( vesselInfo.atbDt ), 'yyyy-MM-dd HH:mm')}"></td>
+									<th>ETD</th>
+									<td th:text="${ #dates.format( sdf.parse( vesselInfo.etdDt ), 'yyyy-MM-dd HH:mm') }"></td>
+								</tr>
+							</tbody>
+							<tbody th:unless="${vesselInfo} != null">
+								<tr>
+									<td>조회 가능한 데이터가 존재하지 않습니다.</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="col-lg-4 col-md-4 col-sm-12">
+						<table th:if="${vesselInfo} != null">
+							<thead>
+								<tr>
+									<th th:rowspan="2">작업물량</th>
+									<th th:colspan="3">구분</th>
+								</tr>
+								<tr>
+									<th>양하</th>
+									<th>적하</th>
+									<th>합계</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<th>작업량</th>
+									<td th:text="${vesselInfo.disRest} + ${vesselInfo.disFin}"></td>
+									<td th:text="${vesselInfo.lodRest} + ${vesselInfo.lodFin}"></td>
+									<td th:text="${vesselInfo.disRest + vesselInfo.disFin + vesselInfo.lodRest + vesselInfo.lodFin}"></td>
+								</tr>
+								<tr>
+									<th>완료량</th>
+									<td th:text="${vesselInfo.disFin}"></td>
+									<td th:text="${vesselInfo.lodFin}"></td>
+									<td th:text="${vesselInfo.disFin + vesselInfo.lodFin}"></td>
+								</tr>
+								<tr>
+									<th>잔여량</th>
+									<td th:text="${vesselInfo.disRest}"></td>
+									<td th:text="${vesselInfo.lodRest}"></td>
+									<td th:text="${vesselInfo.disRest + vesselInfo.lodRest}"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<hr/>
+				<div class="row">
+					<table th:if="${vesselInfo} != null">
+						<thead>
+							<tr>
+								<th th:rowspan="2">모선항차</th>
+								<th th:rowspan="2">C/C</th>
+								<th th:rowspan="2">작업위치</th>
+								<th th:colspan="3">잔여량</th>
+								<th th:rowspan="2">생산성<br/>(VAN/HR)</th>
+								<th th:rowspan="2">예상작업완료시간</th>
+							</tr>
+							<tr>
+								<th>양하</th>
+								<th>적하</th>
+								<th>합계</th>
+							</tr>
+						</thead>
+						<tbody th:each="works, i:${vesselWorkDetail}">
+							<tr>
+								<td th:text="${works.shipCd}"></td>
+								<td th:text="${works.eqPlno}"></td>
+								<td th:text="${works.gcBay}"></td>
+								<td th:text="${works.disRest}"></td>
+								<td th:text="${works.lodRest}"></td>
+								<td th:text="${works.disRest + works.lodRest}"></td>
+								<td th:text="${works.vesselWorkCount}"></td>
+								<td th:text="${works.isArrived}"></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<script type="text/javascript">
+				$(function(){
+					
+				});
+			</script>
+		</section>
+		
+	</div>
+</html>

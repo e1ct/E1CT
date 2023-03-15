@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<script type="text/javascript">
+		alert( '[[${msg}]]' );
+		if( '[[${url}]]' == "INSPECTION" ) {
+			location.href = "/info/cust/inspectionManage";
+		} else {
+			location.href = "/info/cust/insPvntManage";
+		}
+	</script>	
+</html>

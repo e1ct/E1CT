@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content" th:remove="tag">
+		<div class="sub-visual sub-vs-4">
+			<h1>커뮤니티</h1>
+			<p>최신 소식을 빠르게 전달해 드립니다.</p>
+		</div>
+		<div class="sub-nav">
+			<div class="wr"> 
+				<a href="/" class="sub-home"></a>
+				<div class="sub-depth">
+					<h3>커뮤니티</h3>
+					<ul>
+						<li><a href="/company/greeting">회사소개</a></li>
+						<li><a href="/terminal/facilities">터미널소개</a></li>
+						<li><a href="/info/terminal/berthText">정보조회서비스</a></li>
+						<li><a href="/community/news">커뮤니티</a></li> 
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3>News</h3>
+					<ul>
+						<li><a href="/community/news">News</a></li>
+						<li><a href="/community/notice">공지사항</a></li>
+						<li><a href="/community/reference">자료실</a></li>
+						<li><a href="/community/faq">FAQ</a></li>
+						<li><a href="/community/shipping">해운용어</a></li>
+					</ul>
+				</div>
+			</div>
+		</div><!--sub-visual-->
+		<section id="wrap">
+			<h1 class="cont-tit">News</h1>
+			<div class="cont-wr">
+				<!--채용정보 상단 끝--> 
+				<div class="board-atc">
+					<p class="count">총 <span th:text="${pager.get('totalCount')}"></span>건</p>
+				</div> 
+				<div id="board-list"> 
+					<table>
+						<thead>
+							<tr>
+								<th>번호</th>
+								<th>제목</th>
+								<th>작성일</th>
+								<th>조회수</th>
+							</tr>
+						</thead>
+						<tbody th:with="sdf=${ new java.text.SimpleDateFormat('yyyy-MM-dd')}">
+							<tr th:each="board, i:${list}">
+								<td th:text="${pager.get('totalCount')} - ( ${pager.get('pageNumber')} * ${pager.get('pageSize')} ) - ${i.index}"></td>
+								<td class="subject">
+									<a th:href="@{'/community/news/view'(pageNumber=${pager.get('pageNumber')}, MSeq=${board.MSeq})}"><th:block th:text="${board.mTitle}"></th:block></a>
+								</td>
+								<td th:text="${#dates.format( sdf.parse( board.mWriteday ), 'yyyy-MM-dd' )}"></td>
+								<td th:text="${board.mReadnum} < 100 ? ${board.mReadnum} : ${#numbers.formatInteger(board.mReadnum, 3, 'COMMA')}"></td>
+							</tr>
+						</tbody>
+					</table>
+					<div class="paging">
+						<a th:href="'?page=0'" class="first"></a>
+						<a th:if="${pager.get('pageNumber')} > 0" th:href="'?page=' +  ( ${pager.get('pageNumber')} - 1 )" class="prev"></a>
+						<a th:each="page : ${ #numbers.sequence( pager.get('sequenceStart'), pager.get('sequenceEnd') ) }" th:text="${page}+1" th:class="${page} == ${pager.get('pageNumber')} ? 'active'" th:href="'?page=' + ${page}"></a>
+						<a th:if=" ${pager.get('pageNumber')} + 1 <= ${pager.get('maxPage')}" th:href="'?page=' + (${pager.get('pageNumber')} + 1)" class="next"></a>
+						<a th:href="'?page=' + ${pager.get('maxPage')}" class="last"></a>
+					</div>
+					
+					<div class="board-btn-wrap" sec:authorize="hasAnyRole('G', 'S')">
+						<a th:href="@{'/community/news/write'(page=${pager.get('pageNumber')})}" class="btn-enrol" th:text="'글쓰기'"></a>
+					</div>
+				</div>
+				
+			</div>
+		</section>
+	</div>
+</html>

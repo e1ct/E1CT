@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<style>
+			* {
+				font-size: 0.75rem;
+				-webkit-print-color-adjust: exact;
+				printer-colors: exact;
+				color-adjust: exact;
+			}
+			
+			table {
+				border-spacing: 0px;
+			}
+			
+			thead {
+				color: #fff;
+				background-color: #eb6800;
+			}
+			
+			@media print {
+				thead th {
+					color: #000;
+					border: 1px solid black;
+				}
+			}
+			
+			td {
+				border-left: 1px solid #aaa;
+				border-bottom: 1px solid #aaa;
+			}
+			
+			td:last-child {
+	 			border-right: 1px solid #aaa;
+			}
+		</style>
+	<table>
+		<thead>
+			<tr>
+				<th th:text="'순번'"></th>
+				<th th:text="'선사'"></th>
+				<th th:text="'Cntr No.'"></th>
+				<th th:text="'Sz/Tp'"></th>
+				<th th:text="'S/D'"></th>
+				<th th:text="'데미지발생일시'"></th>
+				<th th:text="'이적일시'"></th>
+				<th th:text="'수리일시'"></th>
+				<th th:text="'Grade'"></th>
+			</tr>
+		</thead>
+		<tbody th:if="${list} != null and ${#lists.size(list)} > 0">
+			<tr th:each="list, i:${list}">
+				<td th:text="${i.index}+1"></td>
+				<td th:text="${list.operCd}"></td>
+				<td th:text="${list.cntrNo}"></td>
+				<td th:text="${list.szCd} + '/' + ${list.tyCd}"></td>
+				<td th:if="${list.dmgCd} != null and ${list.dmgCd} != ''" th:text="'D(' + ${list.dmgCd} + ')'"></td>
+				<td th:unless="${list.dmgCd} != null and ${list.dmgCd} != ''" th:text="'S'"></td>
+				<td th:text="${list.dmgDt}"></td>
+				<td th:text="${list.odDt}"></td>
+				<td th:text="${list.repairDt}"></td>
+				<td th:if="${list.cntrGrade} != null and ${list.cntrGrade} != ''" th:text="${list.cntrGrade}"></td>
+				<td th:unless="${list.cntrGrade} != null and ${list.cntrGrade} != ''" th:text="'-'"></td>
+			</tr>
+		</tbody>
+		<tbody th:unless="${list} != null and ${#lists.size(list)} > 0">
+			<tr>
+				<td th:colspan="9" th:text="'조회된 데이터가 존재하지 않습니다.'"></td>
+			</tr>
+		</tbody>
+	</table>
+	<script type="text/javascript">
+		setTimeout( window.print(), 200 );
+	</script>
+</html>

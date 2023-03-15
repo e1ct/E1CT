@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TbRvasMastRepository">
+
+	<update id="smsDetailSubmitUpdate" parameterType="kr.co.e1ct.vo.TbRvasMastVo">
+		<![CDATA[
+			UPDATE
+				TB_RVAS_MAST
+			SET
+				STAT_CD = '1',
+				IN_GB = '2',
+				PAY_AMT = #{payAmt},
+				PAY_FROM_DATE = TO_CHAR(SYSDATE, 'yyyymmdd'),
+				PAY_TO_DATE = #{payToDate},
+				CUST_CD = #{custCd},
+				CUST_NM = #{custNm},
+				ENTRY_DATE = TO_CHAR(SYSDATE, 'yyyymmddhh24miss'),
+				ENTRY_IDNO = 'WEB'
+			WHERE
+				VACCT_NO = #{vacctNo}
+		]]>
+	</update>
+</mapper>

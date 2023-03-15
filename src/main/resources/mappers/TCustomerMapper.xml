@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TCustomerRepository">
+	<select id="findOne" parameterType="kr.co.e1ct.vo.TCustomerVo" resultType="kr.co.e1ct.vo.TCustomerVo">
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				T_CUSTOMER
+			WHERE
+				CST_NO = #{cstNo}
+		]]>
+	</select>
+
+	<select id="getCustomerInfo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCustomerVo">
+		<![CDATA[
+			SELECT
+				A.CST_NO,
+				A.CST_NM,
+				A.OPER_OWNER_NM,
+				A.CST_TYPE,
+				A.CST_TRAD,
+				A.ADDR,
+				NVL(REPLACE(A.TEL_NO, '-'), ' ') TEL_NO,
+				A.VAT_CD,
+				NVL(REPLACE(A.FAX_NO, '-'), ' ') FAX_NO,
+				A.EDI_CHARGE,
+				A.EMAIL,
+				NVL(REPLACE(A.EDI_CHARGE_TEL, '-'), ' ') EDI_CHARGE_TEL,
+				B.CORP_FLAG,
+				A.CATALOG
+			FROM
+				T_CUSTOMER A LEFT OUTER JOIN
+				T_CUSTOMER_HDR B
+			ON
+				A.CST_NO = B.CST_HDR_NO
+			WHERE 1=1
+		]]>
+		<if test="cstNo != null and cstNo != ''">
+			<![CDATA[
+				AND CST_NO = #{cstNo}
+			]]>
+		</if>
+		<if test="cstNo == null or cstNo == ''">
+			<![CDATA[
+				AND CST_NO = ''
+			]]>
+		</if>
+	</select>
+	
+	<select id="findCustomer" parameterType="kr.co.e1ct.vo.TCustomerVo" resultType="kr.co.e1ct.vo.TCustomerVo">
+		<![CDATA[
+			SELECT
+				NVL(A.CST_NO, '') CST_NO,
+				NVL(A.CST_NM, '') CST_NM,
+				NVL(A.OPER_OWNER_NM, '') OPER_OWNER_NM,
+				NVL(A.CST_TYPE, '') CST_TYPE,
+				NVL(A.CST_TRAD, '') CST_TRAD,
+				NVL(A.ADDR, '') ADDR,
+				NVL(REPLACE(A.TEL_NO, '-'), '') TEL_NO,
+				NVL(A.VAT_CD, '') VAT_CD,
+				NVL(REPLACE(A.FAX_NO, '-'), '') FAX_NO,
+				NVL(A.EDI_CHARGE, '') EDI_CHARGE,
+				NVL(A.EMAIL, '') EMAIL,
+				NVL(REPLACE(A.EDI_CHARGE_TEL, '-'), '') EDI_CHARGE_TEL,
+				NVL(B.CORP_FLAG, '') CORP_FLAG,
+				NVL(B.CST_KIND, '') CST_KIND
+			FROM
+				T_CUSTOMER A,
+				T_CUSTOMER_HDR B
+			WHERE
+				A.CST_NO = B.CST_HDR_NO
+				AND CST_NO = #{cstNo}
+		]]>
+	</select>
+	
+	<select id="getConcludeList" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCustomerVo">
+		<![CDATA[
+			SELECT
+				NVL(A.CST_NO, '') CST_NO,
+				NVL(A.CST_NM, '') CST_NM,
+				NVL(A.OPER_OWNER_NM, '') OPER_OWNER_NM,
+				NVL(A.CST_TYPE, '') CST_TYPE,
+				NVL(A.CST_TRAD, '') CST_TRAD,
+				NVL(A.ADDR, '') ADDR,
+				NVL(A.TEL_NO, '') TEL_NO,
+				NVL(A.EMAIL, '') EMAIL,
+				NVL(B.CNTR_NO, '') CNTR_NO,
+				NVL(B.DEAL_DD, '') DEAL_DD,
+				NVL(B.OVER_CASH, '') OVER_CASH,
+				NVL(B.TEMP_CASH, '') TEMP_CASH,
+				NVL(B.CHK_CASH, '') CHK_CASH,
+				NVL(B.XRAY_CASH, '') XRAY_CASH,
+				NVL(B.LIFT_CASH, '') LIFT_CASH,
+				NVL(B.CAR_CASH, '') CAR_CASH
+			FROM
+				T_CUSTOMER A,
+				T_CASH B
+			WHERE
+				A.CST_NO = B.CST_NO
+				AND A.CST_NO = #{cstNo}
+				AND B.DEAL_DD BETWEEN #{searchStartDt} AND #{searchEndDt}
+		]]>
+	</select>
+	
+	<select id="findCstNoAndCatalogByCstNoWithTCustomerHdr" parameterType="kr.co.e1ct.vo.TCustomerVo" resultType="kr.co.e1ct.vo.TCustomerVo">
+		<![CDATA[
+			SELECT
+				A.CST_NO,
+				A.CATALOG
+			FROM
+				t_customer A,
+				t_customer_hdr B
+			WHERE
+				A.CST_NO = B.CST_HDR_NO
+				AND A.CST_NO = #{cstNo}
+				AND A.CATALOG = '운송사'
+		]]>
+	</select>
+	
+	<select id="findNextCustId" resultType="kr.co.e1ct.vo.TCustomerVo">
+		<![CDATA[
+			SELECT
+				MAX(CUST_ID)+1 CUST_ID
+			FROM
+			(
+				SELECT
+					cust_id
+				FROM
+					T_CUSTOMER
+				WHERE
+					cust_id IS NOT NULL
+				GROUP BY
+					cust_id
+			)
+		]]>
+	</select>
+	
+	<insert id="insertCustomer" parameterType="kr.co.e1ct.vo.TCustomerVo">
+		<![CDATA[
+			INSERT INTO t_customer( CST_NO, CST_NM, OPER_OWNER_NM, CST_TYPE, CST_TRAD, ADDR, TEL_NO, EMAIL, CUST_ID, VAT_CD, FAX_NO, EDI_CHARGE, EDI_CHARGE_TEL, CST_HDR_NO, CRT_EMP, CRT_DT, BIZ_DT, CATALOG, ADDR1, ADDR2 )
+			VALUES(
+				#{cstNo},
+				#{cstNm},
+				#{operOwnerNm},
+				#{cstType},
+				#{cstTrad},
+				#{addr},
+				#{telNo},
+				#{email},
+				#{custId},
+				#{vatCd},
+				#{faxNo},
+				#{ediCharge},
+				#{ediChargeTel},
+				#{cstNo},
+				'0000',
+				SYSDATE,
+				TO_CHAR( SYSDATE, 'yyyy-mm-dd'),
+				'운송사',
+				SUBSTRB(#{addr}, 1, 50),
+				SUBSTRB(#{addr}, 50, 100)
+			)
+		]]>
+	</insert>
+	
+	<update id="updateCustomer" parameterType="kr.co.e1ct.vo.TCustomerVo">
+		<![CDATA[
+			UPDATE
+				t_customer
+			SET
+				CST_NM = #{cstNm},
+				OPER_OWNER_NM = #{operOwnerNm},
+				CST_TYPE = #{cstType},
+				CST_TRAD = #{cstTrad},
+				ADDR = #{addr},
+				ADDR1 = SUBSTRB(#{addr}, 1, 50),
+				ADDR2 = SUBSTRB(#{addr}, 50, 100),
+				TEL_NO = #{telNo},
+				EMAIL = #{email},
+				VAT_CD = #{vatCd},
+				FAX_NO = #{faxNo},
+				EDI_CHARGE = #{ediCharge},
+				EDI_CHARGE_TEL = #{ediChargeTel}
+			WHERE
+				CST_NO = #{cstNo}
+				
+		]]>
+	</update>
+</mapper>

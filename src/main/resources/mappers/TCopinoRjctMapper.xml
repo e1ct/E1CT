@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TCopinoRjctRepository">
+
+	<select id="findByCntrNoAndDupNoAndOperCd" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCopinoRjctVo">
+		<![CDATA[
+			select * from T_COPINO_RJCT where CNTR_NO = #{cntrNo} and dup_no = #{pcDupno} and oper_cd = #{operCd}
+		]]>
+	</select>
+	
+	<select id="findByCntrNoAndOperCdAndRejectOperAndRejectFirstAndRejectIn" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCopinoRjctVo">
+		<![CDATA[
+			SELECT * from T_COPINO_RJCT 
+		   WHERE CNTR_NO = #{cntrNo}
+		   AND oper_cd = #{operCd} 
+		   AND reject_oper is null 
+		   AND reject_first is null 
+		   AND reject_in is null 
+		]]>
+	</select>
+	
+	<select id="onDockGatePass" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCopinoRjctVo">
+		<![CDATA[
+			SELECT
+				NVL(cntr_no, '') cntr_no,
+				NVL(TO_CHAR(upd_dt, 'yyyy-mm-dd hh24:mi'), '') upd_dt,
+				NVL(emp_no, '') emp_no,
+				NVL(RMK, '') rmk,
+				NVL(dup_no, 0) dup_no
+			FROM
+				t_copino_rjct
+			WHERE
+				reject_oper IS NULL
+				AND reject_first IS NULL
+				AND reject_in IS NULL
+				AND oper_cd IN
+		]]>
+		<foreach collection="operList" close=")" index="index" item="item" open="(" separator=",">
+			<![CDATA[
+				#{item}
+			]]>
+		</foreach>
+		<![CDATA[
+				AND (cntr_no,
+				dup_no) NOT IN (
+				SELECT
+					cntr_no,
+					dup_no
+				FROM
+					t_cntr)
+		]]>
+		<if test='cntrNo != null and cntrNo != ""'>
+			<![CDATA[
+				AND cntr_no = #{cntrNo}
+			]]>
+		</if>
+		<if test='searchStartDt != null and searchStartDt != "" and searchEndDt != null and searchEndDt != ""'>
+			<![CDATA[
+				AND upd_dt between to_date( #{searchStartDt} ||'000001' ,'yyyymmddhh24miss') AND to_date( #{searchEndDt} ||'235959','yyyymmddhh24miss')
+			]]>
+		</if>
+		<if test='sort == "updDt"'>
+			<![CDATA[
+				ORDER BY upd_dt DESC
+			]]>
+		</if>
+		<if test='sort == "cntrNo"'>
+			<![CDATA[
+				ORDER BY cntr_no ASC
+			]]>
+		</if>
+		<if test='sort != "updDt" and sort != "cntrNo"'>
+			<![CDATA[
+				ORDER BY upd_dt DESC
+			]]>
+		</if>
+	</select>
+	
+	<delete id="onDockGatePassDeleteData" parameterType="kr.co.e1ct.vo.TCopinoRjctVo">
+		<![CDATA[
+			DELETE FROM T_COPINO_RJCT WHERE cntr_no = #{cntrNo} AND dup_no = #{dupNo} AND oper_cd = #{operCd}
+		]]>
+	</delete>
+	
+	<select id="findOneByCntrNoANdDupNo" parameterType="kr.co.e1ct.vo.TCopinoRjctVo" resultType="kr.co.e1ct.vo.TCopinoRjctVo">
+		<![CDATA[
+			SELECT * from t_copino_rjct WHERE cntr_no = #{cntrNo} AND dup_no = #{dupNo}
+		]]>
+	</select>
+	
+	<insert id="insertOnDockGatePassSave" parameterType="kr.co.e1ct.vo.TCopinoRjctVo">
+		<![CDATA[
+			INSERT
+				INTO
+				t_copino_rjct ( oper_cd,
+				cntr_no,
+				dup_no,
+				upd_dt,
+				emp_no,
+				rmk )
+			VALUES ( #{operCd},
+			#{cntrNo},
+			#{dupNo},
+			SYSDATE,
+			#{empNo},
+			#{rmk})
+		]]>
+	</insert>
+	
+	<update id="updateOnDockGatePassSave" parameterType="kr.co.e1ct.vo.TCopinoRjctVo">
+		<![CDATA[
+			UPDATE
+				t_copino_rjct
+			SET
+				oper_cd = #{operCd},
+				UPD_DT = SYSDATE,
+				EMP_NO = #{empNo},
+				REJECT_FIRST = NULL,
+				REJECT_OPER = NULL,
+				REJECT_IN = NULL,
+				RMK = #{rmk}
+			WHERE
+				Cntr_no = #{cntrNo}
+				AND dup_no = #{dupNo}
+		]]>
+	</update>
+</mapper>

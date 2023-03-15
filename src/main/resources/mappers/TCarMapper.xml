@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TCarRepository">
+
+	<select id="ediCopinoCarFind" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCarVo">
+		<![CDATA[
+			SELECT * FROM T_CAR
+			WHERE UPPER( trucker_cd ) = UPPER( SUBSTR( #{carNo}, 0, 4 ) )
+			AND UPPER( car_no ) = UPPER( SUBSTR( #{carNo}, 5, 8 ) )
+		]]>
+	</select>
+	
+	<select id="findCarNmAndSndIdWhereTruckerCdAndCarNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCarVo">
+		<![CDATA[
+			Select NVL(car_nm, '') car_nm, NVL(snd_id, '') snd_id from t_car where trucker_cd=#{truckerCd} and car_no=#{carNo}
+		]]>
+	</select>
+	
+</mapper>

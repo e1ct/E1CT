@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TCopinoChkinRepository">
+	<select id="findByCntrNoAndOperCd" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCopinoChkinVo">
+		<![CDATA[
+			select * from T_COPIN_CHKIN where cntr_no = #{cntrNo} and oper_cd = #{operCd}
+		]]>
+	</select>
+</mapper>

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content">
+		<div class="sub-visual sub-vs-3">
+			<h1>정보조회서비스</h1>
+			<p>E1컨테이너터미널은 세계를 목표로 나아갑니다.</p>
+		</div><!--sub-visual-->
+		<div class="sub-nav">
+			<div class="wr"> 
+				<a href="/" class="sub-home"></a>
+				<div class="sub-depth">
+					<h3>정보조회서비스</h3>
+					<ul>
+						<li><a href="/company/greeting">회사소개</a></li>
+						<li><a href="/terminal/facilities">터미널소개</a></li>
+						<li><a href="/info/terminal/berthText">정보조회서비스</a></li>
+						<li><a href="/community/news">커뮤니티</a></li>
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3>인트라넷</h3>
+					<ul>
+						<li th:each="submenu, i:${subMenuList}">
+							<a th:href="${submenu.url}" th:text="${i18n} == 'en' ? ${submenu.menuNameEn} : ${submenu.menuNameKo}"></a>
+						</li>
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3>상세본선작업현황</h3>
+					<ul>
+						<li><a href="/info/intra/damageReq">이적요청</a></li>
+						<li><a href="/info/intra/damageCom">이적목록및수리완료</a></li>
+						<li><a href="/info/intra/intrDamage">수리완료컨테이너</a></li>
+						<li><a href="/info/intra/vesselDetail">상세본선작업현황</a>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<section id="info_section">
+			<h1 class="title">상세본선작업현황</h1>
+			<form name="searchForm" action="/info/intra/vesselDetail" method="POST">
+				<div class="date_sch">
+					<label for="" th:text="'Dis/Loading'"></label>
+					<select id="gubun" name="gubun">
+						<option value="" th:text="ALL"></option>
+						<option th:value="'U'" th:text="'Discharging'"></option>
+						<option th:value="'L'" th:text="'Loading'"></option>
+					</select>
+					<a id="searchBtn" class="btn_lookup">조회</a>
+				</div>
+			</form>
+			
+			<div class="tb_hd">
+				<div class="vessel-status reefer" th:text="'Reefer'"></div>
+				<div class="vessel-status danger" th:text="'Danger'"></div>
+				<div class="vessel-status inspection" th:text="'Inspection'"></div>
+				<div class="vessel-status tscargo">T/S Cargo "1"</div>
+				<div class="vessel-status oog" th:text="'OOG'"></div>
+			</div>
+			
+			<div class="tb_tmnl" style="display: flex;">
+				<table style="width: 49%;">
+					<thead>
+						<tr>
+							<th th:colspan="2">
+								<input type="checkbox" id="chkEqLeft" name="chkEqLeft" value="1">
+								<label for="" th:text="'EQ_SEQ'"></label>
+							</th>
+							<td th:colspan="4">
+								<select name="eqNoLeft" id="eqNoLeft">
+									<option th:each="cc, i:${ccList}" th:text="${cc.eqNo}" th:value="${cc.eqNo}"></option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<th th:colspan="2" th:text="'Ship Code'"></th>
+							<td th:colspan="4">
+								<select name="shipLeft" id="shipLeft">
+									<option value="">*</option>
+								</select>
+								<input type="hidden" id="shipLeftVal" th:value="${searchParams.shipLeft}">
+							</td>
+						</tr>
+						<tr>
+							<th th:colspan="2" th:text="'Bay'"></th>
+							<td th:colspan="4">
+								<select name="baysLeft" id="baysLeft">
+									<option value="">*</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<th th:text="'Seq'"></th>
+							<th th:text="'S-pos'"></th>
+							<th th:text="'POD'"></th>
+							<th th:text="'Container'"></th>
+							<th th:text="'F/M'"></th>
+							<th th:text="'Y-pos'"></th>
+						</tr>
+					</thead>
+					<tbody id="tbodyLeft">
+						<tr>
+							<td th:colspan="6" th:text="'조회 가능한 데이터가 존재하지 않습니다.'"></td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<table style="width: 49%;">
+					<thead>
+						<tr>
+							<th th:colspan="2">
+								<input type="checkbox" id="chkEqRight" name="chkEqRight" value="1">
+								<label for="" th:text="'EQ_SEQ'"></label>
+							</th>
+							<td th:colspan="4">
+								<select name="eqNoRight" id="eqNoRight">
+									<option th:each="cc, i:${ccList}" th:text="${cc.eqNo}" th:value="${cc.eqNo}"></option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<th th:colspan="2" th:text="'Ship Code'"></th>
+							<td th:colspan="4">
+								<select name="shipRight" id="shipRight">
+									<option value="">*</option>
+								</select>
+								<input type="hidden" id="shipRightVal" th:value="${searchParams.shipRight}">
+							</td>
+						</tr>
+						<tr>
+							<th th:colspan="2" th:text="'Bay'"></th>
+							<td th:colspan="4">
+								<select name="baysRight" id="baysRight">
+									<option value="">*</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<th th:text="'Seq'"></th>
+							<th th:text="'S-pos'"></th>
+							<th th:text="'POD'"></th>
+							<th th:text="'Container'"></th>
+							<th th:text="'F/M'"></th>
+							<th th:text="'Y-pos'"></th>
+						</tr>
+					</thead>
+					<tbody id="tbodyRight">
+						<tr>
+							<td th:colspan="6" th:text="'조회 가능한 데이터가 존재하지 않습니다.'"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<script type="text/javascript">
+				$(function(){
+					$("#eqNoLeft").change( function() {
+						setBays("L");
+						setShip("L");
+					});
+					
+					$("#eqNoRight").change( function() {
+						setBays("R");
+						setShip("R");
+					});
+					
+					$("#searchBtn").click(function() {
+						load();
+					});
+				});
+				
+				function setShip(side) {
+					var val = side.toUpperCase() == "L" ? $("#eqNoLeft").val() : $("#eqNoRight").val();
+					var ship = side.toUpperCase() == "L" ? $("#shipLeft").val() : $("#shipRight").val();
+					var elId = side.toUpperCase() == "L" ? "shipLeft" : "shipRight";
+					
+					var param = {};
+					param['eqNo'] = val;
+					param['ship'] = ship;
+					
+					send( '/info/intra/vesselDetail/getShip', param, function(d) {
+						console.log( d );
+						if( d.list.length ) {
+							
+							$("#" + elId).children().remove();
+							
+							$("#" + elId).append( "<option value=''>*</option>" );
+							for( var i=0; i<d.list.length; i++ ) {
+								var selected = false; 
+								if( ship == d.list[i].shipCd + "-" + d.list[i].callNo.zf(3) + "-" + d.list[i].callYy ) selected = true;
+								$("#" + elId).append( "<option value='" + d.list[i].shipCd + "-" + d.list[i].callNo.zf(3) + "-" + d.list[i].callYy + "'>" + d.list[i].shipCd + "-" + d.list[i].callNo.zf(3) + "-" + d.list[i].callYy + ( selected ? " selected" : "" ) + "</option>" );
+							}
+						}
+					}, 'POST');
+				}
+
+				function setBays( side ) {
+					var val = side.toUpperCase() == "L" ? $("#eqNoLeft").val() : $("#eqNoRight").val();
+					var ship = side.toUpperCase() == "L" ? $("#shipLeft").val() : $("#shipRight").val();
+					var elId = side.toUpperCase() == "L" ? "baysLeft" : "baysRight";
+					
+					send( '/info/intra/vesselDetail/getBays', {
+						'eqNo': val,
+						'ship': ship
+					}, function(d) {
+						console.log( d );
+						if( d.list.length ) {
+							$("#" + elId).children().remove();
+							
+							$("#" + elId).append( "<option value=''>*</option>" );
+							for( var i=0; i<d.list.length; i++ ) {
+								var selected = false;
+								/////////////// selected 처리 해야함.
+								
+								if( d.list[i].sbayh.trim().length > 0 ) {
+									$("#" + elId).append( "<option value='" + d.list[i].sbayh + "|H'>" + d.list[i].sbayh + " H</option>" );
+								}
+								if( d.list[i].sbayd.trim().length > 0 ) {
+									$("#" + elId).append( "<option value='" + d.list[i].sbayd + "|D'>" + d.list[i].sbayd + " D</option>" );
+								}
+							}
+						}
+					}, 'POST');
+				}
+				
+				setShip("L");
+				setShip("R");
+				setBays("L");
+				setBays("R");
+				
+				var load = function() {
+					var side = ["Left", "Right"];
+					
+					for( var i=0; i<side.length; i++ ) {
+						var param = {};
+						
+						param['ship'] = $("#ship" + side[i]).val();
+						param['gubun'] = $("#gubun").val();
+						param['bays'] = $("#bays" + side[i]).val();
+						param['chkEq'] = $("#chkEq" + side[i]).is(":checked") ? $("#chkEq" + side[i]).val() : "";
+						param['eqNo'] = $("#eqNo" + side[i]).val();
+						param['side'] = side[i];
+						
+						console.log( param );
+						
+						send( '/info/intra/vesselDetail/load', param, function(d) {
+							$("#tbody" + d.param.side).children().remove();
+							
+							if( d.list.length > 0 ) {
+								
+								for( var j=0; j<d.list.length; j++ ) {
+									var bgColor = "";
+									var ftColor1 = "";
+									var ftColor2 = "";
+									var ftColor3 = "";
+									var ypos = "";
+									
+									if( d.list[j].curStat != "XO" ) {
+										if( d.list[j].cntrNo2 != "" ) {
+											if( d.list[j].ytno == "" ) {
+												ftColor3 = "blue";
+											} else {
+												ftColor3 = "red";
+											}
+										} else {
+											ftColor3 = "black";
+										}
+									} else {
+										ypos = d.list[j].ypos;
+									}
+									
+									if( d.list[j].dirId != null & d.list[j].dirId != "" ) {
+										if( d.list[j].dirId == "T" ) {
+											ypos = "IN-DL";
+										} else if( d.list[j].dirId == "1" || d.list[j].dirId == "9" ) {
+											if( d.list[j].ypos2 == "---" ) {
+												ypos = "EX-DL";
+											} else {
+												if( d.list[j].curStat != "XO") {
+													ypos = d.list[j].ypos2;
+												}
+											}
+										} else if( d.list[j].dirId == "0" ) {
+											if( d.list[j].ypos2 == "---" ) {
+												ypos = "OD-DL";	
+											} else {
+												ypos = d.list[j].ypos2;
+											}
+										} else if( d.list[j].dirId == "L" ) {
+											if( d.list[j].curStat == "XT" ) {
+												ypos = d.list[j].ypos2.substring(0, 2) + "-ROAD";
+											} else if( d.list[j].curStat == "XG" ) {
+												ypos = d.list[j].fblock.substring(0, 2) + "-DL";
+											} else {
+												ypos = d.list[j].ypos2;
+											}
+										} else {
+											ypos = "Err";
+										}
+									}
+									
+									// SIZE 여부
+									if( d.list[j].szCd == "2" ) {
+										ftColor1 = "black";
+									} else if( d.list[j].szCd == "4" ) {
+										ftColor1 = "blue";
+									} else {
+										ftColor1 = "red";
+									}
+									
+									// T/S 여부
+									if( d.list[j].tsId == 1 ) {
+										bgColor = "yellow";
+										ftColor2 = "black";
+									}
+									
+									// OOG 여부
+									if( d.list[j].hwlCd != null ) {
+										bgColor = "#ff1493";
+										ftColor2 = "white";
+									}
+									
+									// Inspection 여부
+									if( d.list[j].inspId != null ) {
+										bgColor = "green";
+										ftColor2 = "black";
+									}
+									
+									// Danger 여부
+									if( d.list[j].imdgchk != null ) {
+										bgColor = "red";
+										ftColor2 = "white";
+									}
+									
+									// Reefer 여부
+									if( d.list[j].tempchk != null && d.list[j].tempchk.substring(0,3) != "DRY" && d.list[j].tempChk.substring( d.list[j].tempChk.length - 3 ) != "DRY" ) {
+										bgColor = "blue";
+										ftColor2 = "white";
+									}
+									
+									// remark 여부
+									if( d.list[j].remark != null ) {
+										ftColor1 = "magenta";
+									}
+									
+									var tr = document.createElement( "tr" );
+									
+									if( d.list[j].remark != null ) {
+										$(tr).append( "<td style='color: " + ftColor1 + "'><del>" + d.list[j].seq + "</del></td>" );
+									} else {
+										$(tr).append( "<td>" + d.list[j].seq + "</td>" );
+									}
+									
+									if( d.list[j].remark != null ) {
+										$(tr).append( "<td style='color: " + ftColor1 + "'><del>" + d.list[j].spos + "</del></td>" );
+									} else {
+										$(tr).append( "<td>" + d.list[j].spos + "</td>" );
+									}
+									
+									$(tr).append( "<td>" + d.list[j].pod + "</td>" );
+									
+									$(tr).append( "<td style='background-color: " + bgColor + "; color: " + ftColor2 + ";'>" + d.list[j].cntrNo + "</td>" );
+									
+									$(tr).append( "<td>" + d.list[j].fmCd + "</td>" );
+									
+									$(tr).append( "<td style='color: " + ftColor3 + ";'>" + d.list[j].ypos + "</td>" );
+									
+									$("#tbody" + d.param.side ).append( tr );
+									
+								}
+							} else {
+								$("#tbody" + d.param.side).append( "<tr><td colspan='6'>조회 가능한 데이터가 존재하지 않습니다.</td></tr>" );
+							}
+						}, 'POST');
+					}
+				}
+			</script>
+		</section>
+		
+	</div>
+</html>

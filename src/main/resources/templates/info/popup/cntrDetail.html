@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/popup">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content">
+	
+		<section id="info_section">
+			<h1 class="title" th:text="'컨테이너 번호 : ' + ${searchParams.cntrNo}" style="text-align: center; margin-bottom: 20px;"></h1>
+			<div class="tb_tmnl">
+				<table>
+					<tbody th:if="${data} != null">
+						<tr>
+							<th>모선항차</th>
+							<td th:text="${data.shipCd} + '-' + ${#numbers.formatInteger(data.callNo, 3)} + '-' + ${data.callYy}"></td>
+							<td colspan="2" th:text="${data.shipNm}"></td>
+						</tr>
+						<tr>
+							<th>선사</th>
+							<td th:text="${data.operCd}"></td>
+							<td colspan="2" th:text="${data.operKnm}"></td>
+						</tr>
+						<tr>
+							<th>상태</th>
+							<td>
+								<div th:text="${data.curStat} + '-' + ${data.fmCd}"></div>
+								<a id="statusDetail" th:onclick="javascript:statusDetail([[${data.curStat}]], [[${data.fmCd}]])" style="cursor: pointer; font-size: 0.9rem; font-weight: 600;">Click</a>
+							</td>
+							<th>Size/Type</th>
+							<td>
+								<th:block th:text="${data.szCd} + '/' + ${data.tyCd}"></th:block>
+								<th:block th:if="${data.tyCd} >= 30 and ${data.tyCd} <= 39" th:text="'(Reefer)'"></th:block>
+								<th:block th:if="${data.tyCd} >= 40 and ${data.tyCd} <= 49" th:text="'(Reefer)'"></th:block>
+								<th:block th:if="${data.tyCd} >= 50 and ${data.tyCd} <= 59" th:text="'(Open Top)'"></th:block>
+								<th:block th:if="${data.tyCd} >= 60 and ${data.tyCd} <= 69" th:text="'(Platform)'"></th:block>
+								<th:block th:if="${data.tyCd} >= 70 and ${data.tyCd} <= 79" th:text="'(Tank)'"></th:block>
+								<th:block th:if="${data.tyCd} >= 80 and ${data.tyCd} <= 89" th:text="'(Special)'"></th:block>
+								<th:block th:if="${data.tyCd} >= 90 and ${data.tyCd} <= 99" th:text="'(Air)'"></th:block>
+								<th:block th:if="${data.tyCd} < 30 or ${data.tyCd} > 99" th:text="'(General)'"></th:block>
+							</td>
+						</tr>
+						<tr>
+							<th>Return/Cancel</th>
+							
+							<td th:if="${data.rtnCd} == 'C'" th:text="'Cancel'"></td>
+							<td th:if="${data.rtnCd} == 'R'" th:text="'Return'"></td>
+							<td th:if="${data.rtnCd} != 'C' and ${data.rtnCd} != 'R'"></td>
+							<th>T/S</th>
+							<td th:text="${data.tsId}"></td>
+						</tr>
+						<tr>
+							<div th:if="${data.truckerCdOut} != null" th:remove="tag">
+								<div th:if="${data.sealNo2} != null" th:remove="tag">
+									<th>차량번호(Seal No.)</th>
+									<td th:text="${data.truckerCdOut} + '-' + ${data.carNoOut} + '(' + ${data.sealNo2} + ')'"></td>
+									<th>무게</th>
+									<td th:text="${data.weight}"></td>
+								</div>
+								<div th:if="${data.sealNo2} == null and ${data.sealNo1} != null" th:remove="tag">
+									<th>차량번호(Seal No.)</th>
+									<td th:text="${data.truckerCdOut} + '-' + ${data.carNoOut} + '(' + ${data.sealNo1} + ')'"></td>
+									<th>무게</th>
+									<td th:text="${data.weight}"></td>
+								</div>
+								<div th:if="${data.sealNo2} == null and ${data.sealNo1} == null" th:remove="tag">
+									<th>차량번호(Seal No.)</th>
+									<td th:text="${data.truckerCdOut} + '-' + ${data.carNoOut} + '(' + ${data.sealNo} + ')'"></td>
+									<th>무게</th>
+									<td th:text="${data.weight}"></td>
+								</div>
+							</div>
+							<div th:unless="${data.truckerCdOut} != null" th:remove="tag">
+								<div th:if="${data.sealNo2} != null" th:remove="tag">
+									<th>차량번호(Seal No.)</th>
+									<td th:text="( ${data.truckerCd} != null ? ${data.truckerCd} : '' ) + '-' + ( ${data.carNo} != null ? ${data.carNo} : '' ) + ( ${data.sealNo2} != null ? '(' + ${data.sealNo2} + ')' : '' )"></td>
+									<th>무게</th>
+									<td th:text="${data.weight}"></td>
+								</div>
+								<div th:if="${data.sealNo2} == null and ${data.sealNo1} != null" th:remove="tag">
+									<th>차량번호(Seal No.)</th>
+									<td th:text="( ${data.truckerCd} != null ? ${data.truckerCd} : '' ) + '-' + ( ${data.carNo} != null ? ${data.carNo} : '' ) + ( ${data.sealNo1} != null ? '(' + ${data.sealNo1} + ')' : '' )"></td>
+									<th>무게</th>
+									<td th:text="${data.weight}"></td>
+								</div>
+								<div th:if="${data.sealNo2} == null and ${data.sealNo1} == null" th:remove="tag">
+									<th>차량번호(Seal No.)</th>
+									<td th:text="( ${data.truckerCd} != null ? ${data.truckerCd} : '' ) + '-' + ( ${data.carNo} != null ? ${data.carNo} : '' ) + ( ${data.sealNo} != null ? '(' + ${data.sealNo} + ')' : '' )"></td>
+									<th>무게</th>
+									<td th:text="${data.weight}"></td>
+								</div>
+							</div>
+						</tr>
+						<tr>
+							<th>위험물</th>
+							<td th:text="'IMDG : ' + ( ${data.imdg} == null ? '' : ${data.imdg} ) + '  UNNO : ' + ( ${data.unno} == null ? '' : ${data.unno} )"></td>
+							<th>냉동온도</th>
+							<td th:if="${data.temp} != null" th:text="${data.temp} + ( ${data.tempId} == 'CEL' ? '℃' : '℉' )"></td>
+							<td th:unless="${data.temp} != null"></td>
+						</tr>
+						<tr>
+							<th>선내위치</th>
+							<td th:text="( ${data.sTbay} == null ? '' : ${data.sTbay} ) + '-' + ${data.sTrow} + '-' + ${data.sTtier}"></td>
+							<th>야드위치</th>
+							<td th:text="${data.yTblock} + '-' + ${data.yTbay} + '-' + ${data.yTrow} + '-' + ${data.yTtier}"></td>
+						</tr>
+						<tr>
+							<th>양하/적하항</th>
+							<td th:text="${data.pod} + '/' + ${data.pol}"></td>
+							<th>X-Ray 검색</th>
+							<td th:text="${data.inspId}"></td>
+						</tr>
+						<tr>
+							<th>반입(양하)일시</th>
+							<td th:if="${data.ginDt} != null or ${data.gcDdt} == ''" th:text="${data.ginDt}"></td>
+							<td th:unless="${data.ginDt} != null or ${data.gcDdt} == ''" th:text="${data.gcDdt} != null ? '(' + ${data.gcDdt} + ')' : ''"></td>
+							<th>반출(적하)일시</th>
+							<td th:if="${data.goutDt} != null or ${data.gcLdt} == ''" th:text="${data.goutDt}"></td>
+							<td th:unless="${data.goutDt} != null or ${data.gcLdt} == ''" th:text="${data.gcLdt} != null ? '(' + ${data.gcLdt} + ')' : ''"></td>
+						</tr>
+						<tr>
+							<th>보세구분</th>
+							<td th:if="${data.bondId} == 'B'">보세</td>
+							<td th:if="${data.bondId} == 'C'">부두통관</td>
+							<td th:if="${data.bondId} != 'B' and ${data.bondId} != 'C'"></td>
+							<th>Stock Days</th>
+							<td th:text="${data.yardDay}"></td>
+						</tr>
+						<tr>
+							<th>Order No.</th>
+							<td colspan="3" th:text="${data.orderNo}"></td>
+						</tr>
+					</tbody>
+					<tbody th:if="${data} == null">
+						<tr>
+							<td th:colspan="11">조회된 데이터가 존재하지 않습니다.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div id="statusDetailModal" style="display: none; width: 230px;">
+				<dl>
+					<dt>수출입 구분</dt>
+					<dd id="modal_ixCd"></dd>
+				</dl>
+				<dl>
+					<dt>상태</dt>
+					<dd id="modal_yCd"></dd>
+				</dl>
+				<dl>
+					<dt>Full / Empty</dt>
+					<dd id="modal_fmCd"></dd>
+				</dl>
+			</div>
+			
+			<script type="text/javascript">
+				$(function(){
+					$("#statusDetailModal").iziModal({
+						padding: '20px',
+						radius: 10,
+						title: '컨테이너상세코드 조회',
+						headerColor: "#eb6800"
+					});
+					
+					$("#searchBtn").click(function() {
+						document.searchForm.submit();
+					});
+					
+					$("#printBtn").click( function() {
+					});
+				});
+				
+				function statusDetail( curStat, fmCd ) {
+					var ixCd = curStat.substring(0,1);
+					var yCd = curStat.substring(1,2);
+					console.log( ixCd + "," + yCd + "," +fmCd );
+					
+					$("#modal_ixCd").text("");
+					$("#modal_yCd").text("");
+					$("#modal_fmCd").text("");
+					
+					if( ixCd == "X" ) {
+						$("#modal_ixCd").text("수출컨테이너");
+					} else if( ixCd == "I" ) {
+						$("#modal_ixCd").text("수입컨테이너");
+					} else if( ixCd == "M" ) {
+						$("#modal_ixCd").text("온독컨테이너");
+					} else if( ixCd == "S" ) {
+						$("#modal_ixCd").text("Shifting 컨테이너");
+					} 
+					
+					if( yCd == "Y" ) {
+						$("#modal_yCd").text("YARD 장치 상태");
+					} else if( yCd == "D" ) {
+						$("#modal_yCd").text("모든 처리 완료상태");
+					} else if( yCd == "B" ) {
+						$("#modal_yCd").text("예정상태");
+					} else if( yCd == "G" ) {
+						$("#modal_yCd").text("GATE 통과 처리상태" );
+					} else if( yCd == "P" ) {
+						$("#modal_yCd").text("반출상차 요청");
+					} 
+					
+					if( fmCd == "F" ) {
+						$("#modal_fmCd").text("Full 컨테이너");
+					} else if( fmCd == "M" ) {
+						$("#modal_fmCd").text("Empty 컨테이너");
+					}
+					
+					$("#statusDetailModal").iziModal( 'open' );
+				}
+			</script>
+			<script type="text/javascript">
+				$(function(){
+				});
+			</script>
+		</section>
+		
+	</div>
+</html>

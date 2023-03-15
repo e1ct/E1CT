@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<footer th:fragment="footerFragment" id="footer">
+	    <div class="ft-wr">
+		<div class="ft-link">
+			<a href="/privacy" th:text="#{footer.privacy}">개인정보처리방침</a>
+			<a href="/emailcollect" th:text="#{footer.emailpolicy}">이메일무단수집거부</a>
+			<a href="/admin" class="admin-go">Admin</a>
+		</div>
+		<div class="ft-info">
+			<p th:utext="#{footer.ftinfo}">㈜E1컨테이너터미널<span>I</span>인천광역시 중구 서해대로 93번길 42(구 항동7가 112번지) 우 22342<span>I</span>대표전화. 032-880-2222<span>I</span>Fax. 032-880-2381<span>I</span>E-mail. e1chr@e1ct.co.kr
+			<br />Copyright ⓒ  E1CT  All rights reserved.</p>
+		</div>
+		<div id="ft_totop">
+			<img src="/static/img/btn/scr-top.png" alt="상단으로">
+		</div>
+	</div>
+	</footer>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content" th:remove="tag">
+		<div class="sub-visual sub-vs-4">
+			<h1>개인정보 처리방침</h1>
+<!-- 			<p>최신 소식을 빠르게 전달해 드립니다.</p> -->
+		</div>
+		<section id="wrap">
+			<h1 class="cont-tit">이메일 무단수집 거부</h1>
+			<div class="cont-wr">
+				<!--채용정보 상단 끝-->
+				<div id="board-list"> 
+					<textarea style="width: 100%; min-height: 250px; resize: none;">
+본 웹 사이트에 게시된 이메일 주소가 전자우편 수집 프로그램이나 그 밖의 기술적 장치를 이용하여 무단으로 수집되는 것을 거부하며 이를 위반 시 정보통신망법에 의해 형사 처벌됨을 유념하시기 바랍니다.
+
+※ 정보통신망 이용촉진 및 정보보호 등에 관한법률 제50조의 2 (전자우편주소의 무단 수집행위 등 금지)
+
+정보통신망법 제 50조의 2 (전자우편주소의 무단 수집행위 등 금지)
+누구든지 전자우편주소의 수집을 거부하는 의사가 명시된 인터넷 홈페이지에서 자동으로 전자우편주소를 수집하는 프로그램 그 밖의 기술적 장치를 이용하여 전자우편주소를 수집하여서는 아니된다.
+누구든지 제1항의 규정을 위반하여 수집된 전자우편주소를 판매·유통하여서는 아니된다.
+누구든지 제1항의 및 제2항의 규정에 의하여 수집·판매 및 유통이 금지된 전자우편주소임을 알고 이를 정보전송에 이용하여서는 아니된다.
+※ 만일, 위와 같은 기술적 조치를 사용한 이메일주소 무단수집 피해를 당하신 경우 불법스팸 대응센터 전용전화(국번없이 02-1336)나 홈페이지( www.spamcop.or.kr )의 신고 창을 통하여 신고하기 바랍니다.
+					</textarea>
+				</div>
+			</div>
+		</section>
+	</div>
+</html>

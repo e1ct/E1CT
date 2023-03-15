@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TBkmstRepository">
+
+	<select id="onDockBookingList" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TBkmstVo">
+		<![CDATA[
+			SELECT
+				NVL(A.oper_cd, ' ') oper_cd,
+				NVL(a.bk_no, ' ') bk_no,
+				NVL(a.ship_cd, ' ') ship_cd,
+				NVL(TO_CHAR(a.call_no), ' ') call_no,
+				NVL(TO_CHAR(a.call_yy), ' ') call_yy,
+				NVL(a.carrier_nm, ' ') carrier_nm,
+				NVL(TO_CHAR(a.bk_dt), ' ') bk_dt,
+				NVL(b.sz_cd, ' ') sz_cd,
+				NVL(b.ty_grp_cd, ' ') ty_grp_cd,
+				NVL(b.BK_EAMT, 0) bk_eamt,
+				NVL(b.bk_aamt, 0) bk_aamt
+			FROM
+				t_bkmst a,
+				t_bkdtl b
+			WHERE
+				a.bk_no = b.bk_no
+		]]>
+		<if test="operList != null">
+			<![CDATA[
+				AND b.oper_cd IN
+			]]>
+			<foreach collection="operList" separator="," index="index" item="item" open="(" close=")">
+				<![CDATA[
+					#{item}
+				]]>
+			</foreach>
+		</if>
+		<![CDATA[
+				AND a.trans_cd IS NULL
+				AND (b.BK_EAMT > 0 OR b.bk_aamt > 0)
+		]]>
+		<if test="bkNo != null and bkNo != ''">
+			<![CDATA[
+				AND a.bk_no = #{bkNo}
+				AND ( (A.bk_dt >= REPLACE( #{searchStartDt}, '-', '' )
+				AND A.bk_dt < TO_DATE( REPLACE( #{searchEndDt}, '-', '' ), 'yyyymmdd')+ 1)
+				OR (A.bkacpt_dt >= REPLACE( #{searchStartDt}, '-', '' )
+				AND A.bkacpt_dt < TO_DATE(REPLACE( #{searchEndDt}, '-', '' ), 'yyyymmdd')+ 1) )
+			]]>
+		</if>
+		<if test="bkNo == null or bkNo == ''">
+			<![CDATA[
+				AND A.bk_dt >= REPLACE( #{searchStartDt}, '-', '' )
+				AND A.bk_dt < to_date(REPLACE( #{searchEndDt}, '-', '' ),'yyyymmdd')+1 
+			]]>
+		</if>
+		<if test="sort == 'bkTm'">
+			<![CDATA[
+			ORDER BY a.bk_dt desc
+			]]>
+		</if>
+		<if test="sort == 'orderNo'">
+			<![CDATA[
+			ORDER BY a.bk_no
+			]]>
+		</if>
+		<if test="sort == 'comp'">
+			<![CDATA[
+			ORDER BY a.carrier_nm
+			]]>
+		</if>
+		<if test="sort == 'ship'">
+			<![CDATA[
+			ORDER BY a.ship_cd, a.call_yy, a.call_no desc
+			]]>
+		</if>
+	</select>
+	
+	<select id="onDockBookingListForT" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TBkmstVo">
+		<![CDATA[
+			SELECT
+				NVL(A.cntr_no, ' ') cntr_no,
+				NVL(A.sz_cd, ' ') sz_cd,
+				NVL(A.ty_grp_cd, ' ') ty_grp_cd,
+				NVL(A.y_tblock, ' ') y_tblock,
+				NVL(A.y_tbay, 0) y_tbay,
+				NVL(A.y_trow, 0) y_trow,
+				NVL(A.y_ttier, 0) y_ttier,
+				NVL(A.car_nm, ' ') car_nm,
+				NVL(A.car_no1, ' ') car_no1,
+				NVL(A.car_no2, ' ') car_no2,
+				NVL(A.car_prsn, ' ') car_prsn,
+				NVL(A.car_tel, ' ') car_tel,
+				NVL(A.seal_no, ' ') seal_no,
+				NVL(A.chass_no, ' ') chass_no,
+				NVL(A.fix_cd, ' ') fix_cd,
+				NVL(A.dup_no, 0) dup_no,
+				NVL(A.trucker_cd, ' ') trucker_cd,
+				NVL(A.oper_cd, ' ') oper_cd,
+				NVL(A.ship_cd, ' ') ship_cd,
+				NVL(A.call_no, 0) call_no,
+				NVL(A.call_yy, 0) call_yy,
+				NVL(A.seq_no, 0) seq_no,
+				NVL(TO_CHAR(B.gin_dt, 'yyyy-mm-dd hh24:mi'), ' ') gin_dt,
+				NVL(TO_CHAR(B.gc_ddt, 'yyyy-mm-dd hh24:mi'), '') gc_ddt,
+				NVL(B.cur_stat, ' ') cur_stat,
+				NVL(A.bk_no, ' ') bk_no
+			FROM
+				t_bklst A,
+				t_cntr B,
+				t_bkmst D
+			WHERE
+				A.trucker_cd = #{empNo}
+				AND D.trans_cd IS NULL
+		]]>
+		<if test="bkNo == null or bkNo == ''">
+			<![CDATA[
+				AND D.bkacpt_dt >= #{searchStartDt}
+				ANd D.bkacpt_dt < to_date( #{searchEndDt}, 'yymmdd') + 1
+			]]>
+		</if>
+		<if test="bkNo != null and bkNo != ''">
+			<![CDATA[
+				AND A.bk_no = #{bkNo}
+			]]>
+		</if>
+		<![CDATA[
+				AND A.bk_no = D.bk_no
+				AND A.oper_cd = D.oper_cd
+				ANd A.cntr_no = B.cntr_no (+)
+				AND A.dup_no = B.dup_no (+)
+				AND A.cop_yn IS NULL
+		]]>
+		<if test="sort == 'orderNo'">
+			<![CDATA[
+			ORDER BY NVL(A.bk_no, ' ')
+			]]>
+		</if>
+		<if test="sort == 'comp'">
+			<![CDATA[
+			ORDER BY NVL(A.car_no1, ' ')
+			]]>
+		</if>
+		<if test="sort == 'ship'">
+			<![CDATA[
+			ORDER BY NVL(A.ship_cd, ' '), NVL(A.call_yy, ' '), NVL(A.call_no, ' ') desc
+			]]>
+		</if>
+	</select>
+	
+	<delete id="deleteByBkNoAndOperCd" parameterType="kr.co.e1ct.vo.SearchVo">
+		<![CDATA[
+			DELETE
+				t_bkmst
+			WHERE
+				bk_no = #{bkNo}
+				AND oper_cd IN ( #{oper} )			
+		]]>
+	</delete>
+	
+	<select id="findSzCdAndTyGrpCdAndCyCdAndBkEamtAndBkAamtAndHandCdByBkNoAndOperCd" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TBkmstVo">
+		<![CDATA[
+			SELECT 
+				nvl(b.sz_cd, '') sz_cd, 
+				nvl(b.ty_grp_cd, '') ty_grp_cd, 
+				nvl(b.cy_cd, '') cy_cd, 
+				NVL(B.BK_EAMT, 0) bk_eamt, 
+				NVL(B.BK_AAMT, 0) bk_aamt, 
+				NVL(B.hand_cd, '') hand_cd 
+			from t_bkmst a, t_bkdtl b
+			WHERE a.bk_no = #{orderNo}
+			AND a.oper_cd = #{operCd}
+			AND a.bk_no = b.bk_no
+		]]>
+	</select>
+	
+	<select id="findByOperCdAndBkNoAndTransCd" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TBkmstVo">
+		<![CDATA[
+			select * from t_bkmst where oper_cd = #{operCd} and bk_no = #{orderNo} and trans_cd = 'Y'
+		]]>
+	</select>
+	
+	<select id="findOneByOperCdAndBkNoBkMst" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TBkmstVo">
+		<![CDATA[
+			SELECT
+				bk_no,
+				ship_cd,
+				call_no,
+				call_yy,
+				pod,
+				pol,
+				dest,
+				NVL(tlock, '') tlock,
+				NVL(carrier_nm, '') carrier_nm,
+				NVL(corpco_ow, '') corpco_ow,
+				NVL(factor_nm, '') factor_nm,
+				NVL(factor_loc, '') factor_loc,
+				NVL(contact_nm, '') contact_nm,
+				NVL(tel_no, '') tel_no,
+				NVL(remark, '') remark
+			FROM
+				t_bkmst
+			WHERE
+				oper_cd IN ( #{operCd} )
+				AND bk_no = #{bkNo}
+		]]>
+	</select>
+	
+	<select id="findByOperCdAndBkNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TBkmstVo">
+		<![CDATA[
+			SELECT * from t_bkmst where bk_no= #{bkNo} AND oper_cd IN 
+		]]>
+		<foreach collection="operList" item="item" open="(" close=")" separator="," index="index">
+			<![CDATA[
+				#{item}
+			]]>
+		</foreach>
+	</select>
+	
+	<insert id="insertOrder" parameterType="kr.co.e1ct.vo.TBkmstVo">
+		<![CDATA[
+			INSERT
+				INTO
+				t_bkmst ( 
+					oper_cd,
+					bk_no,
+					bk_dt,
+					bkacpt_dt,
+					emp_no,
+					ship_cd,
+					call_no,
+					call_yy,
+					pod,
+					pol,
+					dest,
+					tlock,
+					carrier_nm,
+					corpco_ow,
+					factor_nm,
+					factor_loc,
+					contact_nm,
+					tel_no,
+					remark
+				) VALUES(
+					#{operCd},
+					#{bkNo},
+					SYSDATE,
+					SYSDATE,
+					'WEB',
+					#{shipCd},
+					#{callNo},
+					#{callYy},
+					#{pod},
+					#{pol},
+					#{dest},
+					#{tlock},
+					#{carrierNm},
+					'${corpcoOw1}${corpcoOw2}${corpcoOw3}',
+					#{factorNm},
+					#{factorLoc},
+					#{contactNm},
+					#{telNo},
+					#{remark}
+				)
+		]]>
+	</insert>
+	
+	<select id="onDockBookingDetailUpdate" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TBkmstVo">
+		<![CDATA[
+			SELECT
+				bk_no,
+				ship_cd,
+				call_no,
+				call_yy,
+				pod,
+				pol,
+				dest,
+				NVL(tlock, '') tlock,
+				NVL(carrier_nm, '') carrier_nm,
+				NVL(corpco_ow, '') corpco_ow,
+				NVL(factor_nm, '') factor_nm,
+				NVL(factor_loc, '') factor_loc,
+				NVL(contact_nm, '') contact_nm,
+				NVL(tel_no, '') tel_no,
+				NVL(remark, '') remark
+			FROM
+				t_bkmst
+			WHERE
+				oper_cd IN 
+		]]>
+		<foreach collection="operList" item="item" open="(" close=")" index="index" separator=",">
+			<![CDATA[
+				#{item}
+			]]>
+		</foreach>
+		<![CDATA[
+				AND bk_no = #{bkNo}
+		]]>
+	</select>
+	
+	<update id="updateBookingDetail" parameterType="kr.co.e1ct.vo.SearchVo">
+		<![CDATA[
+			UPDATE
+				T_BKMST
+			SET
+				emp_no = 'WEB',
+				ship_cd = #{shipCd},
+				call_no = #{callNo},
+				call_yy = #{callYy},
+				pod = #{pod},
+				pol = #{pol},
+				dest = #{dest},
+				tlock = #{tlock},
+				carrier_nm = #{carrierNm},
+				corpco_ow = #{corpcoOw},
+				factor_nm = #{factorNm},
+				factor_loc = #{factorLoc},
+				contact_nm = #{contactNm},
+				tel_no = #{telNo},
+				remark = #{remark}
+			WHERE
+				oper_cd = #{operCd}
+				AND bk_no = #{bkNo}
+		]]>
+	</update>
+</mapper>

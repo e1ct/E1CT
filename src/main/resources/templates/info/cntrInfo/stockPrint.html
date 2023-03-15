@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<style>
+			* {
+				font-size: 0.75rem;
+				-webkit-print-color-adjust: exact;
+				printer-colors: exact;
+				color-adjust: exact;
+			}
+			
+			table {
+				border-spacing: 0px;
+			}
+			
+			thead {
+				color: #fff;
+				background-color: #eb6800;
+			}
+			
+			@media print {
+				thead th {
+					color: #000;
+					border: 1px solid black;
+				}
+			}
+			
+			td {
+				border-left: 1px solid #aaa;
+				border-bottom: 1px solid #aaa;
+			}
+			
+			td:last-child {
+	 			border-right: 1px solid #aaa;
+			}
+		</style>
+	<table>
+		<thead>
+			<tr>
+				<th th:rowspan="2">모선항차</th>
+				<th th:colspan="3" th:text="'FULL'"></th>
+				<th th:colspan="3" th:text="'EMPTY'"></th>
+				<th th:colspan="3" th:text="'TOTAL'"></th>
+				<th th:rowspan="2" th:text="'TEU'"></th>
+			</tr>
+			<tr>
+				<th th:text="'20'"></th>
+				<th th:text="'40'"></th>
+				<th th:text="'45'"></th>
+				<th th:text="'20'"></th>
+				<th th:text="'40'"></th>
+				<th th:text="'45'"></th>
+				<th th:text="'20'"></th>
+				<th th:text="'40'"></th>
+				<th th:text="'45'"></th>
+			</tr>
+		</thead>
+		<tbody th:if="${!#lists.isEmpty(list)}">
+			<tr th:each="list, i:${list}">
+				<td th:text="${list.shipCd} + '-' + ${#numbers.formatInteger(list.callNo, 3)} + '-' + ${list.callYy}"></td>
+				<td th:text="${list.f20} != 0 ? ${list.f20} : '-'"></td>
+				<td th:text="${list.f40} != 0 ? ${list.f40} : '-'"></td>
+				<td th:text="${list.f45} != 0 ? ${list.f45} : '-'"></td>
+				
+				<td th:text="${list.m20} != 0 ? ${list.m20} : '-'"></td>
+				<td th:text="${list.m40} != 0 ? ${list.m40} : '-'"></td>
+				<td th:text="${list.m45} != 0 ? ${list.m45} : '-'"></td>
+				
+				<td th:text="${list.t20}"></td>
+				<td th:text="${list.t40}"></td>
+				<td th:text="${list.t45}"></td>
+				
+				<td th:text="${list.teu}"></td>
+			</tr>
+			<tr>
+				<th th:text="'합계'"></th>
+				<th th:text="${sumMap.f20}"></th>
+				<th th:text="${sumMap.f40}"></th>
+				<th th:text="${sumMap.f45}"></th>
+				
+				<th th:text="${sumMap.m20}"></th>
+				<th th:text="${sumMap.m40}"></th>
+				<th th:text="${sumMap.m45}"></th>
+				
+				<th th:text="${sumMap.t20}"></th>
+				<th th:text="${sumMap.t40}"></th>
+				<th th:text="${sumMap.t45}"></th>
+				
+				<th th:text="${sumMap.teu}"></th>
+			</tr>
+		</tbody>
+		<tbody th:if="${#lists.isEmpty(list)}">
+			<tr>
+				<td th:colspan="11">조회된 데이터가 존재하지 않습니다.</td>
+			</tr>
+		</tbody>
+	</table>
+	<script type="text/javascript">
+		$(function(){
+			setTimeout( window.print(), 200 );
+		});
+	</script>
+</html>

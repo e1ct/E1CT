@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content" th:remove="tag">
+		<div class="sub-visual sub-vs-1">
+			<h1 th:text="#{header.company}">회사소개</h1>
+			<p th:text="#{subvisual.subtitle.1}">E1컨테이너터미널은 세계를 목표로 나아갑니다.</p>
+		</div>
+		<div class="sub-nav">
+			<div class="wr"> 
+				<a href="/" class="sub-home"></a>
+				<div class="sub-depth">
+					<h3 th:text="#{header.company}">회사소개</h3>
+					<ul>
+						<li><a href="/company/greeting" th:text="#{header.company}">회사소개</a></li>
+						<li><a href="/terminal/facilities" th:text="#{header.terminal}">터미널소개</a></li>
+						<li><a href="/info/terminal/berthText" th:text="#{header.info}">정보조회서비스</a></li>
+						<li><a href="/community/news" th:text="#{header.community}">커뮤니티</a></li> 
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3 th:text="#{menu.company.organization}">조직 및 연락처</h3>
+					<ul>
+						<li><a href="/company/greeting" th:text="#{menu.company.greeting}">인사말</a></li>
+						<li><a href="/company/history" th:text="#{menu.company.history}">연혁</a></li>
+						<li><a href="/company/organization" th:text="#{menu.company.organization}">조직 및 연락처</a></li>
+						<li><a href="/company/ci" th:text="#{menu.company.ci}">CI</a></li>
+						<li><a href="/company/notice" th:text="#{menu.company.notice}">공고</a></li>
+						<li><a href="/company/location" th:text="#{menu.company.location}">오시는길</a></li>
+						<li><a href="/company/safeservice" th:text="#{menu.company.safeservice}">안전서비스</a></li>
+						<li><a href="/company/hr" th:Text="#{menu.company.hr}">인사제도</a></li>
+						<li><a href="/company/recruit" th:text="#{menu.company.recruit}">채용정보</a></li>
+						<li><a href="/company/support" th:text="#{menu.company.support}">관련사이트</a></li>
+					</ul>
+				</div>
+			</div> 
+		</div><!--sub-visual-->
+		<section id="wrap">
+			<h1 class="cont-tit" th:text="#{menu.company.organization}">조직 및 연락처</h1>
+			<div id="organization"> 
+				<div class="group"> 
+					<div class="cont-wr">
+						<h2>E1CT organization</h2> 
+						<img th:src="${i18n} == 'en' ? '/static/img/sub/organization-img-en.png' : '/static/img/sub/organization-img.png'" alt="">
+					</div>  
+				</div>
+				<div class="cont-wr">
+					<div class="contact">
+						<h2>E1CT Contact</h2> 
+						<ul>
+							<li>
+								<h3>Planner</h3>
+								<p><span>Tel.</span>032)880-2322~3</p>
+								<p><span>Fax.</span>032)880-2383</p>
+								<p><span>E-mail.</span>planner@e1ct.co.kr</p>
+							</li>
+							<li>
+								<h3>On-dock</h3>
+								<p><span>Tel.</span>032)880-2353~4</p>
+								<p><span>Fax.</span>032)880-2383</p>
+								<p><span>E-mail.</span>ondock@e1ct.co.kr</p>
+							</li>
+							<li>
+								<h3>Center</h3>
+								<p><span>Tel.</span>032)880-2331~2</p>
+								<p><span>Fax.</span>032)880-2383</p>
+								<p><span>E-mail.</span>center@e1ct.co.kr</p>
+							</li>
+							<li>
+								<h3 th:text="#{company.organization.customs}">세관</h3>
+								<p><span>Tel.</span>032)880-2362</p>
+								<p><span>Fax.</span>032)880-2363</p>
+								<p><span>E-mail.</span>shlee2@e1ct.co.kr</p>
+							</li>
+							<li>
+								<h3 th:text="#{company.organization.calculate}">정산</h3>
+								<p><span>Tel.</span>032)880-2351</p>
+								<p><span>Fax.</span>032)880-2380</p>
+								<p><span>E-mail.</span>account@e1ct.co.kr</p>
+							</li>
+							<li>
+								<h3 th:text="#{company.organization.cfsincome}">CFS수입</h3>
+								<p><span>Tel.</span>032)880-2356, 2361</p>
+								<p><span>Fax.</span>032)880-2359</p>
+								<p><span>E-mail.</span>cfse1@e1ct.co.kr</p>
+							</li>
+							<li>
+								<h3 th:text="#{company.organization.cfsexport}">CFS수출</h3>
+								<p><span>Tel.</span>032)880-2357~8</p>
+								<p><span>Fax.</span>032)880-2359</p>
+								<p><span>E-mail.</span>cfse1@e1ct.co.kr</p>
+							</li>
+							<li>
+								<h3 th:text="#{company.organization.3pl}">3PL</h3>
+								<p><span>Tel.</span>032)880-2371~3</p>
+								<p><span>Fax.</span>032)880-2375</p>
+								<p><span>E-mail.</span>cfs@e1ct.co.kr</p>
+							</li>
+							<li>
+								<h3 th:text="#{company.organization.sales}">영업</h3>
+								<p><span>Tel.</span>032)880-2310</p>
+								<p><span>Fax.</span>032)880-2381</p>
+								<p><span>E-mail.</span>marketing@e1ct.co.kr</p>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div> 
+		</section>
+	</div>
+</html>

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TOperRepository">
+
+	<select id="findOperCdListForAnonymousAndManager" parameterType="kr.co.e1ct.vo.TOperVo" resultType="java.lang.String">
+		<![CDATA[
+			SELECT distinct(oper_cd) as oper_cd FROM T_OPER Order by oper_cd ASC
+		]]>
+	</select>
+	
+	<select id="codeShipperData" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TOperVo">
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				(
+				SELECT
+					T.*,
+					ROWNUM AS RNUM
+				FROM
+					(
+					SELECT
+						oper_cd,
+						NVL( oper_enm, '-' ) oper_enm,
+						NVL( oper_knm, '-' ) oper_knm
+					FROM
+						T_OPER
+					WHERE
+						oper_cd NOT IN ( 'ZZZ', 'TTT', 'SEE', 'SIC', 'CFS' )
+		]]>
+		<if test="search != null and search != ''">
+			<![CDATA[
+						AND ${orderCd} LIKE '%' || #{search} || '%'
+			]]>
+		</if>
+		<![CDATA[
+					ORDER BY ${orderCd} 
+				) T
+			) TT
+			WHERE
+				RNUM > ( ${pageNumber} * ${pageSize} )
+				AND RNUM <= ( ${pageNumber} + 1 ) * ${pageSize}
+		]]>
+	</select>
+	
+	<select id="codeShipperDataCount" parameterType="kr.co.e1ct.vo.SearchVo" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT
+				count(*) CNT
+			FROM
+				T_OPER
+			WHERE
+				oper_cd NOT IN ( 'ZZZ', 'TTT', 'SEE', 'SIC', 'CFS' )
+		]]>
+		<if test="search != null and search != ''">
+		<![CDATA[
+				AND ${orderCd} LIKE '%' || #{search} || '%'
+		]]>
+	</if>
+	</select>
+	
+	<select id="copinoGateInInsOperList" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TOperVo">
+		<![CDATA[
+			SELECT
+				oper_cd,
+				nvl( oper_knm, '-' ) oper_knm,
+				nvl( web_cd, '' ) web_cd
+			FROM
+				t_oper
+			WHERE
+				oper_cd NOT IN ( 'ZZZ', 'TTT', 'SEE', 'SIC', 'CFS' )
+				AND NVL( web_cd, 'Y' ) = 'Y'
+			ORDER BY oper_cd ASC
+				
+		]]>
+	</select>
+	
+	<select id="findByOperCdAndGoutChk" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TOperVo">
+		<![CDATA[
+			SELECT * FROM t_oper WHERE oper_cd = #{operCd} AND gout_chk = 'A'
+		]]>
+	</select>
+	
+	<select id="findByOperCd" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TOperVo">
+		<![CDATA[
+			SELECT * FROM t_oper WHERE oper_cd = #{operCd}
+		]]>
+	</select>
+	
+	<select id="findOndockAndMvChkAndLocChkAndDoChkAndBkChkByOperCd" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TOperVo">
+		<![CDATA[
+			SELECT NVL(ondock, '') ondock, NVL(mv_chk, '') mv_chk, nvl(loc_chk, '') loc_chk, nvl(do_chk, '') do_chk, nvl(bk_chk, '') bk_chk
+			FROM t_oper
+			WHERE oper_cd = #{operCd}
+		]]>
+	</select>
+	
+	<select id="findOperChkByOperCd" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TOperVo">
+		<![CDATA[
+			SELECT NVL(oper_chk, 'N') oper_chk
+			FROM t_oper
+			WHERE oper_cd = #{operCd}
+		]]>
+	</select>
+	
+	<select id="copinoFindByOperCd" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TOperVo">
+		<![CDATA[
+			SELECT nvl(ondock, '') ondock, nvl(do_chk, '') do_chk, nvl(bk_chk, '') bk_chk, nvl(demur_chk, 'N') demur_chk, nvl( dosnd_chk, '' ) dosnd_chk
+			from t_oper
+			where oper_cd = #{operCd}
+		]]>
+	</select>
+	
+	<select id="findByOperCdAfterCopinoEnd" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TOperVo">
+		<![CDATA[
+			SELECT nvl(ondock, '') ondock, NVL(mv_chk, '') mv_chk, NVL(loc_chk, '') loc_chk, NVL(do_chk, '') do_chk, NVL(bk_chk, '') bk_chk, NVL(mgin_chk, '') mgin_chk, NVL(mginall_chk, '') mginall_chk, NVL(Igin_chk, '') igin_chk 
+		    FROM t_oper 
+		    WHERE oper_cd = #{operCd}
+		]]>
+	</select>
+	
+	<select id="findByOperCdAndBkChk" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TOperVo">
+		<![CDATA[
+			select * from t_oper where oper_cd = #{operCd} and bk_chk = 'Y'
+		]]>
+	</select>
+	
+	<select id="findDemurChk" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TOperVo">
+		<![CDATA[
+			select demur_chk from T_OPER where oper_cd = #{operCd}
+		]]>
+		
+	</select>
+</mapper>

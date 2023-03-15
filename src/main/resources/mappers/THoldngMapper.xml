@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.THoldngRepository">
+
+	<select id="findCdNmAndCdValByCntrNoAndDupNoAndHoldCdAndCdIdAndRelsDt" parameterType="kr.co.e1ct.vo.TCntrVo" resultType="kr.co.e1ct.vo.THoldngVo">
+		<![CDATA[
+			SELECT
+				CD_NM,
+				CD_VAL
+			FROM
+				T_HOLDNG,
+				T_CODE
+			WHERE
+				CNTR_NO = #{cntrNo}
+				AND DUP_NO = #{dupNo}
+				AND HOLD_CD = CD_VAL
+				AND CD_ID = 'D05'
+				AND RELS_DT IS NULL
+		]]>
+	</select>
+	
+	<select id="onDockHolding" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.THoldngVo">
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				(
+				SELECT
+					T.*,
+					ROWNUM AS RNUM
+				FROM
+					(
+						SELECT
+							NVL(h.cntr_no, '') cntr_no,
+							NVL(h.dup_no, 1) dup_no,
+							NVL(h.oper_cd, '') oper_cd,
+							NVL(h.sz_cd, '') sz_cd,
+							NVL(h.ty_cd, '') ty_cd,
+							NVL(h.y_tblock, '') y_tblock,
+							NVL(h.y_tbay, 0) y_tbay,
+							NVL(h.y_trow, 0) y_trow,
+							NVL(h.y_ttier, 0) y_ttier,
+							NVL(TO_CHAR(hold_dt, 'yyyy-mm-dd hh24:mi:ss'), '') hold_dt,
+							NVL(h.remark, '') remark,
+							NVL(cd_nm, '') cd_nm,
+							NVL(fm_cd, '') fm_cd
+						FROM
+							t_holdng h,
+							t_code c
+						WHERE
+							h.rels_dt IS NULL
+							AND c.cd_id = 'D05'
+							AND h.hold_cd = c.cd_val
+							AND oper_cd IN 
+		]]>
+		<foreach collection="operList" index="index" item="item" open="(" close=")" separator=",">
+			<![CDATA[
+								#{item}
+			]]>
+		</foreach>
+		<if test='search != null and search != ""'>
+			<![CDATA[
+							AND h.hold_cd = #{search}
+			]]>
+		</if>
+		<if test='szCd != null and szCd != ""'>
+			<if test='szCd == 20'>
+				<![CDATA[
+						AND SUBSTR( h.sz_cd, 1, 1 ) IN ( '2' ) 
+				]]>
+			</if>
+			<if test='szCd == 40'>
+				<![CDATA[
+						AND SUBSTR( h.sz_cd, 1, 1 ) IN ( '4' )
+				]]>
+			</if>
+			<if test='szCd == 45'>
+				<![CDATA[
+						AND SUBSTR( h.sz_cd, 1, 1 ) IN ( '9', 'L' )
+				]]>
+			</if>
+		</if>
+		<if test='cntrNo != null and cntrNo != ""'>
+			<![CDATA[
+							AND h.cntr_no = #{cntrNo}
+			]]>
+		</if>
+		<![CDATA[
+						ORDER BY 
+							h.cntr_no, 
+							h.sz_cd, 
+							h.ty_cd, 
+							h.hold_dt, 
+							h.y_tblock
+					) T ) TT
+			WHERE
+				RNUM > ( ${pageNumber} * ${pageSize} )
+				AND RNUM <= ( ${pageNumber} + 1 ) * ${pageSize}	
+		]]>
+	</select>
+	
+	<select id="onDockHoldingEntire" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.THoldngVo">
+		<![CDATA[
+			SELECT
+				NVL(h.cntr_no, '') cntr_no,
+				NVL(h.dup_no, 1) dup_no,
+				NVL(h.oper_cd, '') oper_cd,
+				NVL(h.sz_cd, '') sz_cd,
+				NVL(h.ty_cd, '') ty_cd,
+				NVL(h.y_tblock, '') y_tblock,
+				NVL(h.y_tbay, 0) y_tbay,
+				NVL(h.y_trow, 0) y_trow,
+				NVL(h.y_ttier, 0) y_ttier,
+				NVL(TO_CHAR(hold_dt, 'yyyy-mm-dd hh24:mi:ss'), '') hold_dt,
+				NVL(h.remark, '') remark,
+				NVL(cd_nm, '') cd_nm,
+				NVL(fm_cd, '') fm_cd
+			FROM
+				t_holdng h,
+				t_code c
+			WHERE
+				h.rels_dt IS NULL
+				AND c.cd_id = 'D05'
+				AND h.hold_cd = c.cd_val
+				AND oper_cd IN 
+		]]>
+		<foreach collection="operList" index="index" item="item" open="(" close=")" separator=",">
+			<![CDATA[
+					#{item}
+			]]>
+		</foreach>
+		<if test='search != null and search != ""'>
+			<![CDATA[
+				AND h.hold_cd = #{search}
+			]]>
+		</if>
+		<if test='cntrNo != null and cntrNo != ""'>
+			<![CDATA[
+				AND h.cntr_no = #{cntrNo}
+			]]>
+		</if>
+		<![CDATA[
+			ORDER BY 
+				h.cntr_no, 
+				h.sz_cd, 
+				h.ty_cd, 
+				h.hold_dt, 
+				h.y_tblock
+		]]>
+	</select>
+	
+	<select id="onDockHoldingCnt" parameterType="kr.co.e1ct.vo.SearchVo" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT
+				count(*)
+			FROM
+				t_holdng h,
+				t_code c
+			WHERE
+				h.rels_dt IS NULL
+				AND c.cd_id = 'D05'
+				AND h.hold_cd = c.cd_val
+				AND oper_cd IN 
+		]]>
+		<foreach collection="operList" index="index" item="item" open="(" close=")" separator=",">
+			<![CDATA[
+					#{item}
+			]]>
+		</foreach>
+		<if test='search != null and search != ""'>
+			<![CDATA[
+				AND h.hold_cd = #{search}
+			]]>
+		</if>
+		<if test='cntrNo != null and cntrNo != ""'>
+			<![CDATA[
+				AND h.cntr_no = #{cntrNo}
+			]]>
+		</if>
+	</select>
+	
+	<select id="findCountByCntrNoAndOperCdAndHoldCdAndIoCdAndRelsDt" parameterType="kr.co.e1ct.vo.SearchVo" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT count(*) FROM t_holdng WHERE cntr_no= #{cntrNo} AND oper_cd = #{operCd} AND hold_cd ='9' AND io_cd='I' and rels_dt is null
+		]]>
+	</select>
+</mapper>

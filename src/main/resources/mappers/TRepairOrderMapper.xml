@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TRepairOrderRepository">
+
+	<insert id="saveDamageReq" parameterType="kr.co.e1ct.vo.SearchVo">
+		<![CDATA[
+			INSERT INTO t_repair_order (cntr_no, dup_no, request_dt, oper_cd, sz_cd, ty_cd, fm_cd, request_id) 
+			VALUES( #{cntrNo}, #{dupNo}, SYSDATE, #{operCd}, #{szCd}, #{tyCd}, #{fmCd}, #{user} )
+		]]>
+	</insert>	
+</mapper>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TTcorderRepository">
+
+	<select id="yardWorkCount" resultType="kr.co.e1ct.vo.TTcorderVo">
+		<![CDATA[
+			SELECT
+				COUNT(DISTINCT(DECODE(WK_CD, 'R', FR_LOCA || TRUCKER_CD, TO_LOCA || TRUCKER_CD ))) AS truck_cnt,
+				NVL( SUM(DECODE(wk_cd, 'R', 1)) , 0) AS in_cnt,
+				NVL( SUM(DECODE(wk_cd, 'D', 1)) , 0) AS out_cnt
+			FROM
+				T_TCORDER A,
+				T_YARDBLOCK B
+			WHERE
+				WK_CD IN ('R',
+				'D')
+				AND OK_DT IS NULL
+				AND A.OD_BLOCK = B.BLOCK
+		]]>
+	</select>
+	
+	<select id="terminalYardStackWorkStatus" resultType="kr.co.e1ct.vo.TTcorderVo">
+		<![CDATA[
+			SELECT od_block,wk_cd,count(od_block) cnt FROM t_tcorder  WHERE  ok_dt IS NULL and od_block is not null GROUP BY od_block,wk_cd
+		]]>
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+

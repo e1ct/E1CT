@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TCustomerHdrRepository">
+
+	<insert id="insertCustomer" parameterType="kr.co.e1ct.vo.TCustomerVo">
+		<![CDATA[
+			INSERT INTO t_customer_hdr (
+				CST_HDR_NO,
+				CST_NM,
+				CST_SNM,
+				CST_KIND,
+				CORP_FLAG,
+				CRT_DT,
+				CRT_EMP
+			) VALUES (
+				#{cstNo},
+				#{cstNm},
+				#{cstNm},
+				'A',
+				#{corpFlag},
+				SYSDATE,
+				'0000'
+			)
+		]]>
+	</insert>
+	
+	<update id="updateCustomer" parameterType="kr.co.e1ct.vo.TCustomerVo">
+		<![CDATA[
+			UPDATE
+				t_customer_hdr
+			SET
+				CST_KIND = 'A',
+				CORP_FLAG = #{corpFlag}
+			WHERE
+				CST_HDR_NO = #{cstNo}
+		]]>
+	</update>
+</mapper>

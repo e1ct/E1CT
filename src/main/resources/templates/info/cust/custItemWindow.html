@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+	<head>
+	    <meta charset="UTF-8" />
+	    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+	    
+	    <meta name="_csrf" th:content="${_csrf.token}">
+	    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+	    
+	    <meta http-equiv="X-UA-Compatible" content="IE=10" />
+	    
+	    <!-- 공통으로 쓰이는 css파일을넣는다.-->
+	    <link rel="stylesheet" href="/static/lib/air-datepicker/css/datepicker.min.css" />
+	    <link rel="stylesheet" href="/static/lib/iziModal/css/iziModal.css" />
+	    <link rel="stylesheet" href="/static/common/css/info.css"/>
+	    <!-- 컨텐츠페이지의 CSS 영역이 들어감 -->
+	    <!-- 공통으로 쓰이는 css파일을넣는다.-->
+	    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+	    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	    <script src="/static/lib/air-datepicker/js/datepicker.js"></script>
+	    <script src="/static/lib/air-datepicker/js/i18n/datepicker.en.js"></script>
+	    <script src="/static/lib/moment/moment.min.js"></script>
+	    <script src="/static/lib/iziModal/js/iziModal.js"></script>
+	    <script src="/static/common/js/function.js"></script>
+	    <!-- 컨텐츠페이지의 스크립트 영역이 들어감 -->
+	</head>
+
+	<body>
+		<section id="info_section">
+			
+			<form name="frm" method="post" action="/info/cust/custItemWindowSave" onSubmit="return check();">
+				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+				<div class="tb_hd">
+					<div class="btn_right">
+						<a id="saveBtn" href="#" th:text="'등록'"></a>
+					</div>
+				</div>
+				
+				<div class="tb_tmnl">
+					<table>
+						<tbody>
+							<tr>
+								<th th:text="'MRN'"></th>
+								<td th:text="${data.mrn}"></td>
+								<th th:text="'MSN'"></th>
+								<td th:text="${data.msn}"></td>
+								<th th:text="'HSN'"></th>
+								<td th:text="${data.hsn}"></td>
+								<th th:text="'Cntr No.'"></th>
+								<td th:text="${data.cntrNo}"></td>
+							</tr>
+							<tr>
+								<th th:text="'란'"></th>
+								<td th:text="${data.space}"></td>
+								<th th:text="'Oper'"></th>
+								<td th:text="${data.operCd}"></td>
+								<th th:text="'검사방법'"></th>
+								<td th:if="${data.inspType} == 1" th:text="'앞면발췌'"></td>
+								<td th:if="${data.inspType} == 2" th:text="'내장(통로)발췌'"></td>
+								<td th:if="${data.inspType} == 3" th:text="'전량적출'"></td>
+								<td th:if="${data.inspType} == 4" th:text="'기타(분석검사)'"></td>
+								<td th:if="${data.inspType} == 5" th:text="'내장통로발췌'"></td>
+								<td th:if="${data.inspType} == 6" th:text="'내장발췌'"></td>
+								<td th:if="${data.inspType} == 7" th:text="'X-ray'"></td>
+								<th th:text="'ISO'"></th>
+								<td th:text="${data.iso}"></td>
+							</tr>
+						</tbody>
+					</table>
+					<br/>
+					<table id="t1">
+						<thead>
+							<tr>
+								<th>
+									<a href="#" th:onclick="javascript:addRow('t1', 'tb1')" th:text="'추가'"></a>
+								</th>
+								<th th:colspan="7" th:text="'* 검사참관신청여부 입력에 거짓 입력시 그에 따른 모든 책임은 신청 기관에 있습니다.'"></th>
+							</tr>
+							<tr>
+								<th th:text="'품명'"></th>
+								<th th:text="'단위'"></th>
+								<th th:text="'수량'"></th>
+								<th th:text="'중량'"></th>
+								<th th:text="'Model No.'"></th>
+								<th th:text="'Car Ton No.'"></th>
+								<th th:text="'검사참관여부'"></th>
+								<th th:text="'삭제'"></th>
+							</tr>
+						</thead>
+						<tbody id="tb1">
+							<tr th:each="item, i:${itemList}">
+								<td>
+									<input type="text" name="itemNm" maxlength="50" th:value="${item.itemNm}">
+								</td>
+								<td>
+									<input type="text" name="unit" maxlength="3" th:value="${item.unit}">
+								</td>
+								<td>
+									<input type="text" name="qty" maxlength="4" th:value="${item.qty}">
+								</td>
+								<td>
+									<input type="text" name="weight" maxlength="10" th:value="${item.weight}">
+								</td>
+								<td>
+									<input type="text" name="modelNo" maxlength="50" th:value="${item.modelNo}">
+								</td>
+								<td>
+									<input type="text" name="cartonNo" maxlength="5" th:value="${item.cartonNo}">
+								</td>
+								<td>
+									<select name="packageNo">
+										<option value="1" th:selected="${item.packageNo} == 1 ? 'true'" th:text="'미신청'"></option>
+										<option value="2" th:selected="${item.packageNo} == 2 ? 'true'" th:text="'화주'"></option>
+										<option value="3" th:selected="${item.packageNo} == 3 ? 'true'" th:text="'관세사'"></option>
+										<option value="4" th:selected="${item.packageNo} == 4 ? 'true'" th:text="'포워더'"></option>
+									</select>
+								</td>
+								<td>
+									<a href="#" th:onclick="javascript:goDelete([[${item.itemId}]], [[${searchParams.custId}]])" th:text="'삭제'"></a>
+								</td>
+								<input type="hidden" name="itemId" th:value="${item.itemId}">
+							</tr>
+							<input type="hidden" name="custId" th:value="${searchParams.custId}">
+						</tbody>
+					</table>
+				</div>
+			</form>
+		</section>
+		
+		<script type="text/javascript">
+			$(function() {
+				$("#saveBtn").click(function() {
+					document.frm.submit();
+				});
+			});
+			
+			function goDelete(str, cust_id) {
+				if (confirm("해당 품목을 삭제하시겠습니까?")) {
+					send( '/info/cust/custItemWindowDelete', {
+						'itemId': str,
+						'custId': cust_id
+					}, function(d) {
+						if( d.code > 0 ) {
+							alert( '처리 되었습니다.' );
+							location.reload();
+						} else {
+							alert( '처리중 오류가 발생하였습니다. 잠시 후 다시 시도해주세요.' );
+						}
+					}, 'POST');
+				}
+			}
+			
+			function check() {
+
+				var frm = document.frm;		
+				if (frm.item.length == undefined ) {
+					
+					if (frm.item.value == "") {
+						alert("품명을 입력해 주십시오.");
+						frm.item.focus();
+						return false;
+					}
+					
+					if (frm.unit.value == "") {
+						alert("단위을 입력해 주십시오.");
+						frm.unit.focus();
+						return false;
+					}
+					if (frm.qty.value == "") {
+							alert("수량을 입력해 주십시오.");
+							frm.qty.focus();
+							return false;
+						}		
+							
+					if (frm.weight.value == "" ) {
+						alert("중량을 입력해 주십시오.");
+						frm.weight.focus();
+						return false;
+					}
+				
+					if (frm.modelNo.value == "") {
+						alert("Model No를 입력해 주십시오.");
+						frm.modelNo.focus();
+						return false;
+					}
+					if (frm.carNo.value == "") {
+						alert("Car Ton No를 입력해 주십시오.");
+						frm.carNo.focus();
+						return false;
+					}
+					if (frm.packNo.value == "") {
+						alert("Package No를 입력해 주십시오.");
+						frm.packNo.focus();
+						return false;
+					}	
+				
+				} else {
+					
+					for (var i = 0; i < frm.item.length ; i++) {
+						if (frm.item[i].value == "") {
+							alert("품명을 입력해 주십시오.");
+							frm.item[i].focus();
+							return false;
+						}
+						
+						if (frm.unit[i].value == "") {
+							alert("단위를 입력해 주십시오.");
+							frm.unit[i].focus();
+							return false;
+						}
+						
+						if (frm.qty[i].value == "") {
+							alert("수량을 입력해 주십시오.");
+							frm.qty[i].focus();
+							return false;
+						}							
+						
+						if (frm.weight[i].value == "" ) {
+							alert("중량을 입력 주십시오.");
+							frm.weight[i].focus();
+							return false;
+						}
+				
+						if (frm.modelNo[i].value == "") {
+							alert("Model No를 입력해 주십시오.");
+							frm.modelNo[i].focus();
+							return false;
+						}
+						
+						if (frm.carNo[i].value == "") {
+							alert("Car Ton No를 입력해 주십시오.");
+							frm.carNo[i].focus();
+							return false;
+						}	
+						
+						if (frm.packNo[i].value == "") {
+							alert("Package No를 입력해 주십시오.");
+							frm.packNo[i].focus();
+							return false;
+						}	
+					}
+				}
+			}
+			
+			function deleteRow(trid) {	
+				var bodyObj = document.getElementById ("tb1");
+				var trObj = document.getElementById (trid);	
+				bodyObj.removeChild(trObj);	
+			}
+			
+			function addRow(tName, bName){
+				var frm = document.frm;	
+				
+				//for (var i = 0; i < arryStr.length ; i++) {	
+					var tblObj = document.getElementById (tName);
+					var bodyObj = document.getElementById (bName);
+					var rowNum = bodyObj.rows.length;
+					var newRow = document.createElement ("TR");
+				
+						// newRow.setAttribute("id", "r_" 이걸로 검색		
+					newRow.setAttribute("id", "r_" + rowNum );	
+					newRow.setAttribute("bgColor", "white");
+					newRow.setAttribute("align", "center" );	
+					newRow.setAttribute("height", "25");			
+				/*
+					var td1 = document.createElement ("TD");		
+					var newText1 =  "<input type='checkbox' name='chk' value='1'>"; 
+					td1.innerHTML = newText1;		
+					newRow.appendChild(td1);
+				*/
+					var td1 = document.createElement ("TD");
+					var newText1 =  "<input type='text' name='itemNm' maxlength='50' OnBlur='javascript:this.value = this.value.toUpperCase();'>"; 
+						  newText1 = newText1 + "<input type='hidden' name='itemId' value='0'>";
+					td1.innerHTML = newText1;		
+					newRow.appendChild(td1);
+					
+					var td2 = document.createElement ("TD");
+					var newText2 =  "<input type='text' name='unit' maxlength='3'  OnBlur='javascript:this.value = this.value.toUpperCase();'>"; 
+					td2.innerHTML = newText2;		
+					newRow.appendChild(td2);
+					
+					var td3 = document.createElement ("TD");
+					var newText3 =  "<input type='text' name='qty' maxlength='8'>"; 
+					td3.innerHTML = newText3;		
+					newRow.appendChild(td3);
+					
+					var td4 = document.createElement ("TD");
+					var newText4 =  "<input type='text' name='weight' maxlength='10' OnBlur='javascript:this.value = this.value.toUpperCase();'>"; 
+					td4.innerHTML = newText4;		
+					newRow.appendChild(td4);
+					
+					var td5 = document.createElement ("TD");
+					var newText5 =  "<input type='text' name='modelNo' maxlength='50' OnBlur='javascript:this.value = this.value.toUpperCase();'>"; 
+					td5.innerHTML = newText5;		
+					newRow.appendChild(td5);
+					
+					var td6 = document.createElement ("TD");
+					var newText6 =  "<input type='text' name='cartonNo' maxlength='7' OnBlur='javascript:this.value = this.value.toUpperCase();'>"; 
+					td6.innerHTML = newText6;		
+					newRow.appendChild(td6);
+							
+					var td7 = document.createElement ("TD");
+					
+					//var newText7 =  "<input type='text' size='10' name='packNo' maxlength='5' OnBlur='javascript:this.value = this.value.toUpperCase();'  style='height:20;'>"; 
+					var newText7 =  "<select name='packageNo'>"; 
+						  newText7 = newText7 + "<option value='1'>미신청</option>";
+						  newText7 = newText7 + "<option value='2'>화주</option>";
+						  newText7 = newText7 + "<option value='3'>관세사</option>";
+						  newText7 = newText7 + "<option value='4'>포워더</option>";
+						  newText7 = newText7 + "</select>";
+							
+					td7.innerHTML = newText7;		
+					newRow.appendChild(td7);
+					
+					var td8 = document.createElement ("TD");		
+					var newText8 =  "<a href=javascript:deleteRow('r_" + rowNum  + "');>삭제</a>"; 		
+					td8.innerHTML = newText8;
+					newRow.appendChild(td8);
+				
+					bodyObj.appendChild(newRow);			
+			}
+		</script>
+	</body>
+</html>

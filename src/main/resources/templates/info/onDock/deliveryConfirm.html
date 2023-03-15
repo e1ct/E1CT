@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/popup">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content">
+	
+		<section id="info_section">
+			<form id="form" name="do_save">
+				<h1 class="title">Delivery Order 반출처리</h1>
+				<div class="tb_hd">
+					<div class="btn_left">
+						
+					</div>
+					<div class="btn_right" th:if="${selfTrans} == null">
+						<input type="checkbox" name="line" value="IT" checked onclick="javascript:chkTrans('IT');"> 라인운송
+						<input type="checkbox" name="self" value="ST" onclick="javascript:chkTrans('ST')"> 자가운송 
+					</div>
+					<div class="btn_right" th:unless="${selfTrans} == null">
+						<input type="checkbox" name="line" value="IT" onclick="javascript:chkTrans('IT')" th:checked="${selfTrans.selfTrans} == 'IT' ? 'true'"> 라인운송
+						<input type="checkbox" name="self" value="ST" onclick="javascript:chkTrans('ST')" th:checked="${selfTrans.selfTrans} == 'ST' ? 'true'"> 자가운송
+					</div>
+				</div>
+				
+				<div class="tb_hd" th:if="${searchParams.gubun} == 'N'">
+					<div class="btn_left">
+						<a href="javascript:menu_all()">전체선택</a>
+						<a href="javascript:menu_cancel()">전체해제</a>
+						<a th:onclick="javascript:menu_action([[${demurChk}]])" style="background-color: #eb6800; color: white;">D/O반출처리</a>
+					</div>
+					<div class="btn_right" th:if="${demurChk} == 'Y'">
+						<label for="">반출기간 : </label>
+						<input type="text" class="datepicker-here" data-language="en" name="date1" id="date1">
+						<input type="text" name="date2" id="date2" value="00:00">
+						<a onclick="javascript:dateCheck()">[적용]</a>
+					</div>
+				</div>
+				
+				<div class="tb_tmnl">
+				
+					<input name="chkCntr" type="hidden" id="chkCntr">
+					<input name="chkOutDate" type="hidden" id="chkOutDate">
+					<input name="chkCount" type="hidden" id="chkCount">
+					<input name="nonCntr" type="hidden" id="nonCntr">
+					<input name="nonCount" type="hidden" id="nonCount">	
+					<input name="do" type="hidden" th:value="${searchParams.blNo}">
+					<input name="blNo" type="hidden" id="bl_no" th:value="${searchParams.blNo}">	
+					<input name="shipCd" type="hidden" th:value="${searchParams.shipCd}">
+					<input name="callNo" type="hidden" th:value="${searchParams.callNo}">
+					<input name="callYy" type="hidden" th:value="${searchParams.callYy}">
+					<table>
+						<thead>
+							<tr>
+								<th>번호</th>
+								<th>B/L No.</th>
+								<th>D/O No.</th>
+								<th>컨테이너번호</th>
+								<th th:if="${demurChk} == 'Y'">반출기간</th>
+								<th>D/O 해제일시</th>
+								<th>해제</th>
+							</tr>
+						</thead>
+						<tbody id="tbody">
+							<tr th:if="!${#lists.isEmpty(list)}" th:each="list, i:${list}">
+							
+								<td th:text="${i.index}+1"></td>
+								<td th:text="${searchParams.blNo}"></td>
+								<td>
+									<input name="oper_do" type="text" th:value="${searchParams.blNo}" maxlength="18">
+								</td>
+								<td>
+									<b th:text="${list.cntrNo}"></b>
+									<input type="hidden" name="cntrNo" th:value="${list.cntrNo}">
+								</td>
+								<div th:remove="tag" th:if="${list.rs1} == null">
+									<td th:if="${demurChk} == 'Y'">
+										<input type="text" name="outDtHr" th:value="${list.outDt}" maxlength="10" style="width: 49%; text-align: center;">
+										<input type="text" name="outDtMn" th:value="'00:00'" maxlength="5" style="width: 49%; text-align: center;">
+									</td>
+									<div th:if="${list.rss1} == 'D'" th:remove="tag">
+										<td colspan="2" style="color: blue;">
+											반출예정 또는 반출 컨테이너
+											<input type="checkbox" name="checkbox" style="display: none">
+										</td>
+									</div>
+									<div th:unless="${list.rss1} == 'D'" th:remove="tag">
+										<td></td>
+										<td>
+											<input type="checkbox" name="checkbox" th:value="${list.cntrNo}">
+										</td>
+									</div>
+								</div>
+								<div th:remove="tag" th:unless="${list.rs1} == null">
+									<td th:if="${demurChk} == 'Y'">
+										<input type="text" name="outDtHr" th:value="${#strings.substring(list.rs1.closingDt, 0, 11)}" maxlength="10" style="width: 49%; text-align: center;" >
+										<input type="text" name="outDtMn" th:value="${#strings.substring(list.rs1.closingDt, 11)}" maxlength="5" style="width: 49%; text-align: center;">
+									</td>
+									<div th:if="${list.rs1.copinoYn} != 'Y' and ( ${list.rs1.curStat} == 'IY' or ${list.rs1.curStat} == 'IL' or ${list.rs1.curStat} == 'IW' or ${list.rs1.curStat} == 'IB' or ${list.rs1.curStat} == 'IO' or ${list.rs1.curStat} == 'IZ' ) ">
+										<td th:text="${list.rs1.rlsDt}"></td>
+										<td th:if="${list.rs1.rlsDt} != null and ${list.rs1.rlsDt} != ''">
+											<input type="checkbox" name="checkbox" th:value="${list.cntrNo}" checked>
+										</td>
+										<td th:unless="${list.rs1.rlsDt} != null and ${list.rs1.rlsDt} != ''">
+											<input type="checkbox" name="checkbox" th:value="${list.cntrNo}">
+										</td>
+									</div>
+									<div th:if="!(${list.rs1.copinoYn} != 'Y' and ( ${list.rs1.curStat} == 'IY' or ${list.rs1.curStat} == 'IL' or ${list.rs1.curStat} == 'IW' or ${list.rs1.curStat} == 'IB' or ${list.rs1.curStat} == 'IO' or ${list.rs1.curStat} == 'IZ' )) and ${list.rs1.curStat} == 'IP'">
+										<td colspan="2">반출상차요청인 컨테이너</td>
+										<input name="checkbox" type="checkbox" style="display: none;">
+									</div>
+									<div th:if="!(${list.rs1.copinoYn} != 'Y' and ( ${list.rs1.curStat} == 'IY' or ${list.rs1.curStat} == 'IL' or ${list.rs1.curStat} == 'IW' or ${list.rs1.curStat} == 'IB' or ${list.rs1.curStat} == 'IO' or ${list.rs1.curStat} == 'IZ' )) and ${list.rs1.curStat} != 'IP'">
+										<td colspan="2">반출예정 또는 반출 컨테이너</td>
+										<input name="checkbox" type="checkbox" style="display: none;">
+									</div>
+								</div>
+							</tr>
+							<div th:if="${#lists.isEmpty(list)}" th:remove="tag">
+								<tr>
+									<td th:colspan="11">조회된 데이터가 존재하지 않습니다.</td>
+								</tr>
+							</div>
+						</tbody>
+					</table>
+				
+				</div>
+			</form>
+			<script type="text/javascript">
+				$(function() {
+					var rtnDt = '[[${rtnDt.rtnDt}]]';
+					
+					if( rtnDt ) {
+						$("#date1").val( moment( rtnDt, 'YYYYMMDD').format('YYYY-MM-DD') );	
+					} 
+				});
+				
+				var OnTop = true;
+				function ChangeOnTop() {
+					if (OnTop) OnTop = false;
+					else if (!OnTop) {
+						OnTop = true;
+						self.focus();
+					}
+				}
+
+				function FocusMe() {
+					if (OnTop) setTimeout("self.focus()",250);
+				}
+		 
+				function menu_cancel() {
+					var i=0;
+					while (i < document.do_save.elements.length) {
+						if (document.do_save.elements[i].name == 'checkbox') {
+							document.do_save.elements[i].checked = false;
+						}
+						i++;
+					}
+				}
+				
+				function menu_all() {
+					var i=0;
+					while (i < document.do_save.elements.length) {
+						if (document.do_save.elements[i].name == 'checkbox') {
+							document.do_save.elements[i].checked = true;
+						}
+						i++;
+					}
+				}
+
+				function menu_action(gubun) {
+					var chkCntr = "";
+					var chkCount = 0;
+					var chkOutDate = "";
+					var nonCntr = "";
+					var nonCount = 0;
+			
+					// 단일값 즉, Row가 1개일때 적용
+					if (document.do_save.checkbox.length == undefined){
+						if (document.do_save.checkbox.checked) {
+							// 선사에 따라 다름. 디머리지 적용 여부에 따라
+							if (gubun == "Y" ) {
+								if (document.do_save.outDtHr.value == "" || document.do_save.outDtMn.value == "") {
+									alert("반출기간(예:2008-12-30 12:00)을 입력해 주세요.")
+									document.do_save.outDtHr.focus();
+									return;
+								}
+							}
+							
+							chkCntr += document.do_save.checkbox.value + ",";
+							//chkOper += document.do_save.oper_cd1.value + ",";
+							if (gubun == "Y" ) {
+								chkOutDate += document.do_save.outDtHr.value.replace("-","") + document.do_save.outDtMn.value.replace(":","") + ",";
+							}
+							
+							chkCount++;	// 체크된 컨 수
+						} else {
+							nonCntr += document.do_save.checkbox.value + ",";
+							//nonOper += document.do_save.oper_cd1.value + ",";
+							nonCount++;	// 체크되지 않은 컨 수
+						}
+						
+						// 배열일때 적용	즉, Row가 2개이상일? 적용
+					} else {
+						for (var i = 0; i < document.do_save.checkbox.length; i++) {
+							if (document.do_save.checkbox[i].checked) {
+								// 선사에 따라 다름. 디머리지 적용 여부에 따라
+								if (gubun == "Y" ) {
+									if (document.do_save.outDtHr[i].value == "" || document.do_save.outDtMn[i].value == "") {
+										alert("반출기간(예:2008-12-30 12:00)을 입력해 주세요.")
+										return;
+									}
+								}
+								
+								chkCntr += document.do_save.checkbox[i].value + ",";
+								//chkOper += document.do_save.oper_cd1[i].value + ",";
+								
+								if (gubun == "Y" ) {
+									chkOutDate += document.do_save.outDtHr[i].value.replace("-","") + document.do_save.outDtMn[i].value.replace(":","") + ",";
+								}
+								
+								chkCount++;	// 체크된 컨 수
+							} else {
+								nonCntr += document.do_save.checkbox[i].value + ",";
+								//nonOper += document.do_save.oper_cd1[i].value + ",";
+								nonCount++;	// 체크되지 않은 컨 수
+							}
+						}
+					}
+					
+					document.do_save.chkCntr.value = chkCntr;
+					document.do_save.chkCount.value = chkCount;
+					//document.do_save.chkOper.value = chkOper;
+					
+					if (gubun == "Y" ) {
+						document.do_save.chkOutDate.value = chkOutDate.replace("-","");	//반출기간
+					}
+					
+					document.do_save.nonCntr.value = nonCntr;
+					document.do_save.nonCount.value = nonCount;
+					//document.do_save.nonOper.value = nonOper;
+					
+					// 최종 전송
+					send( '/info/onDock/deliveryConfirm/save', $("#form").serializeObject(), function(d) {
+						alert( d.msg );
+						if( d.code == 200 ) {
+							location.reload();
+						}
+					})
+				}
+				
+				function dateCheck() {
+					var frm = document.do_save;
+					
+					if (frm.date2.value.length < 5 ) {
+						alert("시간형식은 5자리입니다.\n\n (예) 13:00");
+						frm.date2.focus();
+						return;
+					}
+					
+					var hr = frm.date2.value.substring(0,2);
+					var mi = frm.date2.value.substring(3,5);
+					
+					// 숫자타입 체크
+					if (hr > 23 ) {
+						alert("시간 입력이 잘못되었습니다. (24시간제) ");
+						frm.date2.focus();
+						return;
+					}
+					
+					if (mi > 59 ) {
+						alert("분 입력이 잘못되었습니다. ");
+						frm.date2.focus();
+						return;
+					}
+					
+					// Row 갯수 구하기
+					var cnt = $("#tbody").children("tr").length;
+					
+					if ( cnt == "1" ) {
+						document.do_save.outDtHr.value = document.do_save.date1.value;
+						document.do_save.outDtMn.value = document.do_save.date2.value;
+					} else {
+						for(i = 0; i < cnt; i++) {
+							document.do_save.outDtHr[i].value = document.do_save.date1.value;
+							document.do_save.outDtMn[i].value = document.do_save.date2.value;
+						}
+					}
+				}
+				
+				function chkTrans(str) {
+					if (str == "IT") {
+						document.do_save.self.checked = false;
+						document.do_save.line.checked = true;
+					} else {
+						document.do_save.self.checked = true;
+						document.do_save.line.checked = false;
+					}
+				}
+			</script>
+		</section>
+		
+	</div>
+</html>

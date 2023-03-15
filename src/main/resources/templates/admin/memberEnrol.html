@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.w3.org/1999/xhtml"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	layout:decorator="layout/adminLayout">
+	<body>
+		<section layout:fragment="content" id="main-content">
+			<section class="wrapper">
+				<div class="row mt">
+					<div class="col-lg-12">
+						<div class="form-panel">
+							<h4><i class="fa fa-angle-right"></i> 회원 관리</h4>
+							<form class="form-horizontal style-form" id="form" enctype="multipart/form-data" method="POST" action="/admin/category/save">
+				              	<div class="form-group">
+				              		<label class="col-sm-2 control-label">회원 ID</label>
+				              		<div class="col-sm-10">
+				              			<input type="text" name="empNo" class="form-control">
+				              		</div>
+				              	</div>
+				              	<div class="form-group">
+				              		<label class="col-sm-2 control-label">비밀번호</label>
+				              		<div class="col-sm-10">
+				              			<input type="text" name="empPwd" class="form-control" th:value="${data} != null ? ${data.mTitle} : ''" maxlength="20">
+				              		</div>
+				              	</div>
+				              	<div class="form-group">
+				              		<label class="col-sm-2 control-label">그룹</label>
+				              		<div class="col-sm-4">
+				              			<select name="jo" class="form-control" >
+				              				<option value="O">선사</option>
+				              				<option value="T">운송사</option>													
+											<option value="M">검수업체</option>
+											<option value="P">수리업체</option>
+											<option value="C">관세사</option>													
+											<option value="I">검역대행</option>
+											<option value="G">E1CT(일반)</option>
+											<option value="E">E1CT(장비)</option>													
+											<option value="S">관리자</option>
+				              			</select>
+				              		</div>
+				              		<label class="col-sm-2 control-label">대표선사</label>
+				              		<div class="col-sm-4">
+				              			<input type="text" class="form-control" name="operCd" maxlength="3">
+				              		</div>
+				              	</div>
+				              	<div class="form-group">
+				              		<label class="col-sm-2 control-label">신청기관</label>
+				              		<div class="col-sm-10">
+				              			<input type="text" class="form-control" name="empComp" maxlength="25">
+				              		</div>
+				              	</div>
+				              	<div class="form-group">
+				              		<label class="col-sm-2 control-label">담당자명</label>
+				              		<div class="col-sm-10">
+				              			<input type="text" name="empNm" class="form-control" th:value="${data} != null ? ${data.mContent} : ''" maxlength="10">
+				              		</div>
+				              	</div>
+				              	<div class="form-group">
+				              		<label class="col-sm-2 control-label">연락처</label>
+				              		<div class="col-sm-10">
+				              			<input type="text" class="form-control" name="empTel" maxlength="11">
+				              		</div>
+				              	</div>
+				              	<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+				                <div class="form-group">
+				                	<div class="col-lg-offset-2 col-lg-10">
+				                		<button class="btn btn-theme04 pull-right" type="button">취소</button>
+				                		<button class="btn btn-theme pull-right" type="button" id="saveBtn">저장</button>
+				                	</div>
+				                </div>
+				            </form>
+				            
+				            <script type="text/javascript">
+				            	$("#saveBtn").click(function() {
+				            		var f = $("#form").serializeObject();
+				            		
+				            		if( f.empNo.trim() == "" ) {
+				            			alert( "ID를 입력하세요." );
+				            		} else if( f.empPwd.trim() == "" ) {
+				            			alert( "비밀번호를 입력하세요" );
+				            		} else if( f.empComp.trim() == "" ) {
+				            			alert( "신청기관을 입력하세요" );
+				            		} else if( f.empNm.trim() == "" ) {
+				            			alert( "담당자명을 입력하세요" );
+				            		} else if( f.empTel.trim() == "" ) {
+				            			alert( "연락처를 입력하세요" );
+				            		} else if( f.jo == "O" && f.operCd.trim() == "" ) {
+				            			alert( "구분이 선사인 회원은 대표선사를 입력하셔야 합니다.")
+				            		} else {
+				            			$.ajax({
+				            				type:'POST',
+				            				url: '/admin/member/enrol/proc',
+				            				data: f,
+				            				success: function(d) {
+				            					console.log( d );
+				            					alert( d.msg );
+				            					if( d.code == 200 ) {
+				            						location.href="/admin/member";
+				            					}
+				            				}
+				            			});
+				            		}
+				            	});
+				            </script>
+						</div>
+					</div>
+				</div>
+			</section>
+		</section>
+	</body>
+</html>

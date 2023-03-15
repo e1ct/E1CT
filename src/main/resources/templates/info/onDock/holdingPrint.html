@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+	<style>
+			* {
+				font-size: 0.75rem;
+				-webkit-print-color-adjust: exact;
+				printer-colors: exact;
+				color-adjust: exact;
+			}
+			
+			table {
+				border-spacing: 0px;
+			}
+			
+			thead {
+				color: #fff;
+				background-color: #eb6800;
+			}
+			
+			@media print {
+				thead th {
+					color: #000;
+					border: 1px solid black;
+				}
+			}
+			
+			td {
+				border-left: 1px solid #aaa;
+				border-bottom: 1px solid #aaa;
+			}
+			
+			td:last-child {
+	 			border-right: 1px solid #aaa;
+			}
+		</style>
+	<table>
+		<thead>
+			<tr>
+				<th th:text="'No'"></th>
+				<th th:text="'컨테이너번호'"></th>
+				<th th:text="'주기'"></th>
+				<th th:text="'선사'"></th>
+				<th th:text="'Sz/Tp'"></th>
+				<th th:text="'F/M'"></th>
+				<th th:text="'야드위치'"></th>
+				<th th:text="'Holding 일시'"></th>
+				<th th:text="'Holding 사유'"></th>
+				<th th:text="'Remark'"></th>
+			</tr>
+		</thead>
+		<tbody th:if="${list} != null and ${#lists.size(list)} > 0">
+			<tr th:each="list, i:${list}">
+				<td th:text="${ searchParams.pageSize * searchParams.pageNumber + i.index + 1}"></td>
+				<td th:if="${list.yTblock} != null and ${list.yTblock} != '' 
+							and ${list.yTbay} != null and ${list.yTbay} != '' 
+							and ${list.yTrow} != null and ${list.yTrow} != '' 
+							and ${list.yTtier} != null and ${list.yTtier} != ''"
+					th:text="${list.cntrNo}"
+					th:onclick="javascript:cntrDetailModal([[${list.cntrNo}]])"></td>
+				<td th:unless="${list.yTblock} != null and ${list.yTblock} != '' 
+								and ${list.yTbay} != null and ${list.yTbay} != '' 
+								and ${list.yTrow} != null and ${list.yTrow} != '' 
+								and ${list.yTtier} != null and ${list.yTtier} != ''"
+					th:text="${list.cntrNo}"></td>
+					
+				<td th:text="${list.dupNo}"></td>
+				
+				<td th:text="${list.operCd}"></td>
+				
+				<td th:if="${list.szCd} != null and ${list.szCd} != '' and ${list.tyCd} != null and ${list.tyCd} != ''" th:text="${list.szCd} + '/' + ${list.tyCd}">
+				<td th:unless="${list.szCd} != null and ${list.szCd} != '' and ${list.tyCd} != null and ${list.tyCd} != ''"></td>
+				
+				<td th:text="${list.fmCd}"></td>
+				
+				<td th:if="${list.yTblock} != null and ${list.yTblock} != '' 
+							and ${list.yTbay} != null and ${list.yTbay} != '' 
+							and ${list.yTrow} != null and ${list.yTrow} != '' 
+							and ${list.yTtier} != null and ${list.yTtier} != ''"
+					th:text="${list.yTblock} + '-' + ${list.yTbay} + '-' + ${list.yTrow} + '-' + ${list.yTtier}"></td>
+				<td th:unless="${list.yTblock} != null and ${list.yTblock} != '' 
+							and ${list.yTbay} != null and ${list.yTbay} != '' 
+							and ${list.yTrow} != null and ${list.yTrow} != '' 
+							and ${list.yTtier} != null and ${list.yTtier} != ''"></td>
+					
+				<td th:text="${list.holdDt}"></td>
+				
+				<td th:text="${list.cdNm}"></td>
+				
+				<td th:text="${list.remark}"></td>
+			</tr>
+		</tbody>
+		<tbody th:unless="${list} != null and ${#lists.size(list)} > 0">
+			<tr>
+				<td th:colspan="9" th:text="'조회된 데이터가 존재하지 않습니다.'"></td>
+			</tr>
+		</tbody>
+	</table>
+		
+	<script type="text/javascript">
+		setTimeout( window.print(), 200 );				
+	</script>
+		
+</html>

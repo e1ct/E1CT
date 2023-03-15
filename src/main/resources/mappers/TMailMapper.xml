@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TMailRepository">
+
+	<select id="findByMailIdAndOperCd" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TMailVo">
+		<![CDATA[
+			SELECT * FROM t_mail WHERE mail_id = #{transId} AND oper_cd = #{operCd}
+		]]>
+	</select>
+	
+	<select id="findByOperCdAndMailIdAndLineCd" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TMailVo">
+		<![CDATA[
+			SELECT * FROM T_MAIL WHERE OPER_CD = #{operCd} AND MAIL_ID = #{transId} AND LINE_CD = 'LN'
+		]]>
+	</select>
+</mapper>

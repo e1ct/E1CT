@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TGateRepository">
+	<select id="cntrListCopino" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TGateVo">
+		<![CDATA[
+			SELECT
+				NVL(cntr_no, ' ') CNTR_NO, 
+				NVL(ship_cd, ' ') SHIP_CD, 
+				TO_CHAR(NVL(call_no, 0), '000') CALL_NO,  
+				NVL(call_yy, 0) CALL_YY, 
+				NVL(sz_cd, ' ') SZ_CD, 
+				NVL(ty_cd, ' ') TY_CD, 
+				NVL(fm_cd, ' ') FM_CD, 
+				NVL(weight, 0) WEIGHT, 
+				NVL(pod, ' ') POD, 
+				NVL(ov_h, 0) OV_H, 
+				NVL(ov_ws, 0) OV_WS, 
+				NVL(ov_wp, 0) OV_WP, 
+				NVL(ov_lf, 0) OV_LF, 
+				NVL(ov_lb, 0) OV_LB, 
+				NVL(temp, ' ') TEMP, 
+				NVL(imdg, ' ') IMDG, 
+				NVL(oper_cd, ' ') OPER_CD,  
+				NVL(TO_CHAR(rcv_dt, 'yyyy-mm-dd hh24:mi'), ' ') RCV_DT, 
+				NVL(trucker_cd, ' ') TRUCKER_CD, 
+				NVL(car_no, ' ') CAR_NO, 
+				NVL(bond_id, ' ') BOND_ID, 
+				IO_CD, 
+				NVL(temp_id, ' ') TEMP_ID,  
+				NVL(snd_id, ' ') SND_ID 
+			FROM
+				t_gate
+			WHERE
+				rcv_dt BETWEEN TO_DATE(#{searchStartDt}, 'YYYYMMDD') AND TO_DATE(#{searchStartDt}, 'YYYYMMDD') + 1
+				AND io_cd = 'I'
+				AND upd_cd IS NULL
+				AND (err_cd IS NULL
+				OR err_cd = '1'
+				OR err_cd = '2')
+	]]>
+	<if test="truckerCd != null and truckerCd != ''">
+		<![CDATA[
+			AND UPPER(trucker_cd) = UPPER( #{truckerCd} )
+		]]>
+	</if>
+	<if test="carNo != null and carNo != ''">
+		<![CDATA[
+			AND car_no =#{carNo}
+		]]>
+	</if>
+	<if test="cntrNo != null and cntrNo != ''">
+		<![CDATA[
+			AND UPPER( cntr_no ) = UPPER(#{cntrNo})
+		]]>
+	</if>
+	<![CDATA[
+			UNION ALL
+			SELECT
+				t_gate.cntr_no CNTR_NO,
+				t_gate.ship_cd SHIP_CD,
+				TO_CHAR(NVL(t_gate.call_no, 0), '000') CALL_NO,
+				t_gate.call_yy CALL_YY,
+				t_gate.sz_cd SZ_CD,
+				t_gate.ty_cd TY_CD,
+				t_gate.fm_cd FM_CD,
+				t_cntr.weight WEIGHT,
+				t_cntr.pod POD,
+				t_cntr.ov_h OV_H,
+				t_cntr.ov_ws OV_WS,
+				t_cntr.ov_wp OV_WP,
+				t_cntr.ov_lf OV_LF,
+				t_cntr.ov_lb OV_LB,
+				t_cntr.temp TEMP,
+				t_cntr.imdg IMDG,
+				t_gate.oper_cd OPER_CD,
+				NVL(TO_CHAR(t_gate.rcv_dt, 'yyyy-mm-dd hh24:mi'), ' ') RCV_DT,
+				t_gate.trucker_cd TRUCKER_CD,
+				t_gate.car_no CAR_NO,
+				t_gate.bond_id BOND_ID,
+				t_gate.io_cd IO_CD,
+				t_cntr.temp_id TEMP_ID,
+				NVL(snd_id, ' ') SND_ID
+			FROM
+				t_gate,
+				t_cntr
+			WHERE
+				t_gate.rcv_dt BETWEEN TO_DATE(#{searchStartDt}, 'YYYYMMDD') AND TO_DATE(#{searchStartDt}, 'YYYYMMDD') + 1
+				AND t_gate.io_cd = 'O'
+				AND t_gate.cntr_no = t_cntr.cntr_no
+				AND t_gate.ship_cd = t_cntr.ship_cd
+				AND t_gate.call_no = t_cntr.call_no
+				AND t_gate.call_yy = t_cntr.call_yy
+				AND (t_cntr.cur_stat IN ('IY',
+				'IB',
+				'IO',
+				'IZ',
+				'IW')
+				OR (t_cntr.cur_stat IN ('XY',
+				'XL',
+				'XW') AND t_cntr.rtn_cd = 'C')) 
+			]]>
+		<if test="truckerCd != null and truckerCd != ''">
+			<![CDATA[
+				AND UPPER( t_gate.trucker_cd  ) = UPPER( #{truckerCd} )
+			]]>
+		</if>
+		<if test="carNo != null and carNo != ''">
+			<![CDATA[
+				AND UPPER( t_gate.car_no ) = UPPER( #{carNo} )
+			]]>
+		</if>
+		<if test="cntrNo != null and cntrNo != ''">
+			<![CDATA[
+				AND UPPER( t_cntr.cntr_no ) = UPPER( #{cntrNo} )
+			]]>
+		</if>
+	</select>
+	
+	<select id="ediCopinoList" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TGateVo">
+		<![CDATA[
+			SELECT 
+				NVL(a.io_cd, '') io_cd, 
+				NVL(a.trucker_cd, '') trucker_cd, 
+				NVL(a.car_no, '') car_no, 
+				NVL(a.cntr_no, '') cntr_no,
+				NVL(a.Sz_cd, '') sz_cd, 
+				NVL(a.ty_cd,'') ty_cd, 
+				NVL(a.ship_cd, '') ship_cd, 
+				NVL(to_char(a.call_no), '') call_no,
+				NVL(to_char(a.call_yy), '') call_yy, 
+				NVL(a.oper_cd, '') oper_cd, 
+				NVL(a.fm_cd, '') fm_cd, 
+				nvl(to_char(a.rcv_dt,'yyyy-mm-dd hh24:mi'), '') rcv_dt, 
+				NVL(a.err_cd, '') err_cd, 
+				NVL(a.err_des, '') err_des, 
+				NVL(a.snd_id, '') snd_id,
+				NVL(flocation, '') flocation, 
+				NVL(B.CY_CD, '') bkdtl_cy_cd,
+				NVL(A.CY_CD, '') gate_cy_cd, 
+				NVL(C.CUR_STAT, '') cur_stat
+			FROM
+				T_GATE A,
+				T_BKDTL B,
+				( SELECT CNTR_NO,Y_TBLOCK,CUR_STAT FROM T_CNTR WHERE CUR_STAT NOT LIKE '%D' ) C
+			WHERE
+				A.upd_cd IS NULL
+				AND A.OPER_CD = B.OPER_CD(+)
+				AND FN_GET_SZTP( A.SZ_CD, A.TY_CD, 'GP' ) = B.SZ_CD(+) || B.TY_GRP_CD(+)
+				AND A.BK_NO = B.BK_NO(+)
+				AND A.CNTR_NO = C.CNTR_NO(+)
+		]]>
+		<if test='okCd == "A"'>
+			<if test='jo == "T"'>
+				<![CDATA[
+				AND ( A.snd_id = #{empNo} OR A.org_snd_id = #{empNo} )
+				]]>
+			</if>
+			<if test='jo == "O"'>
+				<![CDATA[
+				AND A.oper_cd IN
+				]]>
+				<foreach collection="operList" index="index" item="item" open="(" close=")" separator=",">
+					#{item}
+				</foreach>
+			</if>
+			
+			<if test='cntrNo != null and cntrNo != ""'>
+				<![CDATA[
+					A.cntr_no = #{cntrNo}
+				]]>
+			</if>
+		</if>
+		<if test='truckerCd != null and truckerCd != ""'>
+			<![CDATA[
+				AND A.trucker_cd = #{truckerCd}
+			]]>
+		</if>
+		<if test='carNo != null and carNo != ""'>
+			<![CDATA[
+				AND A.car_no = #{carNo}
+			]]>
+		</if>
+		<![CDATA[
+			ORDER BY
+				A.rcv_dt DESC
+		]]>
+	</select>
+	
+	<select id="copinoTimes" resultType="kr.co.e1ct.vo.TGateVo">
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				(
+				SELECT
+					'I' gbn,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 6, 1, 0)), '0') time6,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 7, 1, 0)), '0') time7,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 8, 1, 0)), '0') time8,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 9, 1, 0)), '0') time9,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 10, 1, 0)), '0') time10,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 11, 1, 0)), '0') time11,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 12, 1, 0)), '0') time12,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 13, 1, 0)), '0') time13,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 14, 1, 0)), '0') time14,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 15, 1, 0)), '0') time15,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 16, 1, 0)), '0') time16,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 17, 1, 0)), '0') time17,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 18, 1, 0)), '0') time18,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 19, 1, 0)), '0') time19,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 20, 1, 0)), '0') time20,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 21, 1, 0)), '0') time21,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 22, 1, 0)), '0') time22,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 23, 1, 0)), '0') time23,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 00, 1, 0)), '0') time24,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 1, 1, 0)), '0') time1,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 2, 1, 0)), '0') time2,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 3, 1, 0)), '0') time3,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 4, 1, 0)), '0') time4,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 5, 1, 0)), '0') time5,
+					NVL(COUNT(*), '0') tot
+				FROM
+					t_gate
+				WHERE
+					TO_CHAR(rcv_dt, 'YYYYMMDD') = TO_CHAR( SYSDATE, 'YYYYMMDD' )
+					AND io_cd = 'I'
+					AND est_dt IS NOT NULL
+					AND err_des IS NULL
+					AND wk_cd IS NULL
+			UNION ALL
+				SELECT
+					'O' gbn,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 6, 1, 0)), '0') time6,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 7, 1, 0)), '0') time7,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 8, 1, 0)), '0') time8,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 9, 1, 0)), '0') time9,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 10, 1, 0)), '0') time10,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 11, 1, 0)), '0') time11,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 12, 1, 0)), '0') time12,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 13, 1, 0)), '0') time13,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 14, 1, 0)), '0') time14,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 15, 1, 0)), '0') time15,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 16, 1, 0)), '0') time16,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 17, 1, 0)), '0') time17,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 18, 1, 0)), '0') time18,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 19, 1, 0)), '0') time19,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 20, 1, 0)), '0') time20,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 21, 1, 0)), '0') time21,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 22, 1, 0)), '0') time22,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 23, 1, 0)), '0') time23,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 00, 1, 0)), '0') time24,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 1, 1, 0)), '0') time1,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 2, 1, 0)), '0') time2,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 3, 1, 0)), '0') time3,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 4, 1, 0)), '0') time4,
+					NVL(SUM(DECODE(TO_CHAR(est_dt, 'hh24'), 5, 1, 0)), '0') time5,
+					NVL(COUNT(*), '0') tot
+				FROM
+					t_gate
+				WHERE
+					TO_CHAR(rcv_dt, 'YYYYMMDD') = TO_CHAR( SYSDATE, 'YYYYMMDD' )
+					AND io_cd = 'O'
+					AND est_dt IS NOT NULL
+					AND err_des IS NULL
+					AND wk_cd IS NULL ) T
+			ORDER BY
+				T.gbn ASC
+		]]>
+	</select>
+	
+	<select id="findCountByCntrNoAndIoCdAndErrCd" parameterType="kr.co.e1ct.vo.SearchVo" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT count(*) from t_gate where cntr_no = #{cntrNo} and io_cd = #{cioCd} and NVL(err_cd, '') != '*'
+		]]>
+	</select>
+	
+	<select id="findCountByCuCdAndCntrNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT count(*) from t_gate A, t_cubic B where b.cu_cd = 'R' and a.cntr_no like b.cu_cntr||'%' and a.cntr_no = #{cntrNo}
+		]]>
+	</select>
+	
+	<select id="findDupChkAndErrCdAndWkCdByTruckerCdAndCarNoAndCntrNoAndUpdCd" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TGateVo">
+		<![CDATA[
+			SELECT NVL(dup_chk, '') dup_chk, NVL(err_cd, '') err_cd, NVL(wk_cd, '') wk_cd
+			FROM T_GATE
+			WHERE
+				trucker_cd = SUBSTR(#{carNo}, 1, 4)
+				AND car_no = SUBSTR(#{carNo}, 4 )
+				AND cntr_no = #{cntrNo}
+				AND upd_cd IS NULL
+		]]>
+	</select>
+	
+	<insert id="copinoGateInInsert" parameterType="kr.co.e1ct.vo.TGateVo">
+		<![CDATA[
+			INSERT INTO
+				T_GATE(
+					trucker_cd,
+					car_no,
+					cntr_no,
+					rcv_dt,
+					snd_dt,
+					io_cd,
+					mv_cd,
+					loc_cd,
+					ship_cd,
+					call_yy,
+					call_no,
+					oper_cd,
+					sz_cd,
+					ty_cd,
+					fm_cd,
+					temp,
+					temp_id,
+					weight,
+					imdg,
+					unno,
+					ov_h,
+					ov_wp,
+					ov_ws,
+					ov_lf,
+					ov_lb,
+					pod,
+					pol,
+					dest,
+					seal_no,
+					bond_id,
+					ts_id,
+					tran_tp,
+					flocation,
+					do_no,
+					bk_no,
+					bl_no,
+					dlv_ok,
+					err-cd,
+					chass_no,
+					dup_chk,
+					snd_id,
+					hold_cd,
+					io_udest,
+					owner_nm,
+					est_dt,
+					err_desc,
+					on_line,
+					ix_cd,
+					cy_cd 
+				) VALUES (
+					#{truckerCd},
+					#{catNo},
+					#{cntrNo},
+					SYSDATE,
+					SYSDATE,
+					#{ioCd},
+					#{mvCd},
+					#{locCd},
+					#{shipCd},
+					#{callYy},
+					#{callNo},
+					#{operCd},
+					#{szCd},
+					#{tyCd},
+					#{fmCd},
+					#{temp},
+					#{tempId},
+					#{weight},
+					#{imdg},
+					#{unno},
+					#{ovH},
+					#{ovWp},
+					#{ovWs},
+					#{ovLf},
+					#{ovLb},
+					#{pod},
+					#{pol},
+					#{dest},
+					#{sealNo},
+					#{bondId},
+					#{tsId},
+					#{tranTp},
+					#{flocation},
+					#{doNo},
+					#{bkNo},
+					#{blNo},
+					#{dlvOk},
+					#{errCd},
+					#{chassNo},
+					#{dupChk},
+					#{sndId},
+					#{holdCd},
+					#{ioUdest},
+					#{ownerNm},
+					#{estDt},
+					#{errDes},
+					#{onLine},
+					#{ixCd},
+					#{cyCd}
+				)
+		]]>
+	</insert>
+	
+	<update id="updateCopinoInIns" parameterType="kr.co.e1ct.vo.TGateVo">
+		<![CDATA[
+			UPDATE
+				T_GATE
+			SET
+				rvc_dt = SYSDATE,
+				snd_dt = SYSDATE,
+				io_cd = #{ioCd},
+				mv_cd = #{mvCd},
+				loc_cd = #{locCd},
+				ship_cd = #{shipCd},
+				call_yy = #{callYy},
+				call_no = #{callNo},
+				oper_cd = #{operCd},
+				sz_cd = #{szCd},
+				ty_cd = #{tyCd},
+				fm_cd = #{fmCd},
+				temp = #{temp},
+				temp_id = #{tempId},
+				weight = #{weight},
+				imdg = #{imdg},
+				ov_h = #{ovH},
+				ov_wp = #{ovWp},
+				ov_ws = #{ovWs},
+				ovLf = #{ovLf},
+				ovLb = #{ovLb},
+				pod = #{pod},
+				pol = #{pol},
+				desc = #{dest},
+				seal_no = #{sealNo},
+				bond_id = #{bondId},
+				ts_id = #{tsId},
+				tran_tp = 3,
+				flocation = #{flocation},
+				do_no = #{doNo},
+				bk_no = #{bkNo},
+				bl_no = #{blNo},
+				dlv_ok = #{dlvOk},
+				err_cd = #{errCd},
+				chass_no = #{chassNo},
+				dup_chk = #{dupChk},
+				snd_id = #{sndId},
+				hold_cd = #{holdCd},
+				io_udest = #{ioUdest},
+				gin_ok = '',
+				ix_cd = #{ixCd},
+				cy_cd = #{cyCd},
+				owner_nm = #{ownerNm}
+				est_dt = to_date(${estDt}, 'yyyymmddhh24miss' )
+				err_des = #{errDes}
+			WHERE
+				trucker_cd = #{truckerCd}
+				AND car_no = #{carNo},
+				AND cntr_no = #{cntrNo},
+				AND upd_cd is null
+		]]>
+	</update>
+</mapper>

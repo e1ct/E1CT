@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content" th:remove="tag">
+		<div class="sub-visual sub-vs-1">
+			<h1>회사소개</h1>
+			<p>E1컨테이너터미널은 세계를 목표로 나아갑니다.</p>
+		</div>
+		<div class="sub-nav">
+			<div class="wr"> 
+				<a href="/" class="sub-home"></a>
+				<div class="sub-depth">
+					<h3>회사소개</h3>
+					<ul>
+						<li><a href="/company/greeting">회사소개</a></li>
+						<li><a href="/terminal/facilities">터미널소개</a></li>
+						<li><a href="/info/terminal/berthText">정보조회서비스</a></li>
+						<li><a href="/community/news">커뮤니티</a></li> 
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3>채용정보</h3>
+					<ul>
+						<li><a href="/company/greeting">인사말</a></li>
+						<li><a href="/company/history">연혁</a></li>
+						<li><a href="/company/organization">조직 및 연락처</a></li>
+						<li><a href="/company/ci">CI</a></li>
+						<li><a href="/company/notice">공고</a></li>
+						<li><a href="/company/location">오시는길</a></li>
+						<li><a href="/company/safeservice">안전서비스</a></li>
+						<li><a href="/company/hr">인사제도</a></li>
+						<li><a href="/company/recruit">채용정보</a></li>
+						<li><a href="/company/support">관련사이트</a></li>
+					</ul>
+				</div>
+			</div>
+		</div><!--sub-visual-->
+		<section id="wrap">
+			<h1 class="cont-tit">채용정보</h1>
+			<div class="cont-wr">
+				<!--채용정보 상단 시작 -->
+				<div id="hire">  
+					<h2>새롭게 출발하는 E1CT는<br /><span>유능한 인력개발</span>을 위해 노력하겠습니다.
+						<small>E1CT는 여러분을 향해 항상 열려 있습니다. 당당히 도전하십시오.</small>
+					</h2>
+					<div class="cont-top">
+						<h3>채용 문의 안내</h3>
+						<p>아래의 채용 계획이 없는 경우, 담당자에게 e-mail(e1cthr@e1ct.co.kr)
+						문의 혹은 고객센터로 연락주시면 신속히 답변드리겠습니다.</p>
+					</div> 
+				</div>
+				<!--채용정보 상단 끝--> 
+				<div id="board-view"> 
+					<form name="form" id="form" enctype="multipart/form-data" method="POST" action="/board/save">
+						<input type="hidden" name="mSeq" th:value="${board} != null ? ${board.mSeq} : ''">
+						<input type="hidden" name="MType" th:value="'RE'">
+						<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+						<table>
+							<colgroup>
+								<col width="15%">
+								<col width="85%">
+							</colgroup>
+							<tbody th:with="sdf=${ new java.text.SimpleDateFormat('yyyy-MM-dd')}">
+								<tr>
+									<th th:text="'공고명'"></th>
+									<td>
+										<input type="text" name="mTitle" th:value="${board} != null ? ${board.mTitle} : ''" style="width: 100%;">
+									</td>
+								</tr>
+								<tr>
+									<th th:text="'경력'"></th>
+									<td>
+										<input type="text" name="mName" th:value="${board} != null ? ${board.mName} : ''" style="width: 100%;">
+									</td>
+								</tr>
+								<tr>
+									<th th:text="'근무지'"></th>
+									<td>
+										<input type="text" name="mEmail" th:value="${board} != null ? ${board.mEmail} : ''" style="width: 100%;">
+									</td>
+								</tr>
+								<tr>
+									<th th:text="'인원'"></th>
+									<td>
+										<input type="text" name="mTel" th:value="${board} != null ? ${board.mTel} : '0'"> 명
+									</td>
+								</tr>
+								<tr>
+									<th th:text="'채용기한'"></th>
+									<td>
+										<input type="text" id="mWriteday" name="mWriteday" class="datepicker-here" data-language="en">
+									</td>
+								</tr>
+								<tr>
+									<th th:text="'내용'"></th>
+									<td>
+										<textarea name="mContent" class="editor" th:text="${board} != null ? ${board.mContent} : ''"></textarea>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="list-btn">
+							<a id="enrolBtn" class="enrol-btn" th:text="'글쓰기'"></a>
+							<a th:href="@{'/company/recruit'(page=${params.pageNumber})}" th:text="'목록'"></a>
+						</div>
+					</form>
+				</div>
+			</div>
+			
+			<script type="text/javascript">
+				$(".editor").summernote({
+	        		height: 300,
+	        		maxHeight: 300,
+	        		callbacks: {
+	        			onImageUpload: function( files, editor, welEditable ) {
+	        				for( var i = files.length - 1; i>=0; i-- ) {
+	        					sendFile( files[i], this );
+	        				}
+	        			}
+	        		}
+	        	});
+				
+				function sendFile( file, el ) {
+	        		var form_data = new FormData();
+	        		form_data.append( 'file', file );
+	        		form_data.append( '[[${_csrf.parameterName}]]', '[[${_csrf.token}]]' )
+	        		$.ajax({
+	        			data: form_data,
+	        			type: 'POST',
+	        			url: '/file/upload',
+	        			cache: false,
+	        			contentType: false,
+	        			encType: 'multipart/form-data',
+	        			processData: false,
+	        			success: function( url ) {
+	        				$(el).summernote( 'editor.insertImage', url );
+	        				$( "#imageBoard > ul").append( "<li><img src='" + url + "' height='auto'/></li>" );
+	        			}
+	        		});
+	        	}
+				
+				$("#enrolBtn").click(function() {
+					var f = $("#form").serializeObject();
+					if( f.mTitle == null || f.mTitle.trim().length == 0 ) {
+						alert( '공고명을 입력하세요' )
+					} else if( f.mName == null || f.mName.trim().length == 0 ) {
+						alert( '경력을 입력하세요.' );
+					} else if( f.mEmail == null || f.mEmail.trim().length == 0 ) {
+						alert( '근무지를 입력하세요.' );
+					} else if( f.mTel == null || f.mTel.trim().length == 0 ) { 
+						alert( '인원을 입력하세요' ); 
+					} else if( f.mWriteday == null || f.mWriteday.trim().length == 0 ) { 
+						alert( "채용기한을 입력하세요." );
+					} else {
+						var form_data = new FormData( document.getElementById( "form" ) );
+						
+						$.ajax({
+							data: form_data,
+							type: 'POST',
+							url: '/board/save',
+							cache: false,
+							contentType: false,
+							encType: 'multipart/form-data',
+							processData: false,
+							success: function(d) {
+								console.log(d);
+								alert( d.msg );
+								if( d.code == 200 ) {
+									location.href="/company/recruit";
+								}
+							}
+						});
+					}
+				});
+				
+				var mWriteday = '[[${params.mWriteday}]]';
+				
+				if( !mWriteday ) {
+					$("#mWriteday").val( moment().format('YYYY-MM-DD') );	
+				} else {
+					$("#mWriteday").val( moment( mPfrom, 'YYYYMMDD').format('YYYY-MM-DD') );
+				}
+			</script>
+		</section>
+	</div>
+</html>

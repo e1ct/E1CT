@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content">
+		<section id="wrap"> 
+			<div id="login">   
+				<h1>접근권한이 없습니다.</h1>
+				<form>
+					<a href="/"><button type="button" onclick="javascript:location.href='/'">HOME</button></a>
+				</form>
+			</div> 
+		</section>
+	</div>
+</html>

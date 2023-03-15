@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+	<head th:fragment="configFragment">
+	    <meta charset="UTF-8" />
+	    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+	    <meta name="_csrf" th:content="${_csrf} == null ? '' : ${_csrf.token}">
+	    <meta name="_csrf_header" th:content="${_csrf} == null ? '' : ${_csrf.headerName}">
+	    <meta http-equiv="X-UA-Compatible" content="IE=10" />
+	    
+	    <!-- 공통으로 쓰이는 css파일을넣는다.-->
+	    <link rel="stylesheet" href="/static/lib/air-datepicker/css/datepicker.min.css" />
+	    <link rel="stylesheet" href="/static/lib/iziModal/css/iziModal.css" />
+	    <link rel="stylesheet" href="/static/lib/select2/css/select2.min.css" />
+	    <link rel="stylesheet" href="/static/lib/swiper/swiper.css" />
+	    <link rel="stylesheet" href="/static/lib/bootstrap/bootstrap.min.css" />
+	    <link rel="stylesheet" href="/static/lib/summernote/summernote.css" />
+		<link rel="stylesheet" href="/static/common/css/info.css"/>
+	    <link rel="stylesheet" href="/static/common/css/common.css"/>
+	    
+	    <script src="/static/lib/jquery/jquery-2.2.4.min.js"></script>
+	    <script src="/static/lib/bootstrap/bootstrap.min.js"></script>
+	    <script src="/static/lib/air-datepicker/js/datepicker.js"></script>
+	    <script src="/static/lib/air-datepicker/js/i18n/datepicker.en.js"></script>
+	    <script src="/static/lib/moment/moment.min.js"></script>
+	    <script src="/static/lib/iziModal/js/iziModal.js"></script>
+	    <script src="/static/lib/select2/js/select2.full.min.js"></script>
+   		<script src="/static/lib/swiper/swiper.js"></script>
+   		<script src="/static/lib/summernote/summernote.min.js"></script>
+   		<script src="/static/lib/jquery-cookie/jquery.cookie.js"></script>
+	    <script src="/static/common/js/function.js"></script>
+	    <script src="/static/common/js/common.js"></script>
+	    
+	    <!-- 컨텐츠페이지의 스크립트 영역이 들어감 -->
+	    <th:block layout:fragment="script"></th:block>
+	</head>
+</html>

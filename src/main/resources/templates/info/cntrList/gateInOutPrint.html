@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<style>
+			* {
+				font-size: 0.75rem;
+				-webkit-print-color-adjust: exact;
+				printer-colors: exact;
+				color-adjust: exact;
+			}
+			
+			table {
+				border-spacing: 0px;
+			}
+			
+			thead {
+				color: #fff;
+				background-color: #eb6800;
+			}
+			
+			@media print {
+				thead th {
+					color: #000;
+					border: 1px solid black;
+				}
+			}
+			
+			td {
+				border-left: 1px solid #aaa;
+				border-bottom: 1px solid #aaa;
+			}
+			
+			td:last-child {
+	 			border-right: 1px solid #aaa;
+			}
+		</style>
+	</head>
+	<table>
+		<thead>
+			<tr>
+				<th th:rowspan="2">번호</th>
+				<th th:text="'구분'"></th>
+				<th th:text="'컨테이너번호'"></th>
+				<th th:text="'모선항차'"></th>
+				<th th:text="'Sz/Ty'"></th>
+				<th th:text="'F/M'"></th>
+				<th th:text="'양하항'"></th>
+				<th th:text="'야드위치'"></th>
+			</tr>
+			<tr>
+				<th th:text="'반입일시'"></th>
+				<th th:if="${searchParams.gubun} == 'in'" th:text="'반출(적하)일시'"></th>
+				<th th:if="${searchParams.gubun} == 'out'" th:text="'반입(적하)일시'"></th>
+				<th th:text="'차량번호'"></th>
+				<th th:text="'운송사'"></th>
+				<th th:if="${searchParams.gubun} == 'in'" th:text="'Order No.'"></th>
+				<th th:if="${searchParams.gubun} == 'out'" th:text="'B/O or D/O'"></th>
+				<th th:text="'Seal'"></th>
+				<th th:text="'Copino Seal'"></th>
+			</tr>
+		</thead>
+		<tbody>
+			<div th:if="!${#lists.isEmpty(list)}" th:each="list, i:${list}" th:remove="tag">
+				<tr>
+					<td th:rowspan="2" th:text="${i.index} + 1"></td>
+					<td th:if="${searchParams.gubun} == 'in'" th:text="'반입'"></td>
+					<td th:if="${searchParams.gubun} == 'out'" th:text="'반출'"></td>
+					<td th:text="${list.cntrNo}" th:onclick="javascript:cntrDetailModal([[${list.cntrNo}]])"></td>
+					<td th:text="${list.shipCd} + '-' + ${#numbers.formatInteger(list.callNo, 3)} + '-' + ${list.callYy}"></td>
+					<td th:text="${list.szCd} + '/' + ${list.tyCd}"></td>
+					<td th:text="${list.fmCd}"></td>
+					<td th:text="${list.pod}"></td>
+					<td th:text="${list.yTblock} + '-' + ${list.yTbay} + '-' + ${list.yTrow} + '-' + ${list.yTtier}"></td>
+				</tr>
+				<tr>
+					<td th:if="${list.ginDt} == '-' and ${list.gcDdt} == '-'" th:text="'-'"></td>
+					<td th:if="${list.ginDt} == '-' and ${list.gcDdt} != '-'" th:text="'(' + ${list.gcDdt} + ')'"></td>
+					<td th:if="${list.ginDt} != '-'" th:text="${list.ginDt}">
+					
+					<td th:if="${list.goutDt} == '-' and ${list.gcLdt} == '-'" th:text="'-'"></td>
+					<td th:if="${list.goutDt} == '-' and ${list.gcLdt} != '-'" th:text="'(' + ${list.gcLdt} + ')'"></td>
+					<td th:if="${list.goutDt} != '-'" th:text="${list.goutDt}"></td>
+					
+					<td th:text="${list.carNo}"></td>
+					<td th:text="${list.truckerNm}"></td>
+					<td th:text="${list.bkdoNo}"></td>
+					<td th:text="${list.sealNo}"></td>
+					<td th:text="${list.copinoSeal} != null and ${list.copinoSeal} != '' ? ${list.copinoSeal} : ''"></td>
+				</tr>
+			</div>
+			<div th:if="${#lists.isEmpty(list)}" th:remove="tag">
+				<tr>
+					<td th:colspan="8">조회된 데이터가 존재하지 않습니다.</td>
+				</tr>
+			</div>
+		</tbody>
+	</table>
+	
+	<script type="text/javascript">
+		setTimeout( window.print(), 2000 );
+	</script>
+</html>

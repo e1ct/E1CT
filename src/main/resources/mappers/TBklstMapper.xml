@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TBklstRepository">
+	<select id="findBkNoByCntrNoAndDupNoAndOperCd" parameterType="kr.co.e1ct.vo.TBklstVo" resultType="kr.co.e1ct.vo.TBklstVo">
+		<![CDATA[
+			SELECT 
+				bk_no 
+			FROM 
+				t_bklst
+			WHERE
+				cntr_no = #{cntrNo}
+				AND dup_no = #{dupNo}
+		]]>
+		<if test="operCd != null and operCd != ''">
+			<![CDATA[
+				AND oper_cd = #{operCd}
+			]]>
+		</if>
+	</select>
+	
+	<select id="findTruckerCdByOperCdAndBkNo" parameterType="kr.co.e1ct.vo.TBkmstVo" resultType="kr.co.e1ct.vo.TBklstVo">
+		<![CDATA[
+			SELECT
+				NVL( trucker_cd, ' ' ) trucker_cd
+			FROM
+				t_bklst
+			WHERE
+				oper_cd = #{operCd}
+				AND bk_no = #{bkNo}
+				AND ROWNUM <= 1
+		]]>
+	</select>
+	
+	<select id="findCntrNoAndDupNoAndOperCdByBkNoAndOperCdAndCurStat" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TBklstVo">
+		<![CDATA[
+			SELECT
+				a.cntr_no,
+				a.dup_no,
+				a.oper_cd
+			FROM
+				T_BKLST a,
+				T_CNTR b
+			WHERE
+				bk_no = #{bkNo}
+				AND a.oper_cd IN ( #{operCd} )
+				AND a.cntr_no = b.cntr_no
+				AND a.dup_no = b.dup_no
+				AND SUBSTR( b.cur_stat, 2, 1 ) NOT IN ( 'Y', 'L', 'W' )
+		]]>
+	</select>
+	
+	<delete id="deleteByBkNoAndOperCdAndSzCdAndTyGrpCd" parameterType="kr.co.e1ct.vo.SearchVo">
+		<![CDATA[
+			DELETE
+				t_bklst
+			WHERE
+				bk_no = #{bkNo}
+				AND oper_cd IN ( #{operCd} )
+		]]>
+		<if test='szCd == 20'>
+			<![CDATA[
+				AND sz_cd BETWEEN 20 AND 29
+			]]>
+		</if>
+		<if test='szCd == 40'>
+			<if test='tyCd == "HQ" or tyCd == "RH"'>
+				<![CDATA[
+				AND ( ( sz_cd BETWEEN 40 AND 43 ) OR ( sz_cd BETWEEN 46 AND 49 ) )
+				]]>
+			</if>
+		</if>
+		<if test='szCd == 45'>
+			<![CDATA[
+				AND sz_cd BETWEEN 90 AND 99
+			]]>
+		</if>
+		
+		<if test='tyCd == "HQ"'>
+			<![CDATA[
+				AND ty_grp_cd = 'GP'
+			]]>
+		</if>
+		<if test='tyCd == "RH"'>
+			<![CDATA[
+				AND ty_grp_cd = 'RF'
+			]]>
+		</if>
+		<if test='tyCd != "HQ" and tyCd != "RH"'>
+			<![CDATA[
+				AND ty_grp_cd = #{tyCd}
+			]]>
+		</if>
+	</delete>
+	
+	<select id="findBkNoByBkNoAndCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TBklstVo">
+		<![CDATA[
+			SELECT bk_no FROM t_bklst WHERE bk_no = #{orderNo} AND cntr_no = #{cntrNo} AND dup_no = #{pcDupno}
+		]]>
+	</select>
+</mapper>

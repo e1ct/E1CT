@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<style>
+			* {
+				font-size: 1rem;
+				-webkit-print-color-adjust: exact;
+				printer-colors: exact;
+				color-adjust: exact;
+			}
+			
+			table {
+				border-spacing: 0px;
+			}
+			
+			thead {
+				color: #fff;
+				background-color: #eb6800;
+			}
+			
+			@media print {
+				thead th {
+					color: #000;
+					border: 1px solid black;
+				}
+			}
+			
+			td {
+				border-left: 1px solid #aaa;
+				border-bottom: 1px solid #aaa;
+			}
+			
+			td:last-child {
+	 			border-right: 1px solid #aaa;
+			}
+		</style>
+	</head>
+	<body>
+		<table>
+			<thead>
+				<tr>
+					<th colspan="12" th:text="'공컨테이너 반출 가능 수량'"></th>
+				</tr>
+				<tr>
+				</tr>
+				<tr>
+					<th>선사</th>
+					<th>20GP</th>
+					<th>40GP</th>
+					<th>40HQ</th>
+					<th>45GP</th>
+					<th>합계</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="list, i:${list}">
+					<td th:text="${list.operCd}"></td>
+					<td th:text="${list.gp20}"></td>
+					<td th:text="${list.gp40}"></td>
+					<td th:text="${list.hq40}"></td>
+					<td th:text="${list.gp45}"></td>
+					<td th:text="${list.tot}"></td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<script type="text/javascript">
+			setTimeout( window.print(), 2000 );
+		</script>
+	</body>
+</html>

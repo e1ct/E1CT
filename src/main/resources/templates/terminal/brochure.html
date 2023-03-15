@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content" th:remove="tag">
+		<div class="sub-visual sub-vs-2">
+			<h1 th:text="#{header.terminal}">터미널소개</h1>
+			<p th:text="#{subvisual.subtitle.2}">최고의 물류서비스를 통해 고객 감동을 만들어갑니다.</p>
+		</div>
+		<div class="sub-nav">
+			<div class="wr"> 
+				<a href="/" class="sub-home"></a>
+				<div class="sub-depth">
+					<h3 th:text="#{header.terminal}">터미널소개</h3>
+					<ul>
+						<li><a href="/company/greeting" th:text="#{header.company}">회사소개</a></li>
+						<li><a href="/terminal/facilities" th:text="#{header.terminal}">터미널소개</a></li>
+						<li><a href="/info/terminal/berthText" th:text="#{header.info}">정보조회서비스</a></li>
+						<li><a href="/community/news" th:text="#{header.community}">커뮤니티</a></li> 
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3 th:text="#{menu.terminal.brochure}">온라인브로슈어</h3>
+					<ul>
+						<li><a href="/terminal/facilities" th:text="#{menu.terminal.facilities}">터미널시설</a></li>
+						<li><a href="/terminal/equipment" th:text="#{menu.terminal.equipment}">터미널장비</a></li>
+						<li><a href="/terminal/feature" th:text="#{menu.terminal.feature}">터미널특징</a></li>
+						<li><a href="/terminal/movie" th:text="#{menu.terminal.movie}">홍보동영상</a></li>
+						<li><a href="/terminal/brochure" th:text="#{menu.terminal.brochure}">온라인브로슈어</a></li>
+						<li><a href="/terminal/gallery" th:text="#{menu.terminal.gallery}">갤러리</a></li>
+					</ul>
+				</div>
+			</div> 
+		</div><!--sub-visual-->
+		<section id="wrap">
+			<h1 class="cont-tit" th:text="#{menu.terminal.brochure}">온라인브로슈어</h1>
+			<div id="brochure">  
+				<div class="cont-wr">   
+					<div class="big-img">
+						<div class="txt">
+							<h2 th:text="#{menu.terminal.brochure}">온라인브로슈어</h2>
+							<p th:text="#{terminal.brochure.p}">Good Partners Dream Together! 세상의 아름다운 이음을 만들어 갑니다.</p>
+						</div>
+					</div>
+					<ul class="download">
+						<li th:utext="#{terminal.brochure.download}">온라인브로슈어 다운로드<a href="/static/file/brochure.pdf" target="_blank" download="E1_E1ContainerTerminal">다운로드</a></li> 
+					</ul>
+				</div>
+			</div> 
+		</section> 
+	</div>
+</html>

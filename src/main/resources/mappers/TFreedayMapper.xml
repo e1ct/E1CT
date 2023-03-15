@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TFreedayRepository">
+
+	<select id="cntrInfoFreeTime" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TFreedayVo">
+		<![CDATA[
+			SELECT
+				cargo_cd,
+				free_day
+			FROM
+				t_freeday
+			WHERE
+				ix_cd = 'I'
+				AND fm_cd = #{fmCd}
+				AND bgn_dt = (
+					SELECT 
+						MAX(bgn_dt)
+					FROM
+						t_freeday
+					WHERE
+						bgn_dt < TO_DATE( SUBSTR( #{stvEndDt}, 1, 8 ), 'yyyymmdd' )
+		]]>
+		<if test="oper != null and oper != ''">
+			<![CDATA[
+						AND oper_cd IN ( #{oper} )
+			]]>
+		</if>
+		<![CDATA[
+				)
+		]]>
+		
+	</select>
+</mapper>

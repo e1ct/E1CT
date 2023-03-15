@@ -1,0 +1,3328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TCntrRepository">
+	<select id="findByCntrNoAndStcking" parameterType="kr.co.e1ct.vo.TCntrVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				y_tblock,
+				y_tbay
+			FROM
+				t_cntr
+			WHERE
+				cntr_no = #{cntrNo}
+				AND stcking = 'Y'
+		]]>
+	</select>
+	
+	<select id="findByStckingAndYTblockANdYTbay" parameterType="kr.co.e1ct.vo.TCntrVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				cntr_no,
+				cur_stat,
+				sz_cd,
+				y_trow,
+				y_ttier
+			FROM
+				t_cntr
+			WHERE
+				stcking = 'Y'
+				AND y_tblock = #{yTblock}
+				AND y_tbay = #{yTbay}
+		]]>
+	</select>
+	
+	<select id="findByCurStatAndFmCdAndDoNo" parameterType="kr.co.e1ct.vo.TDodtlVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				a.cntr_no,
+				FN_GET_SZTP( a.SZ_CT, a.TY_CD, 'GP' ),
+				a.y_tblock,
+				a.y_tbay,
+				a.y_trow,
+				a.y_ttier
+			FROM
+				t_cntr a,
+				t_dodtl b
+			WHERE
+				a.cntr_no = b.cntr_no
+				AND a.dup_no = b.dup_no
+				AND a.cur_stat = 'IY'
+				AND a.fm_cd = 'F'
+				AND b.do_no = #{doNo}
+			ORDER BY
+				a.y_tblock,
+				a.y_tbay,
+				a.y_trow ASC,
+				a.y_ttier DESC
+		]]>
+	</select>
+	
+	<select id="cntrListGateInOut" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			select 
+				cntr_no, 
+				ship_cd, 
+				call_no, 
+				call_yy, 
+				sz_cd, 
+				ty_cd, 
+				fm_cd, 
+				pod, 
+				nvl(hwl_cd,' ')hwl_cd, 
+				nvl(y_tblock,' ')y_tblock, 
+				nvl(y_tbay,0) y_tbay, 
+				nvl(y_trow,0) y_trow, 
+				nvl(y_ttier,0) y_ttier,  
+				nvl(temp,' ')temp, 
+				nvl(temp_id, ' ') temp_id, 
+				nvl(unno, ' ') unno, 
+				nvl(imdg, ' ') imdg, 
+				nvl(to_char(gc_ddt,'yyyy-mm-dd hh24:mi'), '-')  gc_ddt, 
+				NVL(TO_CHAR(DECODE(NVL(TRN_IN,' '),'A',FN_GET_REAL_GIN_DT(CNTR_NO,DUP_NO),gin_dt),'yyyy-mm-dd hh24:mi'),'-') gin_dt, 
+				nvl(to_char(gc_ldt,'yyyy-mm-dd hh24:mi'), '-')  gc_ldt, 
+				NVL(TO_CHAR(DECODE(NVL(TRN_OUT,' '),'A',FN_GET_REAL_GOUT_DT(CNTR_NO,DUP_NO),gOUT_dt),'yyyy-mm-dd hh24:mi'),'-') gOUT_dt, 
+				nvl(seal_no, ' ') seal_no,
+				nvl(seal_no1, ' ') seal_no1, 
+				dup_no, 
+				DECODE(clean_cd,'C','Y','Y','Y',DECODE(dmg_cd, 'B','Y','S','Y','L','Y','H','Y','','N')) dmg_cd, 
+			]]>
+			<if test="gubun == 'in'">
+				<![CDATA[
+					nvl(trucker_cd,' ') trucker_cd, 
+					nvl(car_no,' ') car_no, 
+					NVL((SELECT cst_nm FROM T_EDICUSTOMER WHERE CST_ID = A.SND_ID_IN ), (Select NVL(cst_nm, ' ') from t_trucker where trucker_cd = a.trucker_cd and snd_id = a.snd_id_in ))  trucker_NM 
+				from 
+					t_cntr a 
+				WHERE 
+					gin_dt between to_date( concat( #{searchStartDt}, '000000' ),'yyyymmddhh24miss') and to_date( concat( #{searchEndDt}, '235959' ),'yyyymmddhh24miss') 
+					AND gin_dt is not null 
+					AND TRN_IN in ('D','C') 
+					AND substr(cur_stat,2,1) not in ('G','P') 
+					AND NVL(trim(ts_id),' ') <> '1' 
+				]]>
+			</if>
+			<if test="gubun == 'out'">
+				<![CDATA[
+					nvl(trucker_cd_out,' ') trucker_cd, 
+					nvl(car_no_out,' ') car_no, 
+					NVL((SELECT cst_nm FROM T_EDICUSTOMER WHERE CST_ID = A.SND_ID_out), (Select NVL(cst_nm, ' ') from t_trucker where trucker_cd = a.trucker_cd_out and snd_id = a.snd_id_out ))  trucker_NM 
+				from 
+					t_cntr a 
+				WHERE 
+					gout_dt between to_date( concat( #{searchStartDt}, '000000' ),'yyyymmddhh24miss') and to_date( concat( #{searchEndDt}, '235959' ),'yyyymmddhh24miss') 
+					AND gout_dt is not null 
+					AND TRN_OUT in ('D','C') 
+					AND substr(cur_stat,2,1) not in ('G','P')  
+					AND NVL(trim(ts_id),' ') <> '1' 
+				]]>
+			</if>
+			<if test="shipCd != null and shipCd != '' and callNo != null and callNo != '' and callYy != null and callYy != ''">
+				<![CDATA[
+					and UPPER(ship_cd)=UPPER(#{shipCd}) and call_no=#{callNo} and call_yy=#{callYy} 
+				]]>
+			</if>
+			<if test="oper != null and oper != ''">
+				<![CDATA[
+					and oper_cd in ( #{oper} ) 
+				]]>
+			</if>
+			<if test="fmCd != null and fmCd != ''">
+				<![CDATA[
+					and fm_cd = #{fmCd}
+				]]>
+			</if>
+			<if test="szCd == 20">
+				<![CDATA[
+					and SUBSTR(sz_cd,1 ,1) = '2' 
+				]]>
+			</if>
+			<if test="szCd == 40">
+				<![CDATA[
+					and substr(sz_cd, 1, 1) = '4'
+				]]>
+			</if>
+			<if test="szCd == 45">
+				<![CDATA[
+					and ( substr( sz_cd, 1, 1 ) = '9' or substr( sz_cd, 1, 1 ) = 'L' )
+				]]>
+			</if>
+			<if test="gubun == 'in'">
+				<![CDATA[
+					order by gin_dt 
+				]]>
+			</if>
+			<if test="gubun == 'out'">
+				<![CDATA[
+					order by gout_dt
+				]]>
+			</if>
+			<if test="gubun != null and gubun != '' and sortBy == 'ASC'">
+				<![CDATA[
+					ASC
+				]]>
+			</if>
+			<if test="gubun != null and gubun != '' and sortBy == 'DESC'">
+				<![CDATA[
+					DESC
+				]]>
+			</if>
+	</select>
+	
+	<select id="findFnGetBknoByCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.TCntrVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT 
+				Nvl(FN_GET_BKNO( #{cntrNo},dup_no),' ') bk_no 
+			FROM 
+				t_cntr 
+			WHERE 
+				cntr_no = #{cntrNo}
+				AND dup_no = #{dupNo} 
+		]]>
+	</select>
+	
+	<select id="terminalByOperYardList" parameterType="kr.co.e1ct.vo.TCntrVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				NVL(y_tblock, ' ') y_tblock,
+				SUM(DECODE(SUBSTR(cur_stat,1,1),'I',1,0)) imp, 
+				SUM(DECODE(SUBSTR(cur_stat,1,1),'X',1,0)) exp, 
+				SUM(DECODE(SUBSTR(cur_stat,1,1),'M',1,0)) ondock, 
+				SUM(DECODE(SUBSTR(sz_cd,1,1),'2',1,0)) size20, 
+				SUM(DECODE(SUBSTR(sz_cd,1,1),'4',1,0)) sizeF40, 
+				SUM(DECODE(SUBSTR(sz_cd,1,1),'9',1,'L',1,0)) sizeF45, 
+				COUNT(*) van, 
+				SUM(DECODE(SUBSTR(sz_cd,1,1),'2',1,2)) teu 
+			FROM 
+				t_cntr 
+			WHERE 
+				SUBSTR(CUR_STAT,2,1) = 'Y' AND NVL(DIR_ID,'9') = '9'
+		]]>
+		<if test="oper != null and oper != ''">
+			<![CDATA[
+				AND oper_cd = #{oper}
+			]]>
+		</if>
+		<![CDATA[
+			GROUP BY y_tblock
+			ORDER BY y_tblock
+		]]>
+	</select>
+	
+	<select id="cntrListNotGateOut" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				cntr_no,
+				NVL(oper_cd, ' ') oper_cd,
+				NVL(sz_cd, ' ') sz_cd,
+				NVL(ty_cd, ' ') ty_cd,
+				NVL(fm_cd, ' ') fm_cd,
+				DECODE(clean_cd, 'C', 'Y', 'Y', 'Y', DECODE(dmg_cd, 'B', 'Y', 'S', 'Y', 'L', 'Y', 'H', 'Y', '', 'N')) dmg_cd,
+				NVL(hwl_cd, ' ') hwl_cd,
+				NVL(y_tblock, ' ')y_tblock,
+				NVL(y_tbay, 0) y_tbay,
+				NVL(y_trow, 0) y_trow,
+				NVL(y_ttier, 0) y_ttier,
+				NVL(TO_CHAR(gc_ddt, 'yyyy-mm-dd hh24:mi'), '-') gc_ddt,
+				NVL(TO_CHAR(gin_dt, 'yyyy-mm-dd hh24:mi'), '-') gin_dt
+			FROM
+				t_cntr
+			WHERE
+				(gc_ddt IS NOT NULL
+				OR gin_dt IS NOT NULL)
+				AND gout_dt IS NULL
+				AND (SUBSTR(cur_stat, 1, 1) = 'I'
+				AND SUBSTR(cur_stat, 2, 1) <> 'D')
+		]]>
+		<if test="oper != null and oper != ''">
+			<![CDATA[
+				AND oper_cd IN ( #{oper})
+			]]>
+		</if>
+		<if test="size == 20">
+			<![CDATA[
+				AND sz_cd like '2%'
+			]]>
+		</if>
+		<if test="size == 40">
+			<![CDATA[
+				AND sz_cd like '4%'
+			]]>
+		</if>
+		<if test="size == 45">
+			<![CDATA[
+				AND ( sz_cd like '9%' OR sz_cd like 'L%' )
+			]]>
+		</if>
+		<if test="fmCd == 'Full'">
+			<![CDATA[
+				AND fm_cd = 'F'
+			]]>
+		</if>
+		<if test="fmCd == 'Empty'">
+			<![CDATA[
+				AND fm_cd = 'M'
+			]]>
+		</if>
+		<if test="shipCd != null and shipCd != '' and callNo != null and callNo != '' and callYy != null and callYy != ''">
+			<![CDATA[
+				AND ship_cd = UPPER(#{shipCd})
+				AND call_no = #{callNo}
+				AND call_yy = #{callYy}
+			]]>
+		</if>
+	</select>
+	
+	<select id="cntrListNotGateIn" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				B.CNTR_NO CNTR_NO ,
+				DECODE(NVL(A.SZ_CD, ' '), ' ', B.SZ_CD, A.SZ_CD) || '/' || DECODE(NVL(A.TY_CD, ' '), ' ', B.TY_CD, A.TY_CD) SZTP ,
+				A.CUR_STAT CUR_STAT ,
+				DECODE(NVL(A.FM_CD, ' '), ' ', B.FM_CD, A.FM_CD) FM_CD ,
+				DECODE(NVL(A.OPER_CD, ' '), ' ', B.OPER_CD, A.OPER_CD) OPER_CD ,
+				A.DIR_ID DIR_ID ,
+				DECODE(NVL(TO_CHAR(A.WEIGHT), ' '), ' ', B.WEIGHT, A.WEIGHT) WEIGHT ,
+				DECODE(NVL(A.POD, ' '), ' ', B.POD, A.POD) POD ,
+				DECODE(NVL(A.HWL_CD, ' '), ' ', ' ', 'Y') HWL_CD ,
+				DECODE(NVL(A.TEMP, ' '), ' ', B.TEMP, A.TEMP) || DECODE(NVL(DECODE(NVL(A.TEMP, ' '), ' ', B.TEMP, A.TEMP), ' '), ' ', ' ', SUBSTR(B.TEMP_ID, 1, 1)) TEMP ,
+				A.REEF_ID ,
+				DECODE(NVL(A.IMDG, ' '), ' ', B.IMDG, A.IMDG) IMDG
+			FROM
+				T_CNTR A,
+				T_COLDLT B
+			WHERE
+				A.CNTR_NO(+) = B.CNTR_NO
+				AND A.SHIP_CD(+) = B.SHIP_CD
+				AND A.CALL_NO(+) = B.CALL_NO
+				AND A.CALL_YY(+) = B.CALL_YY
+				AND B.SHIP_CD = UPPER(#{shipCd})
+				AND B.CALL_NO = UPPER(#{callNo})
+				AND B.CALL_YY = UPPER(#{callYy}) 
+			 	AND b.oper_cd in ( #{oper} )
+		]]>
+		<if test="size == 20">
+			<![CDATA[
+				AND A.sz_cd like '2%'
+			]]>
+		</if>
+		<if test="size == 40">
+			<![CDATA[
+				AND A.sz_cd like '4%'
+			]]>
+		</if>
+		<if test="size == 45">
+			<![CDATA[
+				AND ( A.sz_cd like '9%' OR A.sz_cd like 'L%' )
+			]]>
+		</if>
+		<if test="fmCd == 'Full'">
+			<![CDATA[
+				AND A.fm_cd = 'F'
+			]]>
+		</if>
+		<if test="fmCd == 'Empty'">
+			<![CDATA[
+				AND A.fm_cd = 'M'
+			]]>
+		</if>
+		<![CDATA[
+			MINUS
+			SELECT
+				B.CNTR_NO CNTR_NO ,
+				DECODE(NVL(A.SZ_CD, ' '), ' ', B.SZ_CD, A.SZ_CD) || '/' || DECODE(NVL(A.TY_CD, ' '), ' ', B.TY_CD, A.TY_CD) SZTP ,
+				A.CUR_STAT CUR_STAT ,
+				DECODE(NVL(A.FM_CD, ' '), ' ', B.FM_CD, A.FM_CD) FM_CD ,
+				DECODE(NVL(A.OPER_CD, ' '), ' ', B.OPER_CD, A.OPER_CD) OPER_CD ,
+				A.DIR_ID DIR_ID ,
+				DECODE(NVL(TO_CHAR(A.WEIGHT), ' '), ' ', B.WEIGHT, A.WEIGHT) WEIGHT ,
+				DECODE(NVL(A.POD, ' '), ' ', B.POD, A.POD) POD ,
+				DECODE(NVL(A.HWL_CD, ' '), ' ', ' ', 'Y') HWL_CD ,
+				DECODE(NVL(A.TEMP, ' '), ' ', B.TEMP, A.TEMP) || DECODE(NVL(DECODE(NVL(A.TEMP, ' '), ' ', B.TEMP, A.TEMP), ' '), ' ', ' ', SUBSTR(B.TEMP_ID, 1, 1)) TEMP ,
+				A.REEF_ID ,
+				DECODE(NVL(A.IMDG, ' '), ' ', B.IMDG, A.IMDG) IMDG
+			FROM
+				T_CNTR A,
+				T_COLDLT B
+			WHERE
+				A.CNTR_NO = B.CNTR_NO
+				AND A.SHIP_CD = B.SHIP_CD
+				AND A.CALL_NO = B.CALL_NO
+				AND A.CALL_YY = B.CALL_YY
+				AND B.SHIP_CD = UPPER(#{shipCd})
+				AND B.CALL_NO = UPPER(#{callNo})
+				AND B.CALL_YY = UPPER(#{callYy})
+				AND A.CUR_STAT IN ('IG',
+				'IO',
+				'IY',
+				'ID',
+				'XG',
+				'XO',
+				'XY',
+				'XD',
+				'IZ',
+				'XZ',
+				'IL',
+				'IW',
+				'XL',
+				'XW',
+				'IT',
+				'XT')
+				AND A.oper_cd IN ( #{oper} )
+		]]>
+		<if test="size == 20">
+			<![CDATA[
+				AND A.sz_cd like '2%'
+			]]>
+		</if>
+		<if test="size == 40">
+			<![CDATA[
+				AND A.sz_cd like '4%'
+			]]>
+		</if>
+		<if test="size == 45">
+			<![CDATA[
+				AND ( A.sz_cd like '9%' OR A.sz_cd like 'L%' )
+			]]>
+		</if>
+		<if test="fmCd == 'Full'">
+			<![CDATA[
+				AND A.fm_cd = 'F'
+			]]>
+		</if>
+		<if test="fmCd == 'Empty'">
+			<![CDATA[
+				AND A.fm_cd = 'M'
+			]]>
+		</if>
+	</select>
+	
+	<select id="findYTblockAndYTbayByCntrNoAndStcking" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				y_tblock,
+				y_tbay
+			FROM
+				t_cntr
+			WHERE
+				cntr_no = #{cntrNo}
+				AND stcking = 'Y'
+		]]>
+	</select>
+	
+	<select id="terminalYardStackData" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT cntr_no, cur_stat, sz_cd, y_trow, y_ttier from t_cntr WHERE stcking = 'Y' AND y_tblock = #{block} AND y_tbay = #{bay} 
+		]]>
+	</select>
+	
+	<select id="cntrInfoDetailsDataList" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				a.ship_cd,
+				TO_CHAR(a.call_no, '000') call_no,
+				a.call_yy,
+				a.oper_cd oper_cd,
+				NVL(a.oper_cd2, '') oper_cd2,
+				a.cur_stat,
+				a.fm_cd,
+				a.sz_cd,
+				a.ty_cd,
+				NVL(a.rtn_cd, '') rtn_cd,
+				NVL(a.ts_id, '') ts_id,
+				NVL(a.trucker_cd, '') trucker_cd,
+				NVL(a.car_no, '') car_no,
+				NVL(a.weight, 0) weight,
+				NVL(a.imdg, '') imdg,
+				NVL(a.unno, '') unno,
+				NVL(a.temp, '') temp,
+				NVL(a.s_tbay, '') s_tbay,
+				NVL(a.s_trow, 0) s_trow,
+				NVL(a.s_ttier, 0)s_ttier,
+				NVL(a.y_tblock, 0)y_tblock,
+				NVL(a.y_tbay, 0)y_tbay,
+				NVL(a.y_trow, 0) y_trow,
+				NVL(a.y_ttier, 0) y_ttier,
+				NVL(a.pod, '') pod,
+				NVL(a.pol, '') pol,
+				NVL(a.dmg_cd, '') dmg_cd,
+				NVL(TO_CHAR(a.gin_dt, 'yyyy-mm-dd hh24:mi'), '') gin_dt,
+				NVL(TO_CHAR(a.gc_ddt, 'yyyy-mm-dd hh24:mi'), '') gc_ddt,
+				NVL(TO_CHAR(a.gout_dt, 'yyyy-mm-dd hh24:mi'), '') gout_dt,
+				NVL(TO_CHAR(a.gc_ldt, 'yyyy-mm-dd hh24:mi'), '') gc_ldt,
+				NVL(a.bond_id, '') bond_id,
+				NVL(b.ship_nm, '') ship_nm,
+				NVL(c.oper_knm, '') oper_knm,
+				NVL(a.insp_id, '') insp_id,
+				MAX(NVL(d.cargo_no, '')) cargo_no,
+				NVL(FN_GET_BKNO( #{search}, a.dup_no), '') bk_no,
+				a.dup_no,
+				NVL(a.seal_no1, '') seal_no2,
+				NVL(d.seal_no, '') seal_no,
+				NVL(a.seal_no, '') seal_no1,
+				NVL(a.temp_id, '') temp_id,
+				NVL(a.trucker_cd_out, '') trucker_cd_out,
+				NVL(a.car_no_out, '') car_no_out,
+				NVL(a.clean_cd, '') clean_cd
+			FROM
+				t_cntr a,
+				t_vessel b,
+				t_oper c ,
+				t_bsiot_sub d,
+				t_bklst e
+			WHERE
+				a.cntr_no = UPPER( #{search} )
+				AND a.ship_cd = b.ship_cd
+				AND a.oper_cd = c.oper_cd
+				AND a.cntr_no = d.cntr_no(+)
+				AND a.dup_no = d.dup_no(+)
+				AND a.cntr_no = e.cntr_no(+)
+				AND a.dup_no = e.dup_no(+)
+			GROUP BY
+				a.ship_cd ,
+				a.call_no,
+				a.call_yy,
+				a.oper_cd,
+				NVL(a.oper_cd2, ''),
+				a.cur_stat,
+				a.fm_cd,
+				a.sz_cd,
+				a.ty_cd,
+				a.rtn_cd,
+				a.ts_id,
+				a.trucker_cd,
+				a.car_no,
+				a.weight,
+				a.imdg,
+				a.unno,
+				a.temp,
+				a.s_tbay,
+				a.s_trow,
+				a.s_ttier,
+				a.y_tblock,
+				a.y_tbay,
+				a.y_trow,
+				a.y_ttier,
+				a.pod,
+				a.pol,
+				a.dmg_cd,
+				a.gin_dt,
+				a.gc_ddt,
+				a.gc_ddt,
+				a.gout_dt,
+				a.gc_ldt,
+				a.gc_ldt,
+				a.bond_id,
+				b.ship_nm,
+				c.oper_knm,
+				a.insp_id,
+				e.bk_no,
+				a.dup_no,
+				a.seal_no1,
+				d.seal_no,
+				a.seal_no,
+				a.temp_id,
+				a.trucker_cd_out,
+				a.car_no_out,
+				a.clean_cd
+			ORDER BY
+				a.dup_no ASC
+		]]>
+	</select>
+	
+	<select id="cntrInfoDetailsDataLatest" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				(
+				SELECT
+					ROW_NUMBER() OVER (
+				ORDER BY
+					T.dup_no DESC ) num,
+					T.*
+				FROM
+					(
+					SELECT
+						a.ship_cd,
+						TO_CHAR(a.call_no, '000') call_no,
+						a.call_yy,
+						a.oper_cd oper_cd,
+						NVL(a.oper_cd2, '') oper_cd2,
+						a.cur_stat,
+						a.fm_cd,
+						a.sz_cd,
+						a.ty_cd,
+						NVL(a.rtn_cd, '') rtn_cd,
+						NVL(a.ts_id, '') ts_id,
+						NVL(a.trucker_cd, '') trucker_cd,
+						NVL(a.car_no, '') car_no,
+						NVL(a.weight, 0) weight,
+						NVL(a.imdg, '') imdg,
+						NVL(a.unno, '') unno,
+						NVL(a.temp, '') temp,
+						NVL(a.s_tbay, '') s_tbay,
+						NVL(a.s_trow, 0) s_trow,
+						NVL(a.s_ttier, 0)s_ttier,
+						NVL(a.y_tblock, 0)y_tblock,
+						NVL(a.y_tbay, 0)y_tbay,
+						NVL(a.y_trow, 0) y_trow,
+						NVL(a.y_ttier, 0) y_ttier,
+						NVL(a.pod, '') pod,
+						NVL(a.pol, '') pol,
+						NVL(a.dmg_cd, '') dmg_cd,
+						NVL(TO_CHAR(a.gin_dt, 'yyyy-mm-dd hh24:mi'), '') gin_dt,
+						NVL(TO_CHAR(a.gc_ddt, 'yyyy-mm-dd hh24:mi'), '') gc_ddt,
+						NVL(TO_CHAR(a.gout_dt, 'yyyy-mm-dd hh24:mi'), '') gout_dt,
+						NVL(TO_CHAR(a.gc_ldt, 'yyyy-mm-dd hh24:mi'), '') gc_ldt,
+						NVL(a.bond_id, '') bond_id,
+						NVL(b.ship_nm, '') ship_nm,
+						NVL(c.oper_knm, '') oper_knm,
+						NVL(a.insp_id, '') insp_id,
+						MAX(NVL(d.cargo_no, '')) cargo_no,
+						NVL(FN_GET_BKNO( #{search}, a.dup_no), ' ') bk_no,
+						a.dup_no,
+						NVL(a.seal_no1, '') seal_no2,
+						NVL(d.seal_no, '') seal_no,
+						NVL(a.seal_no, '') seal_no1,
+						NVL(a.temp_id, '') temp_id,
+						NVL(a.trucker_cd_out, '') trucker_cd_out,
+						NVL(a.car_no_out, '') car_no_out,
+						NVL(a.clean_cd, '') clean_cd
+					FROM
+						t_cntr a,
+						t_vessel b,
+						t_oper c ,
+						t_bsiot_sub d,
+						t_bklst e
+					WHERE
+						a.cntr_no = UPPER(#{search})
+						AND a.ship_cd = b.ship_cd
+						AND a.oper_cd = c.oper_cd
+						AND a.cntr_no = d.cntr_no(+)
+						AND a.dup_no = d.dup_no(+)
+						AND a.cntr_no = e.cntr_no(+)
+						AND a.dup_no = e.dup_no(+)
+					GROUP BY
+						a.ship_cd,
+						a.call_no,
+						a.call_yy,
+						a.oper_cd,
+						NVL(a.oper_cd2, ''),
+						a.cur_stat,
+						a.fm_cd,
+						a.sz_cd,
+						a.ty_cd,
+						a.rtn_cd,
+						a.ts_id,
+						a.trucker_cd,
+						a.car_no,
+						a.weight,
+						a.imdg,
+						a.unno,
+						a.temp,
+						a.s_tbay,
+						a.s_trow,
+						a.s_ttier,
+						a.y_tblock,
+						a.y_tbay,
+						a.y_trow,
+						a.y_ttier,
+						a.pod,
+						a.pol,
+						a.dmg_cd,
+						a.gin_dt,
+						a.gc_ddt,
+						a.gc_ddt,
+						a.gout_dt,
+						a.gc_ldt,
+						a.gc_ldt,
+						a.bond_id,
+						b.ship_nm,
+						c.oper_knm,
+						a.insp_id,
+						e.bk_no,
+						a.dup_no,
+						a.seal_no1,
+						d.seal_no,
+						a.seal_no,
+						a.temp_id,
+						a.trucker_cd_out,
+						a.car_no_out,
+						a.clean_cd ) T ) TT
+			WHERE
+				TT.num <= 1
+				
+		]]>
+	</select>
+	
+	
+	<select id="cntrInfoDetailsStockDays" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				v.atb_dt atb_dt,
+				TO_DATE(DECODE(SIGN(TO_CHAR(DECODE(SUBSTR(a.cur_stat, 1, 1), 'I', v.stv_end_dt, a.gin_dt), 'hh24miss')-'080000'),-1, DECODE(SUBSTR(a.cur_stat, 1, 1), 'I', TO_CHAR(v.stv_end_dt, 'YYYYMMDD') || '080000', TO_CHAR(a.gin_dt, 'yyyymmddhh24miss')), 0, TO_CHAR(DECODE(SUBSTR(a.cur_stat, 1, 1), 'I', v.stv_end_dt, a.gin_dt), 'yyyymmddhh24miss'), 1, DECODE(SUBSTR(a.cur_stat, 1, 1), 'I', TO_CHAR(v.stv_end_dt + 1, 'yyyymmdd') || '080000', TO_CHAR(a.gin_dt, 'yyyymmddhh24miss'))), 'yyyymmddhh24miss') from_dt,
+				TO_CHAR(adjFnship_dt(SUBSTR(a.ta_ship_call, 1, 4), SUBSTR(a.ta_ship_call, 5, 4) , SUBSTR(a.ta_ship_call, 9, 3) ), 'YYYY-MM-DDHH24MISS') ta_ship_dt
+			FROM
+				t_cntr A,
+				t_vescall v
+			WHERE
+				a.ship_cd = v.ship_cd
+				AND a.call_no = v.call_no
+				AND a.call_yy = v.call_yy
+				AND a.cntr_no = #{cntrNo}
+				AND a.dup_no = #{dupNo}
+		]]>
+	</select>
+	
+	<select id="cntrListCntrRehandlingList" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+			    ship_cd,
+			    TO_CHAR(call_no, '000') call_no,
+			    call_yy,
+			    oper_cd,
+			    cntr_no,
+			    NVL(sz_cd, ' ')sz_cd,
+			    NVL(ty_cd, ' ')ty_cd,
+			    NVL(cur_stat, ' ')cur_stat,
+			    NVL(fm_cd, ' ')fm_cd,
+			    NVL(ts_id, ' ')ts_id,
+			    NVL(rtn_cd, ' ')rtn_cd,
+			    NVL(pod, ' ') pod,
+			    NVL(dir_id, ' ') dir_id,
+			    NVL(weight, 0) weight,
+			    NVL(ex_pod, ' ') ex_pod,
+			    NVL(hwl_cd, ' ')hwl_cd,
+			    NVL(bond_id, ' ')bond_id,
+			    DECODE(SUBSTR(ex_ship_call, 1, 4) || '-' || SUBSTR(ex_ship_call, 9, 3) || '-' || SUBSTR(ex_ship_call, 5, 4), '--', '', SUBSTR(ex_ship_call, 1, 4) || '-' || SUBSTR(ex_ship_call, 9, 3) || '-' || SUBSTR(ex_ship_call, 5, 4)) ex_ship_call ,
+			    DECODE(s_tbay || '-' || TRIM(TO_CHAR(s_trow, '09')) || '-' || TRIM(TO_CHAR(s_ttier, '09')), '--', '', s_tbay || '-' || TRIM(TO_CHAR(s_trow, '09')) || '-' || TRIM(TO_CHAR(s_ttier, '09'))) ship_loca,
+			    DECODE(SUBSTR(cur_stat, 1, 1), 'I', TO_CHAR(gc_ddt, 'yyyy-mm-dd hh24:mi'), TO_CHAR(gin_dt, 'yyyy-mm-dd hh24:mi')) in_dt ,
+			    DECODE(SUBSTR(cur_stat, 1, 1), 'I', TO_CHAR(gout_dt, 'yyyy-mm-dd hh24:mi'), TO_CHAR(gc_ldt, 'yyyy-mm-dd hh24:mi')) out_dt,
+			    TO_CHAR(gin_dt, 'yyyy-mm-dd hh24:mi') gin_dt,
+			    TO_CHAR(gc_ddt, 'yyyy-mm-dd hh24:mi') gc_ddt,
+			    TO_CHAR(gc_ldt, 'yyyy-mm-dd hh24:mi') gc_ldt,
+			    TO_CHAR(gout_dt, 'yyyy-mm-dd hh24:mi') gout_dt
+			FROM
+			    t_cntr
+			WHERE
+			    ( ex_pod IS NOT NULL
+			    AND pod <> ex_pod
+			    OR ex_ship_call IS NOT NULL )
+		]]>
+		<if test="shipCd != null and shipCd != ''">
+			<![CDATA[
+				AND UPPER( ship_cd ) = UPPER( #{shipCd} )
+			]]>
+		</if>
+		<if test="callYy != null and callYy != ''">
+			<![CDATA[
+				AND call_yy = #{callYy}
+			]]>
+		</if>
+		<if test="callNo != null and callNo != ''">
+			<![CDATA[
+				AND call_no = #{callNo}
+			]]>
+		</if>
+		<if test="oper != null and oper != ''">
+			<![CDATA[
+				AND oper_cd in ( #{oper} )
+			]]>
+		</if>
+		<![CDATA[
+			ORDER BY SUBSTR(sz_cd,1,1), SUBSTR(cur_stat,1,1), fm_cd, cntr_no 
+		]]>
+	</select>
+	
+	<select id="cntrListReeferCargo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				a.ship_cd, to_char( a.call_no, '000' ) call_no, a.call_yy, a.oper_cd, a.cntr_no, a.sz_cd,
+				a.ty_cd, a.cur_stat, a.fm_cd, a.ts_id, a.rtn_cd, 
+		]]>
+		<if test="gubun == 'ice'">
+			<![CDATA[
+				b.req_temp,
+			]]>
+		</if>
+		<![CDATA[
+				a.y_tblock, a.y_tbay, a.y_trow, a.y_ttier,
+		]]>
+		<if test="gubun == 'ice'">
+			<![CDATA[
+				b.plin_dt, b.plout_dt,
+			]]>
+		</if>
+		<![CDATA[
+				a.bond_id, a.temp_id, a.reef_id
+			FROM
+				t_cntr a, t_vescall c
+		]]>
+		<if test="gubun == 'ice'">
+			<![CDATA[
+				, t_rfcargo b
+			]]>
+		</if>
+		<![CDATA[
+			WHERE
+				SUBSTR( a.cur_stat, 2, 1 ) IN ( 'Y', 'L', 'M' ) 
+		]]>
+		<if test="gubun == 'ice'">
+			<![CDATA[
+				AND a.temp_id in ( 'CEL', 'FAH' )
+				AND NVL( a.reef_id, ' ' ) <> 'D' 
+				
+			]]>
+		</if>
+		<if test="gubun == 'dry'">
+			<![CDATA[
+				AND a.ty_cd BETWEEN 30 AND 49
+				AND a.fm_cd = 'F'
+				AND ( a.temp_id = 'DRY' or a.temp_id is null )
+			]]>
+		</if>
+		<if test="oper != null and oper != ''">
+			<![CDATA[
+				AND a.oper_cd in ( #{oper} )
+			]]>
+		</if>
+		<if test="shipCd != null and shipCd != ''">
+			<![CDATA[
+				AND UPPER(a.ship_cd) = UPPER(#{shipCd})
+			]]>
+		</if>
+		<if test="callNo != null and callNo != ''">
+			<![CDATA[
+				AND a.call_no = #{callNo}
+			]]>
+		</if>
+		<if test="callYy != null and callYy != ''">
+			<![CDATA[
+				AND a.call_yy = #{callYy}
+			]]>
+		</if>
+		<if test="gubun == 'ice'">
+			<![CDATA[
+				AND a.ship_cd = b.ship_cd
+				AND a.call_yy = b.call_yy
+				AND a.call_no = b.call_no
+				AND a.cntr_no = b.cntr_no
+				AND a.dup_no = b.dup_no
+				AND a.ship_cd = c.ship_cd(+)
+				AND a.call_yy = c.call_yy(+)
+				AND a.call_no = c.call_no(+)
+			ORDER BY a.cntr_no
+			]]>
+		</if>
+		<if test="gubun == 'dry'">
+			<![CDATA[
+				AND a.ship_cd = c.ship_cd(+)
+				AND a.call_yy = c.call_yy(+)
+				AND a.call_no = c.call_no(+)
+			ORDER BY a.cntr_no
+			]]>
+		</if>
+	</select>
+	
+	<select id="cntrListCntrDanger" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				d.cntr_no,
+				NVL(c.sz_cd, ' ') sz_cd,
+				NVL(c.ty_cd, ' ') ty_cd,
+				NVL(c.cur_stat, ' ')cur_stat,
+				NVL(c.fm_cd, ' ')fm_cd,
+				NVL(c.ts_id, ' ')ts_id,
+				NVL(c.rtn_cd, ' ')rtn_cd,
+				NVL(c.dir_id, ' ')dir_id,
+				NVL(c.weight, 0)weight,
+				NVL(d.imdg, ' ')imdg,
+				NVL(d.unno, ' ')unno,
+				NVL(d.dg_ytype, ' ')dg_ytype,
+				NVL(d.dg_fgrade, ' ')dg_fgrade,
+				NVL(c.s_tbay, 0)s_tbay,
+				NVL(c.s_trow, 0) s_trow,
+				NVL(c.s_ttier, 0) s_ttier,
+				NVL(c.y_tblock, ' ')y_tblock,
+				NVL(c.y_tbay, 0)y_tbay,
+				NVL(c.y_trow, 0)y_trow,
+				NVL(c.y_ttier, 0)y_ttier,
+				NVL(c.overd_cd, ' ')overd_cd,
+				NVL(c.overl_cd, ' ')overl_cd,
+				NVL(c.bond_id, ' ')bond_id,
+				NVL(c.s_sind, ' ')s_sind,
+				c.oper_cd,
+				NVL(TO_CHAR(c.gin_dt, 'yyyy-mm-dd hh24:mi'), ' ')gin_dt,
+				NVL(TO_CHAR(c.gc_ddt, 'yyyy-mm-dd hh24:mi'), ' ')gc_ddt,
+				NVL(TO_CHAR(c.gc_ldt, 'yyyy-mm-dd hh24:mi'), ' ')gc_ldt,
+				NVL(TO_CHAR(c.gout_dt, 'yyyy-mm-dd hh24:mi'), ' ')gout_dt,
+				NVL(d.dg_nm, ' ')c,
+				c.ship_cd,
+				TO_CHAR(c.call_no, '000') call_no,
+				c.call_yy
+			FROM
+				t_dgcargo d,
+				t_cntr c
+			WHERE
+				c.cntr_no = d.cntr_no
+				AND c.dup_no = d.dup_no
+		]]>
+		<if test="shipCd != null and shipCd != ''">
+			<![CDATA[
+				AND c.ship_cd = #{shipCd}
+			]]>
+		</if>
+		<if test="callNo != null and callNo != ''">
+			<![CDATA[
+				AND c.call_no = #{callNo}
+			]]>
+		</if>
+		<if test="callYy != null and callYy != ''">
+			<![CDATA[
+				AND c.call_yy = #{callYy}
+			]]>
+		</if>
+		<if test="oper != null and oper != ''">
+			<![CDATA[
+				AND c.oper_cd in ( #{oper} )
+			]]>
+		</if>
+		<if test="gubun == 'down'">
+			<![CDATA[
+				AND SUBSTR( c.cur_stat, 1, 1 ) = 'I'
+				AND ( gin_dt BETWEEN to_date( #{searchStartDt} || '000000', 'yyyymmddhh24miss' ) AND to_date( #{searchEndDt} || '235959', 'yyyymmddhh24miss' )
+				OR gc_ddt BETWEEN to_date( #{searchStartDt} || '000000', 'yyyymmddhh24miss' ) AND to_date( #{searchEndDt} || '235959', 'yyyymmddhh24miss' ) ) 
+			]]>
+		</if>
+		<if test="gubun == 'up'">
+			<![CDATA[
+				AND SUBSTR( c.cur_stat, 1, 1 ) = 'X'
+				AND gin_dt BETWEEN to_date( ${searchStartDt} || '000000', 'yyyymmddhh24miss' ) AND to_date( #{searchEndDt} || '235959', 'yyyymmddhh24miss' )
+			]]>
+		</if>
+		<if test="gubun != 'down' and gubun != 'up'">
+			<![CDATA[
+				AND TRIM(d.unno) <> TRIM(c.unno)
+				AND gin_dt BETWEEN to_date( #{searchStartDt} || '000000', 'yyyymmddhh24miss' ) AND to_date( #{searchEndDt} || '235959', 'yyyymmddhh24miss' )
+			]]>
+		</if>
+		<![CDATA[
+			ORDER BY c.ship_cd, c.call_no, c.call_yy, c.cntr_no
+		]]>
+	</select>
+	
+	<select id="cntrListCntrCancel" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				NVL(cntr_no, ' ') cntr_no,
+				NVL(sz_cd, ' ') sz_cd,
+				NVL(ty_cd, ' ') ty_cd,
+				NVL(fm_cd, ' ')fm_cd,
+				NVL(pod, ' ')pod,
+				NVL(ov_h, 0)ov_h,
+				NVL(ov_wp, 0)ov_wp,
+				NVL(ov_ws, 0) ov_ws,
+				NVL(ov_lf, 0) ov_lf,
+				NVL(ov_lb, 0) ov_lb,
+				NVL(temp, ' ') temp,
+				NVL(reef_id, ' ') reef_id,
+				NVL(imdg, ' ') imdg,
+				NVL(oper_cd, ' ') oper_cd,
+				NVL(y_tblock, ' ')y_tblock,
+				NVL(y_tbay, 0) y_tbay,
+				NVL(y_trow, 0)y_trow,
+				NVL(y_ttier, 0) y_ttier,
+				NVL(TO_CHAR(gin_dt, 'yyyy-mm-dd hh24:mi'), ' ') gin_dt,
+				NVL(bond_id, ' ')bond_id,
+				NVL(dmg_cd, ' ') dmg_cd,
+				NVL(temp_id, ' ')temp_id,
+				NVL(ship_cd, ' ') ship_cd,
+				TO_CHAR(call_no, '000') call_no,
+				NVL(call_yy, 0) call_yy
+			FROM
+				t_cntr
+			WHERE
+				rtn_cd = 'C'
+		]]>
+		<if test="shipCd != null and shipCd != ''">
+			<![CDATA[
+				AND ship_cd = #{shipCd}
+			]]>
+		</if>
+		<if test="callNo != null and callNo != ''">
+			<![CDATA[
+				AND call_no = #{callNo}
+			]]>
+		</if>
+		<if test="callYy != null and callYy != ''">
+			<![CDATA[
+				AND call_yy = #{callYy}
+			]]>
+		</if>
+		<if test="oper != null and oper != ''">
+			<![CDATA[
+				AND oper_cd in ( #{oper} )
+			]]>
+		</if>
+		<![CDATA[
+				AND ( cur_stat LIKE 'X%' OR cur_stat LIKE 'S%' )
+			ORDER BY ship_cd, call_no, call_yy, cntr_no 
+		]]>
+	</select>
+	
+	<select id="cntrListLongStackRenewal" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				/*+ INDEX (t_cntr I_CNTR_CUR_STAT_DIR) */
+				cntr_no ,
+				dup_no,
+				sz_cd,
+				ty_cd,
+				cur_stat ,
+				fm_cd ,
+				ts_id ,
+				rtn_cd ,
+				y_tblock,
+				TO_CHAR(y_tbay, '00') y_tbay ,
+				y_trow ,
+				y_ttier ,
+				oper_cd ,
+				ship_cd,
+				TO_CHAR(call_no, '000') call_no ,
+				call_yy ,
+				DECODE(SUBSTR(cur_stat, 1, 1), 'I', TO_CHAR(gc_ddt, 'yyyy-mm-dd hh24:mi'), TO_CHAR(gin_dt, 'yyyy-mm-dd hh24:mi')) gin_dt,
+				adjfnovercntr(cntr_no,
+				dup_no) AS OverDays,
+				AdjFnStockCntr(cntr_no,
+				dup_no) AS yardDay,
+				FN_GET_BKNO(cntr_no,
+				dup_no) bk_no
+			FROM
+				t_cntr
+			WHERE
+				SUBSTR(CUR_STAT, 2, 1) IN ( 'Y' )
+				AND NVL(DIR_ID, '9') = '9'
+				AND ${yardDay} <= AdjFnStockCntr(cntr_no,
+				dup_no)
+		]]>
+		<if test="shipCd != null and shipCd != ''">
+			<![CDATA[
+				AND ship_cd = #{shipCd}
+			]]>
+		</if>
+		<if test="callNo != null and callNo != ''">
+			<![CDATA[
+				AND call_no = #{callNo}
+			]]>
+		</if>
+		<if test="callYy != null and callYy != ''">
+			<![CDATA[
+				AND call_yy = #{callYy}
+			]]>
+		</if>
+		<if test="oper != null and oper != ''">
+			<![CDATA[
+				AND oper_cd in ( #{oper} )
+			]]>
+		</if>
+		<if test='fmCd != null and fmCd != ""'>
+			<![CDATA[
+				AND fm_cd = #{fmCd}
+			]]>
+		</if>
+		<if test='ioCd == "I"'>
+			<![CDATA[
+				AND SUBSTR( cur_stat, 1, 1 ) = 'I'
+			]]>
+		</if>
+		<if test='ioCd == "X"'>
+			<![CDATA[
+				AND SUBSTR( cur_stat, 1, 1 ) = 'X'
+			]]>
+		</if>
+		<if test='ioCd == "M"'>
+			<![CDATA[
+				AND SUBSTR( cur_stat, 1, 1 ) = 'M'
+			]]>
+		</if>
+		<if test="szCd == 20">
+			<![CDATA[
+				AND SUBSTR( sz_cd, 1, 1 ) = '2'
+			]]>
+		</if>
+		<if test="szCd == 40">
+			<![CDATA[
+				AND SUBSTR( sz_cd, 1, 1 ) = '4'
+			]]>
+		</if>
+		<if test="szCd == 45">
+			<![CDATA[
+				AND ( SUBSTR( sz_cd, 1, 1 ) = '9' OR SUBSTR( sz_cd, 1, 1 ) = 'L' )
+			]]>
+		</if>
+		<if test="cntrNo != null and cntrNo != ''">
+			<![CDATA[
+				AND cntr_no = UPPER( #{cntrNo} )
+			]]>
+		</if>
+	</select>
+	
+	<select id="cntrListLongStack" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				c.cntr_no,
+				c.dup_no,
+				c.sz_cd,
+				c.ty_cd,
+				c.cur_stat,
+				c.fm_cd,
+				c.ts_id,
+				c.rtn_cd,
+				c.y_tblock,
+				c.y_tbay,
+				c.y_trow,
+				c.y_ttier,
+				c.oper_cd,
+				c.ship_cd,
+				TO_CHAR(c.call_no, '000') call_no,
+				c.call_yy,
+				DECODE(SUBSTR(cur_stat, 1, 1), 'X', TO_CHAR(v.atb_dt, 'yyyymmddhh24miss'), 'I', TO_CHAR(v.stv_end_dt, 'yyyymmddhh24miss')) chkDate,
+				DECODE(SUBSTR(cur_stat, 1, 1), 'I', TO_CHAR(c.gc_ddt, 'yyyy-mm-dd hh24:mi'), TO_CHAR(c.gin_dt, 'yyyy-mm-dd hh24:mi')) gin_dt,
+				DECODE(SUBSTR(cur_stat, 1, 1), 'X', c.gc_ldt, 'I', c.gout_dt, c.gout_dt) gout_dt,
+				TO_DATE(DECODE(SIGN(TO_CHAR(DECODE(SUBSTR(c.cur_stat, 1, 1), 'I', v.stv_end_dt, c.gin_dt), 'hh24miss')-'080000'),-1, DECODE(SUBSTR(c.cur_stat, 1, 1), 'I', TO_CHAR(v.stv_end_dt, 'YYYYMMDD') || '080000', TO_CHAR(c.gin_dt, 'yyyymmddhh24miss')), 0, TO_CHAR(DECODE(SUBSTR(c.cur_stat, 1, 1), 'I', v.stv_end_dt, c.gin_dt), 'yyyymmddhh24miss'), 1, DECODE(SUBSTR(c.cur_stat, 1, 1), 'I', TO_CHAR(v.stv_end_dt + 1, 'yyyymmdd') || '080000', TO_CHAR(c.gin_dt, 'yyyymmddhh24miss'))), 'yyyymmddhh24miss') from_dt,
+				DECODE(SUBSTR(cur_stat, 1, 1), 'X', v.atb_dt, 'I', c.gout_dt, c.gout_dt) to_dt,
+				DECODE(ts_id, '1', '4', '2', '5', DECODE(bond_id, 'B', '2', 'C', '3', '1')) good_cd,
+				adjfnovercntr(c.cntr_no,
+				c.dup_no) AS OverDays,
+				NVL(b.bk_no, ' ') bk_no
+			FROM
+				t_cntr c,
+				t_vescall v,
+				t_bklst b
+			WHERE
+				c.ship_cd = v.ship_cd
+				AND c.call_no = v.call_no
+				AND c.call_yy = v.call_yy
+				AND SUBSTR(c.cur_stat, 2, 1) IN ('Y',
+				'L',
+				'W')
+				AND c.cntr_no = b.cntr_no(+)
+				AND c.dup_no = b.dup_no(+)
+		]]>
+		<if test="shipCd != null and shipCd != ''">
+			<![CDATA[
+				AND c.ship_cd = #{shipCd}
+			]]>
+		</if>
+		<if test="callNo != null and callNo != ''">
+			<![CDATA[
+				AND c.call_no = #{callNo}
+			]]>
+		</if>
+		<if test="callYy != null and callYy != ''">
+			<![CDATA[
+				AND c.call_yy = #{callYy}
+			]]>
+		</if>
+		<if test="oper != null and oper != ''">
+			<![CDATA[
+				AND c.oper_cd in ( #{oper} )
+			]]>
+		</if>
+		<if test="fmCd != null and fmCd != ''">
+			<![CDATA[
+				AND c.fm_cd = #{fmCd}
+			]]>
+		</if>
+		<if test="ioCd == 'I'">
+			<![CDATA[
+				AND SUBSTR( c.cur_stat, 1, 1 ) = 'I'
+			]]>
+		</if>
+		<if test="ioCd == 'X'">
+			<![CDATA[
+				AND SUBSTR( c.cur_stat, 1, 1 ) = 'X'
+			]]>
+		</if>
+		<if test="ioCd == 'M'">
+			<![CDATA[
+				AND SUBSTR( c.cur_stat, 1, 1 ) = 'M'
+			]]>
+		</if>
+		<if test="szCd == 20">
+			<![CDATA[
+				AND SUBSTR( c.sz_cd, 1, 1 ) = '2'
+			]]>
+		</if>
+		<if test="szCd == 40">
+			<![CDATA[
+				AND SUBSTR( c.sz_cd, 1, 1 ) = '4'
+			]]>
+		</if>
+		<if test="szCd == 45">
+			<![CDATA[
+				AND ( SUBSTR( c.sz_cd, 1, 1 ) = '9' OR SUBSTR( c.sz_cd, 1, 1 ) = 'L' )
+			]]>
+		</if>
+		<if test="cntrNo != null and cntrNo != ''">
+			<![CDATA[
+				AND c.cntr_no = UPPER( #{cntrNo} )
+			]]>
+		</if>
+		<![CDATA[
+			ORDER BY from_dt ASC
+		]]>
+	</select>
+	
+	<select id="cllOverStorage" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				NVL(a.cntr_no, ' ') cntr_no,
+				a.sz_cd sz_cd,
+				a.ty_cd ty_cd,
+				NVL(a.cur_stat, '__')|| NVL(a.fm_cd, '_')|| '-' || NVL(a.ts_id, '_')|| NVL(a.rtn_cd, '_') status,
+				a.fm_cd fm_cd ,
+				a.pod pod,
+				a.weight weight,
+				TO_CHAR(a.gin_dt, 'YYYY-MM-DD HH24:MI:SS') AS gin_dt,
+				FN_GET_OVERCNTR(a.cntr_no, a.dup_no) AS OverDays
+			FROM
+				T_CNTR a,
+				T_COLDLT B
+			WHERE
+				a.cur_stat LIKE 'X%'
+				AND a.fm_cd = 'F'
+				AND a.cntr_no = b.cntr_no
+				AND a.ship_cd = b.ship_cd
+				AND a.call_no = b.call_no
+				AND a.call_yy = b.call_yy
+				AND b.ship_cd = #{shipCd}
+				AND b.call_no = #{callNo}
+			 	AND b.call_yy = #{callYy}
+				AND ADJFNOVERCNTR(a.cntr_no, a.dup_no) > 1
+				AND NVL(a.void, ' ') = ' '
+		]]>
+		<if test="oper != null and oper != ''">
+			<![CDATA[
+				AND a.oper_cd IN ( #{oper} )
+			]]>
+		</if>
+	</select>
+	
+	<select id="byVslDisLod" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				NVL(cntr_no, ' ')cntr_no,
+				NVL(sz_cd, ' ')sz_cd,
+				NVL(ty_cd, ' ')ty_cd,
+				NVL(cur_stat, ' ')cur_stat,
+				NVL(fm_cd, ' ')fm_cd,
+				NVL(ts_id, ' ')ts_id,
+				NVL(rtn_cd, ' ')rtn_cd,
+				NVL(dir_id, ' ')dir_id,
+				NVL(weight, 0) weight,
+				NVL(ov_h, 0)ov_h,
+				NVL(ov_wp, 0)ov_wp,
+				NVL(ov_ws, 0)ov_ws,
+				NVL(ov_lf, 0)ov_lf,
+				NVL(ov_lb, 0)ov_lb,
+				NVL(temp, ' ')temp,
+				NVL(reef_id, ' ')reef_id,
+				NVL(imdg, ' ')imdg,
+				NVL(s_tbay, ' ')s_tbay,
+				NVL(s_trow, 0)s_trow,
+				NVL(s_ttier, 0)s_ttier,
+				NVL(y_tblock, ' ')y_tblock,
+				NVL(y_tbay, 0)y_tbay,
+				NVL(y_trow, 0)y_trow,
+				NVL(y_ttier, 0)y_ttier,
+				NVL(TO_CHAR(DECODE(NVL(TRN_IN, ' '), 'A', FN_GET_REAL_GIN_DT(CNTR_NO, DUP_NO), gin_dt), 'yyyy-mm-dd hh24:mi'), '-') gin_dt,
+				NVL(TO_CHAR(DECODE(NVL(TRN_OUT, ' '), 'A', FN_GET_REAL_GOUT_DT(CNTR_NO, DUP_NO), gOUT_dt), 'yyyy-mm-dd hh24:mi'), '-') gout_dt,
+				NVL(TO_CHAR(gc_ddt, 'yyyy-mm-dd hh24:mi'), ' ') gc_ddt,
+				NVL(TO_CHAR(gc_ldt, 'yyyy-mm-dd hh24:mi'), ' ') gc_ldt,
+		]]>
+		<if test="gubun == 'down'">
+			<![CDATA[
+				NVL( overd_cd, ' ') overd_cd,
+			]]>
+		</if>
+		<if test="gubun != 'down'">
+			<![CDATA[
+				NVL( overl_cd, ' ') overl_cd,
+			]]>
+		</if>
+		<![CDATA[
+				NVL(oper_cd,' ') oper_cd
+			FROM
+				T_CNTR
+			WHERE
+				1=1
+		]]>
+		<if test="shipCd != null and shipCd != ''">
+			<![CDATA[
+				AND ship_cd = #{shipCd}
+			]]>
+		</if>
+		<if test="callNo != null and callNo != ''">
+			<![CDATA[
+				AND call_no = #{callNo}
+			]]>
+		</if>
+		<if test="callYy != null and callYy != ''">
+			<![CDATA[
+				AND call_yy = #{callYy}
+			]]>
+		</if>
+		<if test="oper != null and oper != ''">
+			<![CDATA[
+				AND oper_cd in ( #{oper} )
+			]]>
+		</if>
+		<if test="gubun == 'down'">
+			<![CDATA[
+				AND ( cur_stat LIKE 'I%' OR cur_stat LIKE 'S%' )
+			]]>
+		</if>
+		<if test="gubun != 'down'">
+			<![CDATA[
+				AND ( cur_stat LIKE 'X%' OR ( cur_stat LIKE 'S%' AND s_sind = 'Y' ) ) AND rtn_cd is null
+			]]>
+		</if>
+		<![CDATA[
+			ORDER BY oper_cd, cntr_no
+		]]>
+	</select>
+	
+	<select id="cntrInfoStock" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				ship_cd,
+				TO_CHAR(call_no, '000') call_no,
+				call_yy,
+				SUM(DECODE(SUBSTR(sz_cd, 1, 1)|| fm_cd, '2F', 1, 0)) F20,
+				SUM(DECODE(SUBSTR(sz_cd, 1, 1)|| fm_cd, '4F', 1, 0)) F40,
+				SUM(DECODE(SUBSTR(sz_cd, 1, 1)|| fm_cd, '9F', 1, 'LF', 1, 0)) F45,
+				SUM(DECODE(SUBSTR(sz_cd, 1, 1)|| fm_cd, '2M', 1, 0)) M20,
+				SUM(DECODE(SUBSTR(sz_cd, 1, 1)|| fm_cd, '4M', 1, 0)) M40,
+				SUM(DECODE(SUBSTR(sz_cd, 1, 1)|| fm_cd, '9M', 1, 'LF', 1, 0)) M45,
+				SUM(DECODE(SUBSTR(sz_cd, 1, 1), '2', 1, '4', 2, '9', 2, 'L', 2, 0)) TEU,
+				SUM(DECODE(SUBSTR(sz_cd, 1, 1), '2', 1, 0)) T20,
+				SUM(DECODE(SUBSTR(sz_cd, 1, 1), '4', 1, 0)) T40,
+				SUM(DECODE(SUBSTR(sz_cd, 1, 1), '9', 1, 'L', 1, 0)) T45
+			FROM
+				t_cntr
+			WHERE
+				SUBSTR(cur_stat, 2, 1) IN ('Y', 'W', 'L')
+		]]>
+		<if test="oper != null and oper != ''">
+			<![CDATA[
+				AND oper_cd IN ( #{oper} )			
+			]]>
+		</if>
+		<if test="shipCd != null and shipCd != '' and callNo != null and callNo != '' and callYy != null and callYy != ''">
+			<![CDATA[
+				AND ship_cd = #{shipCd}
+				AND call_no = #{callNo}
+				AND call_yy = #{callYy}
+			]]>
+		</if>
+		<![CDATA[
+			GROUP BY ship_cd, call_no, call_yy
+		]]>
+	</select>
+	
+	<select id="cntrInfoFreeTimeFindByCntrNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT 
+				ship_cd,
+				to_char( call_no, '000' ) call_no,
+				call_yy
+			FROM
+				t_cntr
+			WHERE
+				cntr_no = #{cntrNo}
+				AND dup_no = ( SELECT max(dup_no) FROM t_cntr WHERE cntr_no = #{cntrNo} ) 
+		]]>
+	</select>
+	
+	<select id="findCntrInfoByShipCdAndCallNoAndCallYy" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				t_cntr
+			WHERE
+				ship_cd = #{shipCd}
+				AND call_no = #{callNo}
+				AND call_yy = #{callYy}
+		]]>
+	</select>
+	
+	<select id="findCountFromOnDockBookingList" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				a.cntr_no,
+				COUNT(*) cnt
+			FROM
+				t_cntr A,
+				t_bklst B
+			WHERE
+				A.cntr_no = B.cntr_no
+				AND A.dup_no = B.dup_no
+				AND A.oper_cd = B.oper_cd
+		]]>
+		<if test='operList != null'>
+			<![CDATA[
+				AND A.oper_cd IN
+			]]>
+			<foreach collection="operList" item="item" open="(" close=")" separator="," index="index">
+				<![CDATA[
+					#{item}
+				]]>
+			</foreach>
+		</if>
+		<![CDATA[
+				AND B.bk_no = #{bkNo}
+				AND B.cop_yn = 'Y'
+				AND A.fm_cd = 'M'
+				AND A.cur_stat IN ('MD',
+				'ID')
+				AND A.gout_dt IS NOT NULL
+		]]>
+		<if test='szCd == "20"'>
+			<![CDATA[
+				AND B.sz_cd BETWEEN 20 AND 29
+			]]>
+		</if>
+		<if test='szCd == "40"'>
+			<if test='tyCd == "HQ" or tyCd == "RH"'>
+				<![CDATA[
+				AND B.sz_cd BETWEEN 44 AND 45
+				]]>
+			</if>
+			<if test='tyCd != "HQ" and tyCd != "RH"'>
+				<![CDATA[
+				AND ( ( B.sz_cd BETWEEN 40 AND 43 ) OR ( B.sz_cd BETWEEN 46 AND 49 ) )
+				]]>
+			</if>
+		</if>
+		<if test='szCd == "45"'>
+			<![CDATA[
+				AND B.sz_cd BETWEEN 90 AND 99
+			]]>
+		</if>
+		<if test='tyCd == "HQ"'>
+			<![CDATA[
+				AND B.ty_grp_cd = 'GP'
+			]]>
+		</if>
+		<if test='tyCd == "RH"'>
+			<![CDATA[
+				AND B.ty_grp_cd = 'RF'
+			]]>
+		</if>
+		<if test='tyCd != "HQ" and tyCd != "RH"'>
+			<![CDATA[
+				AND B.ty_grp_cd = #{tyCd}
+			]]>
+		</if>
+		<![CDATA[
+			GROUP BY
+				a.cntr_no
+		]]>
+	</select>
+	
+	<select id="findCount1FromOnDockBookingList" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				a.cntr_no,
+				COUNT(*) cnt
+			FROM
+				t_cntr A,
+				t_bklst B
+			WHERE
+				A.cntr_no = B.cntr_no
+				AND A.dup_no = B.dup_no
+				AND A.oper_cd = B.oper_cd
+		]]>
+		<if test="operList.size() > 0">
+			<![CDATA[
+				AND A.oper_cd IN
+			]]>
+			<foreach collection="operList" item="item" open="(" close=")" separator="," index="index">
+				<![CDATA[
+					#{item}
+				]]>
+			</foreach>
+		</if>
+		<![CDATA[
+				AND B.bk_no = #{bkNo}
+				AND B.cop_yn = 'Y'
+				AND A.fm_cd = 'M'
+				AND SUBSTR(A.cur_stat, 1, 1) IN ( 'M', 'I' )
+				AND SUBSTR(A.cur_stat, 2, 1) NOT IN ( 'D', 'B' )
+				AND A.gout_dt IS NOT NULL
+		]]>
+		<if test="szCd == 20">
+			<![CDATA[
+				AND B.sz_cd BETWEEN 20 AND 29
+			]]>
+		</if>
+		<if test="szCd == 40">
+			<if test="tyCd == 'HQ' or tyCd == 'RH'">
+				<![CDATA[
+				AND B.sz_cd BETWEEN 44 AND 45
+				]]>
+			</if>
+			<if test="tyCd != 'HQ' and tyCd != 'RH'">
+				<![CDATA[
+				AND ( ( B.sz_cd BETWEEN 40 AND 43 ) OR ( B.sz_cd BETWEEN 46 AND 49 ) )
+				]]>
+			</if>
+		</if>
+		<if test="szCd == 45">
+			<![CDATA[
+				AND B.sz_cd BETWEEN 90 AND 99
+			]]>
+		</if>
+		<if test="tyCd == 'HQ'">
+			<![CDATA[
+				AND B.ty_grp_cd = 'GP'
+			]]>
+		</if>
+		<if test="tyCd == 'RH'">
+			<![CDATA[
+				AND B.ty_grp_cd = 'RF'
+			]]>
+		</if>
+		<if test="tyCd != 'HQ' and tyCd != 'RH'">
+			<![CDATA[
+				AND B.ty_grp_cd = #{tyCd}
+			]]>
+		</if>
+		<![CDATA[
+			GROUP BY
+				a.cntr_no
+		]]>
+	</select>
+	
+	<select id="onDockStock" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				NVL(A.cntr_no, ' ') cntr_no,
+				NVL( A.ship_cd, ' ') ship_cd,
+				TO_CHAR( A.call_no, '000') call_no,
+				NVL(A.cur_stat, ' ') cur_stat,
+				DECODE(A.clean_cd, 'C', 'Y', 'Y', 'Y', DECODE(A.dmg_cd, 'B', 'Y', 'S', 'Y', 'L', 'Y', 'H', 'Y', '', 'N')) dmg_cd,
+				NVL(A.fm_cd, ' ') fm_cd,
+				NVL(A.ts_id, ' ')ts_id,
+				NVL(A.rtn_cd, ' ') rtn_cd,
+				NVL(A.sz_cd, ' ')sz_cd,
+				NVL(A.ty_cd, ' ')ty_cd,
+				NVL(A.y_tblock, ' ')y_tblock,
+				NVL(A.y_tbay, 0) y_tbay,
+				NVL(A.y_trow, 0) y_trow,
+				NVL(A.y_ttier, 0) y_ttier,
+				NVL(TO_CHAR(A.gin_dt, 'yyyy-mm-dd hh24:mi'), ' ') gin_dt,
+				NVL(TO_CHAR(A.gc_ldt, 'yyyy-mm-dd hh24:mi'), ' ') gc_ldt,
+				NVL(TO_CHAR(A.gc_ddt, 'yyyy-mm-dd hh24:mi'), ' ') gc_ddt,
+				NVL(TO_CHAR(A.gout_dt, 'yyyy-mm-dd hh24:mi'), ' ') gout_dt,
+				NVL(B.bk_no, ' ') bk_no,
+				NVL(A.seal_no, ' ') seal_no ,
+				NVL(a.weight, 0) weight,
+				NVL(A.ty_grp_cd, ' ') ty_grp_cd,
+				TO_DATE(DECODE(SIGN(TO_CHAR(DECODE(SUBSTR(a.cur_stat, 1, 1), 'I', v.stv_end_dt, a.gin_dt), 'hh24miss')-'080000'),-1, DECODE(SUBSTR(a.cur_stat, 1, 1), 'I', TO_CHAR(v.stv_end_dt, 'YYYYMMDD') || '080000', TO_CHAR(a.gin_dt, 'yyyymmddhh24miss')), 0, TO_CHAR(DECODE(SUBSTR(a.cur_stat, 1, 1), 'I', v.stv_end_dt, a.gin_dt), 'yyyymmddhh24miss'), 1, DECODE(SUBSTR(a.cur_stat, 1, 1), 'I', TO_CHAR(v.stv_end_dt + 1, 'yyyymmdd') || '080000', TO_CHAR(a.gin_dt, 'yyyymmddhh24miss'))), 'yyyymmddhh24miss') from_dt
+			FROM
+				t_cntr A,
+				t_bklst b,
+				t_oper C,
+				t_vescall v
+			WHERE
+				a.ship_cd = v.ship_cd
+				AND a.call_no = v.call_no
+				AND a.call_yy = v.call_yy
+				AND a.oper_cd IN
+		]]>
+		<foreach collection="operList" item="item" open="(" close=")" separator="," index="index">
+			<![CDATA[
+					#{item}
+			]]>
+		</foreach>
+		<![CDATA[
+				AND A.OPER_CD = C.OPER_CD
+		]]>
+		<if test='ixCd == "I"'>
+			<![CDATA[
+				AND ( A.cur_stat IN ( 'IY', 'IL', 'IW' ) )
+			]]>
+		</if>
+		<if test='ixCd == "X"'>
+			<![CDATA[
+				AND ( A.cur_stat IN ( 'XY', 'XL', 'XW' ) )
+			]]>
+		</if>
+		<if test='ixCd == "M"'>
+			<![CDATA[
+				AND ( A.cur_stat IN ( 'MY', 'ML', 'MW' ) )
+			]]>
+		</if>
+		<if test='ixCd != "I" and ixCd != "X" and ixCd != "M"'>
+			<![CDATA[
+				AND ( A.cur_stat in ( 'IY', 'IL', 'IW', 'MY', 'ML', 'MW', 'XL', 'XY', 'XW' ) )
+			]]>
+		</if>
+		<if test="shipCd != null and shipCd != '' and callNo != null and callNo != '' and callYy != null and callYy != ''">
+			<![CDATA[
+				AND A.ship_cd = #{shipCd}
+				AND A.call_no = #{callNo}
+				AND A.call_yy = #{callYy}
+			]]>
+		</if>
+		<if test="( szCd == null or szCd == '' ) and tyCd != null and tyCd != ''">
+			<if test="tyCd == 'HG'">
+				<![CDATA[
+				AND a.ty_grp_cd = 'HG'
+				]]>
+			</if>
+			<if test="tyCd != 'HG'">
+				<![CDATA[
+				AND ( NVL( a.ty_grp_cd, ' ' ) <> 'HG' )
+				]]>
+				<if test="tyCd == 'HQ'">
+					<![CDATA[
+				AND a.sz_cd BETWEEN 44 AND 45
+					]]>
+				</if>
+				<if test="tyCd == 'GP'">
+					<![CDATA[
+				AND ( a.ty_cd BETWEEN 00 AND 29 )  
+					]]>
+				</if>
+				<if test="tyCd == 'RH'">
+					<![CDATA[
+				AND a.sz_cd BETWEEN 44 AND 45
+				AND ( a.ty_cd BETWEEN 30 AND 49 ) 
+					]]>
+				</if>
+				<if test="tyCd == 'RF'">
+					<![CDATA[
+				AND ( a.ty_cd BETWEEN 30 AND 49 )
+					]]>
+				</if>
+				<if test="tyCd == 'OT'">
+					<![CDATA[
+				AND ( a.ty_cd BETWEEN 50 AND 59 )
+					]]>
+				</if>
+				<if test="tyCd == 'PF'">
+					<![CDATA[
+				AND ( a.ty_cd BETWEEN 60 AND 69 )
+					]]>
+				</if>
+				<if test="tyCd == 'TK'">
+					<![CDATA[
+				AND ( a.ty_cd BETWEEN 70 AND 79 )
+					]]>
+				</if>
+				<if test="tyCd == 'BK'">
+					<![CDATA[
+				AND ( a.ty_cd BETWEEN 80 AND 89 )
+					]]>
+				</if>
+				<if test="tyCd == 'AR'">
+					<![CDATA[
+				AND ( a.ty_cd BETWEEN 90 AND 99 )
+					]]>
+				</if>
+			</if>
+		</if>
+		<if test="szCd != null and szCd != '' and ( tyCd == null or tyCd == '' )">
+			<if test="szCd == '20'">
+				<![CDATA[
+				AND a.sz_cd BETWEEN 20 AND 29
+				]]>
+			</if>
+			<if test="szCd == '40'">
+				<![CDATA[
+				AND a.sz_cd BETWEEN 40 AND 49
+				]]>
+			</if>
+			<if test="szCd == '45'">
+				<![CDATA[
+				AND SUBSTR( a.sz_cd, 1, 1 ) IN ( '9', 'L' )
+				]]>
+			</if>
+		</if>
+		<if test="szCd != null and szCd != '' and tyCd != null and tyCd != ''">
+			<if test="szCd == '40' and tyCd == 'HQ'">
+				<![CDATA[
+				AND a.sz_cd BETWEEN 44 AND 45
+				AND ( a.ty_cd BETWEEN 00 AND 29 ) AND ( NVL( a.TY_GRP_CD, ' ') <> 'HG' ) 
+				]]>
+			</if>
+			<if test="szCd == '40' and tyCd == 'RH'">
+				<![CDATA[
+				AND a.sz_cd BETWEEN 44 AND 45
+				AND ( a.ty_cd BETWEEN 30 AND 49 ) AND ( NVL( a.TY_GRP_CD, ' ') <> 'HG' )
+				]]>
+			</if>
+			<if test="szCd == '40' and tyCd == 'RF'">
+				<![CDATA[
+				AND a.sz_cd BETWEEN 40 AND 49
+				AND ( a.ty_cd BETWEEN 30 AND 49 ) AND ( NVL( a.TY_GRP_CD, ' ') <> 'HG' )
+				]]>
+			</if>
+			<if test=" !(szCd == '40' and tyCd == 'HQ') and !(szCd == '40' and tyCd == 'RH') and !(szCd == '40' and tyCd == 'RF')">
+				<if test="szCd == '20'">
+					<![CDATA[
+				AND a.sz_cd BETWEEN 20 AND 29
+					]]>
+				</if>
+				<if test="szCd == '40'">
+					<![CDATA[
+				AND ( ( a.sz_cd BETWEEN 40 AND 43 ) OR ( a.sz_cd BETWEEN 46 AND 49 ) )
+					]]>
+				</if>
+				<if test="szCd == '45'">
+					<![CDATA[
+				AND SUBSTR( a.sz_cd, 1, 1 ) IN ( '9', 'L' )
+					]]>
+				</if>
+				
+				<if test="tyCd == 'HG'">
+					<![CDATA[
+				AND a.ty_grp_cd = 'HG'
+					]]>
+				</if>
+				<if test="tyCd != 'HG'">
+					<![CDATA[
+						 AND ( NVL( a.TY_GRP_CD, ' ' ) <> 'HG' )
+					]]>
+				</if>
+				<if test="tyCd == 'GP' or tyCd == 'HQ'">
+					<![CDATA[
+				AND ( a.ty_cd BETWEEN 00 AND 29 )
+					]]>
+				</if>
+				<if test="tyCd == 'RF' or tyCd == 'RH'">
+					<![CDATA[
+				AND ( a.ty_cd BETWEEN 30 AND 49 ) 
+					]]>
+				</if>
+				<if test="tyCd == 'OT'">
+					<![CDATA[
+				AND ( a.ty_cd BETWEEN 50 AND 59 )
+					]]>
+				</if>
+				<if test="tyCd == 'PF'">
+					<![CDATA[
+				AND ( a.ty_cd BETWEEN 60 AND 69 )
+					]]>
+				</if>
+				<if test="tyCd == 'TK'">
+					<![CDATA[
+				AND ( a.ty_cd BETWEEN 70 AND 79 )
+					]]>
+				</if>
+				<if test="tyCd == 'BK'">
+					<![CDATA[
+				AND ( a.ty_cd BETWEEN 80 AND 89 )
+					]]>
+				</if>
+				<if test="tyCd == 'AR'">
+					<![CDATA[
+				AND ( a.ty_cd BETWEEN 90 AND 99 )
+					]]>
+				</if>
+			</if>
+		</if>
+		<if test="fmCd != null and fmCd != ''">
+			<![CDATA[
+				AND a.fm_cd = #{fmCd}
+			]]>
+		</if>
+		<if test='dmgCd == "D"'>
+			<![CDATA[
+				AND ( a.dmg_cd IN ( 'B', 'S', 'L', 'H' ) OR clean_cd IN ( 'Y', 'C' ) )
+			]]>
+		</if>
+		<if test='dmgCd == "S"'>
+			<![CDATA[
+				AND a.dmg_cd IS NULL AND a.clean_cd IS NULL
+			]]>
+		</if>
+		<![CDATA[
+				AND A.cntr_no = B.cntr_no(+)
+				AND A.dup_no = B.dup_no(+)
+			ORDER BY
+				A.ship_cd ASC,
+				A.y_tblock ASC,
+				A.y_tbay ASC,
+				A.y_trow ASC,
+				A.y_ttier DESC
+		]]>
+	</select>
+	
+	<select id="onDockFreeVanPool" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				TY_GRP_CD ,
+				DECODE(dmg_cd, 'Y', 'Y', 'N') dmg_cd ,
+				SUM(NVL(F20I, 0)) FF20I ,
+				SUM(NVL(F40I, 0)) FF40I,
+				SUM(NVL(F40HQI, 0)) FF40HQI ,
+				SUM(NVL(F45I, 0)) FF45I ,
+				SUM(NVL(F20I, 0)+ NVL(F40I, 0)+ NVL(F40HQI, 0)+ NVL(F45I, 0)) TIFFUL ,
+				SUM(NVL(F20X, 0)) FF20X ,
+				SUM(NVL(F40X, 0)) FF40X ,
+				SUM(NVL(F40HQX, 0)) FF40HQX ,
+				SUM(NVL(F45X, 0)) FF45X ,
+				SUM(NVL(F20X, 0)+ NVL(F40X, 0)+ NVL(F40HQX, 0)+ NVL(F45X, 0)) TXFFUL ,
+				SUM(NVL(F20M, 0)) FF20M ,
+				SUM(NVL(F40M, 0)) FF40M ,
+				SUM(NVL(F40HQM, 0)) FF40HQM ,
+				SUM(NVL(F45M, 0)) FF45M ,
+				SUM(NVL(F20M, 0)+ NVL(F40M, 0)+ NVL(F40HQM, 0)+ NVL(F45M, 0)) TOFFUL ,
+				SUM(NVL(M20I, 0))-SUM(NVL(HM20I, 0)) MM20I ,
+				SUM(NVL(M40I, 0))-SUM(NVL(HM40I, 0)) MM40I ,
+				SUM(NVL(M40HQI, 0))-SUM(NVL(HM40HQI, 0)) MM40HQI ,
+				SUM(NVL(M45I, 0))-SUM(NVL(HM45I, 0)) MM45I ,
+				(SUM(NVL(M20I, 0)+ NVL(M40I, 0)+ NVL(M40HQI, 0)+ NVL(M45I, 0))) - (SUM(NVL(HM20I, 0)) + SUM(NVL(HM40I, 0)) + SUM(NVL(HM40HQI, 0)) + SUM(NVL(HM45I, 0))) TIMMUL ,
+				SUM(NVL(M20X, 0))-SUM(NVL(HM20X, 0)) MM20X ,
+				SUM(NVL(M40X, 0))-SUM(NVL(HM40X, 0)) MM40X ,
+				SUM(NVL(M40HQX, 0))-SUM(NVL(HM40HQX, 0)) MM40HQX ,
+				SUM(NVL(M45X, 0))-SUM(NVL(HM45X, 0)) MM45X ,
+				(SUM(NVL(M20X, 0)+ NVL(M40X, 0)+ NVL(M40HQX, 0)+ NVL(M45X, 0))) - (SUM(NVL(HM20X, 0)) + SUM(NVL(HM40X, 0)) + SUM(NVL(HM40HQX, 0)) + SUM(NVL(HM45X, 0))) TXMMUL ,
+				SUM(NVL(M20M, 0))-SUM(NVL(HM20M, 0)) MM20M ,
+				SUM(NVL(M40M, 0))-SUM(NVL(HM40M, 0)) MM40M ,
+				SUM(NVL(M40HQM, 0))-SUM(NVL(HM40HQM, 0)) MM40HQM ,
+				SUM(NVL(M45M, 0))-SUM(NVL(HM45M, 0)) MM45M ,
+				(SUM(NVL(M20M, 0)+ NVL(M40M, 0)+ NVL(M40HQM, 0)+ NVL(M45M, 0))) - (SUM(NVL(HM20M, 0)) + SUM(NVL(HM40M, 0)) + SUM(NVL(HM40HQM, 0)) + SUM(NVL(HM45M, 0))) TMMMUL ,
+				SUM(NVL(HM20I, 0))+ SUM(NVL(HM20X, 0))+ SUM(NVL(HM20M, 0)) HM20IXM ,
+				SUM(NVL(HM40I, 0))+ SUM(NVL(HM40X, 0))+ SUM(NVL(HM40M, 0)) HM40IXM ,
+				SUM(NVL(HM40HQI, 0))+ SUM(NVL(HM40HQX, 0))+ SUM(NVL(HM40HQM, 0)) HM40HQIXM ,
+				SUM(NVL(HM45I, 0))+ SUM(NVL(HM45X, 0))+ SUM(NVL(HM45M, 0)) HM45IXM ,
+				SUM(NVL(HM20I, 0)+ NVL(HM20X, 0)+ NVL(HM20M, 0)+ NVL(HM40I, 0)+ NVL(HM40X, 0)+ NVL(HM40M, 0)+ NVL(HM40HQI, 0)+ NVL(HM40HQX, 0)+ NVL(HM40HQM, 0)) HTMMMUL
+			FROM
+				(
+				SELECT
+					DECODE(ty_grp_cd, 'HG', 'HG', DECODE(SUBSTR(ty_cd, 1, 1), 0, 'GP', 1, 'GP', 2, 'GP', 3, 'RF', 4, 'RF', 5, 'OT', 6, 'PF', 7, 'TK', 8, 'BK', 9, 'AR')) TY_GRP_CD ,
+					DECODE(clean_cd, 'C', 'Y', 'Y', 'Y', DECODE(dmg_cd, 'B', 'Y', 'S', 'Y', 'L', 'Y', 'H', 'Y', '', 'N')) dmg_cd ,
+					SUM(DECODE(fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'F20I', 1, 'F21I', 1, 'F22I', 1, 'F23I', 1, 'F24I', 1, 'F25I', 1, 'F26I', 1, 'F27I', 1, 'F28I', 1, '2F9I', 1)) F20I ,
+					SUM(DECODE(fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'F40I', 1, 'F41I', 1, 'F42I', 1, 'F43I', 1, 'F46I', 1, 'F47I', 1, 'F48I', 1, 'F49I', 1)) F40I ,
+					SUM(DECODE(fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'F44I', 1, 'F45I', 1)) F40HQI ,
+					SUM(DECODE(fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'F90I', 1, 'F91I', 1, 'F92I', 1, 'F93I', 1, 'F94I', 1, 'F95I', 1, 'F96I', 1, 'F97I', 1, 'F98I', 1, 'F99I', 1)) F45I ,
+					SUM(DECODE(fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'F20X', 1, 'F21X', 1, 'F22X', 1, 'F23X', 1, 'F24X', 1, 'F25X', 1, 'F26X', 1, 'F27X', 1, 'F28X', 1, '2F9X', 1)) F20X,
+					SUM(DECODE(fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'F40X', 1, 'F41X', 1, 'F42X', 1, 'F43X', 1, 'F46X', 1, 'F47X', 1, 'F48X', 1, 'F49X', 1)) F40X ,
+					SUM(DECODE(fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'F44X', 1, 'F45X', 1)) F40HQX ,
+					SUM(DECODE(fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'F90X', 1, 'F91X', 1, 'F92X', 1, 'F93X', 1, 'F94X', 1, 'F95X', 1, 'F96X', 1, 'F97X', 1, 'F98X', 1, 'F99X', 1)) F45X ,
+					SUM(DECODE(fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'F20M', 1, 'F21M', 1, 'F22M', 1, 'F23M', 1, 'F24M', 1, 'F25M', 1, 'F26M', 1, 'F27M', 1, 'F28M', 1, '2F9M', 1)) F20M ,
+					SUM(DECODE(fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'F40M', 1, 'F41M', 1, 'F42M', 1, 'F43M', 1, 'F46M', 1, 'F47M', 1, 'F48M', 1, 'F49M', 1)) F40M ,
+					SUM(DECODE(fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'F44M', 1, 'F45M', 1)) F40HQM ,
+					SUM(DECODE(fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'F90M', 1, 'F91M', 1, 'F92M', 1, 'F93M', 1, 'F94M', 1, 'F95M', 1, 'F96M', 1, 'F97M', 1, 'F98M', 1, 'F99M', 1)) F45M ,
+					SUM(DECODE(fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'M20I', 1, 'M21I', 1, 'M22I', 1, 'M23I', 1, 'M24I', 1, 'M25I', 1, 'M26I', 1, 'M27I', 1, 'M28I', 1, 'M29I', 1)) M20I ,
+					SUM(DECODE(fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'M40I', 1, 'M41I', 1, 'M42I', 1, 'M43I', 1, 'M46I', 1, 'M47I', 1, 'M48I', 1, 'M49I', 1)) M40I ,
+					SUM(DECODE(fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'M44I', 1, 'M45I', 1)) M40HQI ,
+					SUM(DECODE(fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'M90I', 1, 'M91I', 1, 'M92I', 1, 'M93I', 1, 'M94I', 1, 'M95I', 1, 'M96I', 1, 'M97I', 1, 'M98I', 1, 'M99I', 1)) M45I ,
+					SUM(DECODE(fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'M20X', 1, 'M21X', 1, 'M22X', 1, 'M23X', 1, 'M24X', 1, 'M25X', 1, 'M26X', 1, 'M27X', 1, 'M28X', 1, 'M29X', 1)) M20X ,
+					SUM(DECODE(fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'M40X', 1, 'M41X', 1, 'M42X', 1, 'M43X', 1, 'M46X', 1, 'M47X', 1, 'M48X', 1, 'M49X', 1)) M40X ,
+					SUM(DECODE(fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'M44X', 1, 'M45X', 1)) M40HQX ,
+					SUM(DECODE(fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'M90X', 1, 'M91X', 1, 'M92X', 1, 'M93X', 1, 'M94X', 1, 'M95X', 1, 'M96X', 1, 'M97X', 1, 'M98X', 1, 'M99X', 1)) M45X ,
+					SUM(DECODE(fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'M20M', 1, 'M21M', 1, 'M22M', 1, 'M23M', 1, 'M24M', 1, 'M25M', 1, 'M26M', 1, 'M27M', 1, 'M28M', 1, 'M29M', 1)) M20M ,
+					SUM(DECODE(fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'M40M', 1, 'M41M', 1, 'M42M', 1, 'M43M', 1, 'M46M', 1, 'M47M', 1, 'M48M', 1, 'M49M', 1)) M40M ,
+					SUM(DECODE(fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'M44M', 1, 'M45M', 1)) M40HQM ,
+					SUM(DECODE(fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'M90M', 1, 'M91M', 1, 'M92M', 1, 'M93M', 1, 'M94M', 1, 'M95M', 1, 'M96M', 1, 'M97M', 1, 'M98M', 1, 'M99M', 1)) M45M ,
+					SUM(DECODE(pick_cd || fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'HM20I', 1, 'HM21I', 1, 'HM22I', 1, 'HM23I', 1, 'HM24I', 1, 'HM25I', 1, 'HM26I', 1, 'HM27I', 1, 'HM28I', 1, 'HM29I', 1)) HM20I ,
+					SUM(DECODE(pick_cd || fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'HM40I', 1, 'HM41I', 1, 'HM42I', 1, 'HM43I', 1, 'HM46I', 1, 'HM47I', 1, 'HM48I', 1, 'HM49I', 1)) HM40I ,
+					SUM(DECODE(pick_cd || fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'HM44I', 1, 'HM45I', 1)) HM40HQI ,
+					SUM(DECODE(pick_cd || fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'HM90I', 1, 'HM91I', 1, 'HM92I', 1, 'HM93I', 1, 'HM94I', 1, 'HM95I', 1, 'HM96I', 1, 'HM97I', 1, 'HM98I', 1, 'HM99I', 1)) HM45I ,
+					SUM(DECODE(pick_cd || fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'HM20X', 1, 'HM21X', 1, 'HM22X', 1, 'HM23X', 1, 'HM24X', 1, 'HM25X', 1, 'HM26X', 1, 'HM27X', 1, 'HM28X', 1, 'H2M9X', 1)) HM20X ,
+					SUM(DECODE(pick_cd || fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'HM40X', 1, 'HM41X', 1, 'HM42X', 1, 'HM43X', 1, 'HM46X', 1, 'HM47X', 1, 'HM48X', 1, 'HM49X', 1)) HM40X ,
+					SUM(DECODE(pick_cd || fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'HM44X', 1, 'HM45X', 1)) HM40HQX ,
+					SUM(DECODE(pick_cd || fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'HM90X', 1, 'HM91X', 1, 'HM92X', 1, 'HM93X', 1, 'HM94X', 1, 'HM95X', 1, 'HM96X', 1, 'HM97X', 1, 'HM98X', 1, 'HM99X', 1)) HM45X ,
+					SUM(DECODE(pick_cd || fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'HM20M', 1, 'HM21M', 1, 'HM22M', 1, 'HM23M', 1, 'HM24M', 1, 'HM25M', 1, 'HM26M', 1, 'HM27M', 1, 'HM28M', 1, 'HM29M', 1)) HM20M ,
+					SUM(DECODE(pick_cd || fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'HM40M', 1, 'HM41M', 1, 'HM42M', 1, 'HM43M', 1, 'HM46M', 1, 'HM47M', 1, 'HM48M', 1, 'HM49M', 1)) HM40M ,
+					SUM(DECODE(pick_cd || fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'HM44M', 1, 'HM45M', 1)) HM40HQM ,
+					SUM(DECODE(pick_cd || fm_cd || sz_cd || SUBSTR(cur_stat, 1, 1), 'HM90M', 1, 'HM91M', 1, 'HM92M', 1, 'HM93M', 1, 'HM94M', 1, 'HM95M', 1, 'HM96M', 1, 'HM97M', 1, 'HM98M', 1, 'HM99M', 1)) HM45M
+				FROM
+					T_CNTR C,
+					T_OPER O
+				WHERE
+					SUBSTR(cur_stat, 2, 1) NOT IN ('B',
+					'D')
+					AND SUBSTR(cur_stat, 1, 1) IN ('I',
+					'X',
+					'M')
+					AND C.OPER_CD = O.OPER_CD
+					AND O.ONDOCK = 'Y'
+					AND C.OPER_CD IN 
+		]]>
+		<foreach collection="operList" index="index" item="item" open="(" close=")" separator=",">
+			<![CDATA[
+						#{item}
+			]]>
+		</foreach>
+		<![CDATA[
+					AND (CUR_STAT NOT LIKE '%L'
+					AND CUR_STAT NOT LIKE '%W')
+					AND Y_TBLOCK < 'A1'
+					AND Y_TBLOCK NOT IN ('1J',
+					'2J',
+					'3J',
+					'4Z',
+					'5Z',
+					'7A',
+					'7B',
+					'7C',
+					'7D',
+					'7M')
+				GROUP BY
+					DECODE(ty_grp_cd, 'HG', 'HG', DECODE(SUBSTR(ty_cd, 1, 1), 0, 'GP', 1, 'GP', 2, 'GP', 3, 'RF', 4, 'RF', 5, 'OT', 6, 'PF', 7, 'TK', 8, 'BK', 9, 'AR')) ,
+					DECODE(clean_cd, 'C', 'Y', 'Y', 'Y', DECODE(dmg_cd, 'B', 'Y', 'S', 'Y', 'L', 'Y', 'H', 'Y', '', 'N'))
+				ORDER BY
+					TY_GRP_CD )
+			GROUP BY
+				TY_GRP_CD,
+				DECODE(dmg_cd, 'Y', 'Y', 'N')
+		]]>
+	</select>
+	
+	<select id="onDockDamage" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				c.ship_cd,
+				c.call_no,
+				c.call_yy,
+				c.cntr_no,
+				NVL(c.sz_cd, ' ') sz_cd,
+				NVL(c.ty_cd, ' ') ty_cd,
+				NVL(c.cur_stat, ' ') cur_stat,
+				NVL(c.fm_cd, ' ') fm_cd,
+				NVL(c.ts_id, ' ') ts_id,
+				NVL(c.rtn_cd, ' ') rtn_cd,
+				NVL(c.oper_cd, ' ') oper_cd,
+				d.dmg_yn,
+				d.hold_cd,
+				TO_CHAR(c.gin_dt, 'yyyy-mm-dd hh24:mi:ss') gin_dt,
+				TO_CHAR(c.gc_ddt, 'yyyy-mm-dd hh24:mi:ss') gc_ddt,
+				TO_CHAR(d.dmg_dt, 'yyyy-mm-dd hh24:mi:ss') dmg_dt,
+				d.repair_dt,
+				NVL(d.dmg_desc, ' ') dmg_desc,
+				NVL(d.repair_yn , ' ') repair_yn,
+				NVL(d.dmg_chk1, ' ') dmg_chk1,
+				NVL(dmg_des2, ' ') dmg_des2,
+				NVL(dmg_chk2, ' ') dmg_chk2,
+				NVL(dmg_des2, ' ') dmg_des2,
+				NVL(d.dmg_chk3, ' ') dmg_chk3,
+				NVL(dmg_des3, ' ') dmg_des3
+			FROM
+				t_cntr c,
+				t_damage d
+			WHERE
+				d.cntr_no = c.cntr_no
+				AND d.dup_no = c.dup_no
+				AND SUBSTR(c.cur_stat, 2, 1) <> 'D'
+				AND d.repair_yn IS NULL
+				AND oper_cd IN
+		]]>
+		<foreach collection="operList" index="index" item="item" open="(" close=")" separator=",">
+			<![CDATA[
+					#{item}
+			]]>
+		</foreach>
+		<if test='shipCd != null and shipCd != "" and callNo != null and callNo != "" and callYy != null and callYy != ""'>
+			<![CDATA[
+				AND c.ship_cd = #{shipCd}
+				AND c.call_no = #{callNo}
+				AND c.call_yy = #{callYy}
+			]]>
+		</if>
+		<if test='cntrNo != null and cntrNo != ""'>
+			<![CDATA[
+				AND d.cntr_no = #{cntrNo}
+			]]>
+		</if>
+		<![CDATA[
+			ORDER BY
+				cntr_no
+		]]>
+	</select>
+	
+	<select id="onDockOverStock" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				NVL(A.cntr_no, '') cntr_no,
+				NVL(A.cur_stat, '') cur_stat,
+				NVL(A.fm_cd, '') fm_cd,
+				NVL(TO_CHAR(A.gin_dt, 'yyyy-mm-dd hh24:mi'), '') gin_dt,
+				NVL(TO_CHAR(A.gc_ldt, 'yyyy-mm-dd hh24:mi'), '') gc_ldt,
+				NVL(TO_CHAR(A.gc_ddt, 'yyyy-mm-dd hh24:mi'), '') gc_ddt,
+				NVL(TO_CHAR(A.gout_dt, 'yyyy-mm-dd hh24:mi'), '') gout_dt,
+				NVL(A.oper_cd, '') oper_cd,
+				NVL( A.ship_cd, '') ship_cd,
+				TO_CHAR(NVL( A.call_no, 0), '000') call_no,
+				NVL(A.call_yy, 0) call_yy,
+				NVL(A.sz_cd, '') sz_cd,
+				NVL(A.ty_cd, '') ty_cd,
+				NVL(A.y_tblock, '') y_tblock,
+				NVL(A.y_tbay, 0) y_tbay,
+				NVL(A.y_trow, 0) y_trow,
+				NVL(A.y_ttier, 0) y_ttier,
+				adjfnovercntr(a.cntr_no,
+				a.dup_no) AS OverDays
+			FROM
+				t_cntr A,
+				t_oper C
+			WHERE
+				A.oper_cd = C.oper_cd
+				AND c.oper_cd IN
+		]]>
+		<foreach collection="operList" index="index" item="item" open="(" close=")" separator=",">
+			<![CDATA[
+					#{item}
+			]]>
+		</foreach>
+		<![CDATA[
+				AND SUBSTR( cur_stat, 2, 1 ) NOT IN ( 'D', 'B' )
+		]]>
+		<if test='fmCd != null and fmCd != ""'>
+			<![CDATA[
+				AND A.fm_cd = #{fmCd}
+			]]>
+		</if>
+		<if test='shipCd != null and shipCd != "" and callNo != null and callNo != "" and callYy != null and callYy != ""'>
+			<![CDATA[
+				AND A.ship_cd = #{shipCd}
+				AND A.call_no = #{callNo}
+				AND A.call_yy = #{callYy}
+			]]>
+		</if>
+		<if test='szCd != null and szCd != "" and tyCd != null and tyCd != ""'>
+			<if test='szCd == "40" and tyCd == "HQ"'>
+				<![CDATA[
+				AND A.sz_cd BETWEEN 44 AND 45
+				AND ( A.ty_cd BETWEEN 00 AND 29 ) AND ( NVL( A.TY_GRP_CD, ' ' ) <> 'HG' ) 
+				]]>
+			</if>
+			<if test='szCd == "40" and tyCd == "RH"'>
+				<![CDATA[
+				AND A.sz_cd BETWEEN 44 AND 45
+				AND ( A.ty_cd BETWEEN 30 AND 49 ) AND ( NVL( A.TY_GRP_CD, ' ' ) <> 'HG' )
+				]]>
+			</if>
+			<if test='!(szCd == "40" and tyCd == "HQ") and !(szCd == "40" and tyCd == "RH")'>
+				<if test='szCd == "20"'>
+					<![CDATA[
+				AND A.sz_cd BETWEEN 20 AND 29
+					]]>
+				</if>
+				<if test='szCd == "40"'>
+					<![CDATA[
+				AND ( ( A.sz_cd BETWEEN 40 AND 43 ) OR ( A.sz_cd BETWEEN 46 AND 49 ) ) 
+					]]>
+				</if>
+				<if test='szCd == "45"'>
+					<![CDATA[
+				AND SUBSTR( A.sz_cd, 1, 1 ) IN ( '9', 'L' )
+					]]>
+				</if>
+				
+				<if test='tyCd == "HG"'>
+					<![CDATA[
+				AND A.TY_GRP_CD = 'HG'
+					]]>
+				</if>
+				<if test='tyCd != "HG"'>
+					<![CDATA[
+				AND ( NVL( A.TY_GRP_CD, ' ' ) <> 'HG' )
+					]]>
+					<if test='tyCd == "GP" or tyCd == "HQ"'>
+						<![CDATA[
+				AND ( A.ty_cd BETWEEN 00 AND 29 )
+						]]>
+					</if>
+					<if test='tyCd == "RF" or tyCd == "RH"'>
+						<![CDATA[
+				AND ( A.ty_cd BETWEEN 30 AND 49 )
+						]]>
+					</if>
+					<if test='tyCd == "OT"'>
+						<![CDATA[
+				AND ( A.ty_cd BETWEEN 50 AND 59 )
+						]]>
+					</if>
+					<if test='tyCd == "PF"'>
+						<![CDATA[
+				AND ( A.ty_cd BETWEEN 60 AND 69 )
+						]]>
+					</if>
+					<if test='tyCd == "TK"'>
+						<![CDATA[
+				AND ( A.ty_cd BETWEEN 70 AND 79 )
+						]]>
+					</if>
+					<if test='tyCd == "BK"'>
+						<![CDATA[
+				AND ( A.ty_cd BETWEEN 80 AND 89 )
+						]]>
+					</if>
+					<if test='tyCd == "AR"'>
+						<![CDATA[
+				AND ( A.ty_cd BETWEEN 90 AND 99 )
+						]]>
+					</if>
+				</if>
+			</if>
+		</if>
+		<if test='szCd != null and szCd != "" and ( tyCd == null or tyCd == "" )'>
+			<if test='szCd == "20"'>
+				<![CDATA[
+				AND A.sz_cd BETWEEN 20 AND 29
+				]]>
+			</if>
+			<if test='szCd == "40"'>
+				<![CDATA[
+				AND SUBSTR(A.sz_cd, 1, 1) IN ( '4' )
+				]]>
+			</if>
+			<if test='szCd == "45"'>
+				<![CDATA[
+				AND SUBSTR( A.sz_cd, 1, 1 ) IN ( '9', 'L' )
+				]]>
+			</if>
+		</if>
+		<if test='(szCd == null or szCd == "") and tyCd != null and tyCd != ""'>
+			<if test='tyCd == "HG"'>
+				<![CDATA[
+				AND A.TY_GRP_CD = 'HG'
+				]]>
+			</if>
+			<if test='tyCd != "HG"'>
+				<![CDATA[
+				AND ( NVL( A.TY_GRP_CD, ' ' ) <> 'HG' )
+				]]>
+				<if test='tyCd == "GP" or tyCd == "HQ"'>
+					<![CDATA[
+				AND ( A.ty_cd BETWEEN 00 AND 29 )
+					]]>
+				</if>
+				<if test='tyCd == "RF" or tyCd == "RH"'>
+					<![CDATA[
+				AND ( A.ty_cd BETWEEN 30 AND 49 )
+					]]>
+				</if>
+				<if test='tyCd == "OT"'>
+					<![CDATA[
+				AND ( A.ty_cd BETWEEN 50 AND 59 )
+					]]>
+				</if>
+				<if test='tyCd == "PF"'>
+					<![CDATA[
+				AND ( A.ty_cd BETWEEN 60 AND 69 )
+					]]>
+				</if>
+				<if test='tyCd == "TK"'>
+					<![CDATA[
+				AND ( A.ty_cd BETWEEN 70 AND 79 )
+					]]>
+				</if>
+				<if test='tyCd == "BK"'>
+					<![CDATA[
+				AND ( A.ty_cd BETWEEN 80 AND 89 )
+					]]>
+				</if>
+				<if test='tyCd == "AR"'>
+					<![CDATA[
+				AND ( A.ty_cd BETWEEN 90 AND 99 )
+					]]>
+				</if>
+			</if>
+		</if>
+		<![CDATA[
+			ORDER BY OverDays DESC
+		]]>
+	</select>
+	
+	<select id="ediByVslCllDetail" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			select 
+				NVL(dir_id, '') dir_id, 
+				NVL(cur_stat, '') cur_stat, 
+				NVL(to_char(gin_dt,'yyyy-mm-dd hh24:mi'), '') gin_dt 
+			from 
+				t_cntr
+			WHERE 
+				cur_stat like 'X_' 
+				and cntr_no = #{cntrNo}
+				AND ship_cd = #{shipCd} 
+				AND call_no = #{callNo} 
+				AND call_yy = #{callYy}
+				AND oper_cd = #{operCd} 
+				AND fm_cd = #{fmCd} 
+				AND sz_cd like #{size} || '_' 
+				AND pod = #{pod} 
+		]]>
+	</select>
+	
+	<update id="updatePickCdByCntrNoAndDupNoAndOperCdAndCurStat" parameterType="kr.co.e1ct.vo.TBklstVo">
+		<![CDATA[
+			UPDATE
+				t_cntr
+			SET 
+				pick_cd = ''
+			WHERE
+				cntr_no = #{cntrNo}
+				AND dup_no = #{dupNo}
+				AND oper_cd = #{operCd}
+				AND ( cur_stat in ( 'MY', 'ML', 'MW', 'IY', 'IL', 'IW' ) OR ( cur_stat IN ( 'XY', 'XL', 'XW' ) AND rtn_cd = 'C' ) )
+				AND pick_cd IS NOT NULL  
+		]]>
+	</update>
+	
+	<select id="intraDamageCom" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				a.cntr_no,
+				NVL(a.sz_cd, ' ') sz_cd,
+				NVL(a.ty_cd, ' ') ty_cd,
+				NVL(a.cur_stat, ' ')cur_stat,
+				NVL(a.y_tblock, ' ')y_tblock,
+				TO_CHAR(NVL(a.y_tbay, 0), '00')y_tbay,
+				NVL(a.y_trow, 0)y_trow,
+				NVL(a.y_ttier, 0)y_ttier,
+				a.oper_cd oper_cd,
+				a.dmg_cd dmg_cd,
+				a.fm_cd fm_cd,
+				a.dup_no dup_no,
+				NVL(TO_CHAR(a.gin_dt, 'yyyy-mm-dd hh24:mi'), ' ')gin_dt,
+				NVL(TO_CHAR(a.gc_ddt, 'yyyy-mm-dd hh24:mi'), ' ')gc_ddt,
+				NVL(TO_CHAR(b.request_dt, 'yyyy-mm-dd hh24:mi'), ' ')request_dt,
+				NVL(TO_CHAR(b.repair_dt, 'yyyy-mm-dd hh24:mi'), ' ')repair_dt,
+				NVL(TO_CHAR(b.od_dt, 'yyyy-mm-dd hh24:mi'), ' ')od_dt,
+				NVL(TO_CHAR(b.accept_dt, 'yyyy-mm-dd hh24:mi'), ' ')accept_dt,
+				a.cntr_grade cntr_grade
+			FROM
+				t_cntr a,
+				t_repair_order b
+			WHERE
+				a.cntr_no = b.cntr_no
+				AND a.dup_no = b.dup_no
+				AND a.oper_cd IN ( #{oper} )
+				AND b.request_dt BETWEEN TO_DATE(#{searchStartDt} || '000000', 'yyyymmddhh24miss') AND TO_DATE( #{searchEndDt} || '235959', 'yyyymmddhh24miss')
+				AND b.repair_dt IS NULL
+				AND b.od_dt IS NOT NULL
+				AND 1 = (
+				SELECT
+					1
+				FROM
+					t_tcorder
+				WHERE
+					cntr_no = a.cntr_no
+					AND dup_no = a.dup_no
+					AND wk_cd = 'E'
+					AND od_dt = b.od_dt )
+			ORDER BY
+				a.y_tblock,
+				a.y_tbay,
+				a.y_trow ,
+				a.y_ttier DESC
+		]]>
+	</select>
+	
+	<select id="intraIntrDamage" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				a.cntr_no,
+				NVL(a.sz_cd, ' ') sz_cd,
+				NVL(a.ty_cd, ' ') ty_cd,
+				a.oper_cd,
+				NVL(TO_CHAR(c.dmg_dt, 'yyyy-mm-dd hh24:mi'), ' ')dmg_dt,
+				NVL(TO_CHAR(b.od_dt, 'yyyy-mm-dd hh24:mi'), ' ')od_dt,
+				NVL(TO_CHAR(b.repair_dt, 'yyyy-mm-dd hh24:mi'), ' ')repair_dt,
+				a.dmg_cd,
+				NVL(a.cntr_grade, ' ') cntr_grade
+			FROM
+				t_cntr a,
+				t_repair_order b,
+				t_damage c
+			WHERE
+				a.cntr_no = b.cntr_no
+				AND a.cntr_no = c.cntr_no
+				AND a.dup_no = b.dup_no
+				AND a.dup_no = c.dup_no
+				AND a.oper_cd IN ( #{oper} )
+				AND b.repair_dt BETWEEN TO_DATE( #{searchStartDt} || '000000', 'yyyymmddhh24miss') AND TO_DATE( #{searchEndDt} || '235959', 'yyyymmddhh24miss')
+				AND b.od_dt IS NOT NULL
+			ORDER BY
+				a.y_tblock,
+				a.y_tbay,
+				a.y_trow ,
+				a.y_ttier DESC
+		]]>
+	</select>
+	
+	<select id="intraDamageReqCurStat" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				a.cntr_no,
+				NVL(a.sz_cd, ' ') sz_cd,
+				NVL(a.ty_cd, ' ') ty_cd,
+				NVL(a.cur_stat, ' ')cur_stat,
+				NVL(a.y_tblock, ' ')y_tblock,
+				TO_CHAR(NVL(a.y_tbay, 0), '00')y_tbay,
+				NVL(a.y_trow, 0)y_trow,
+				NVL(a.y_ttier, 0)y_ttier,
+				a.oper_cd oper_cd,
+				a.dmg_cd dmg_cd,
+				a.fm_cd fm_cd,
+				a.dup_no dup_no,
+				NVL(TO_CHAR(a.gin_dt, 'yyyy-mm-dd hh24:mi'), ' ') gin_dt,
+				NVL(TO_CHAR(a.gc_ddt, 'yyyy-mm-dd hh24:mi'), ' ') gc_ddt,
+		]]>
+		<if test='curStat == "R"'>
+			<![CDATA[
+				NVL(TO_CHAR(b.request_dt, 'yyyy-mm-dd hh24:mi'), ' ') request_dt,
+			]]>
+		</if>
+		<if test='curStat != "R"'>
+			<![CDATA[
+				'' request_dt,
+			]]>
+		</if>
+		<![CDATA[
+				(select hold_cd from t_holdng where cntr_no = a.cntr_no and dup_no = a.dup_no and hold_cd = '6' and rels_dt is null ) hold_cd 
+		]]>
+		<if test='curStat == "R"'>
+			<![CDATA[
+			FROM
+				t_cntr a,
+				t_repair_order b
+			WHERE
+				a.cntr_no = b.cntr_no
+				AND a.dup_no = b.dup_no
+				AND a.oper_cd in ( #{oper} )
+				AND a.dmg_cd IS NOT NULL
+				AND b.request_dt BETWEEN TO_DATE( #{searchStartDt} || '000000', 'yyyymmddhh24miss') AND TO_DATE( #{searchEndDt} || '235959', 'yyyymmddhh24miss')
+				AND b.accept_dt IS NULL
+			]]>		
+		</if>
+		<if test='curStat != "R"'>
+			<![CDATA[
+			FROM
+				t_cntr a
+			]]>
+			<if test='curStat == "X"'>
+				<![CDATA[
+			WHERE
+				a.cur_stat = 'MY'
+				AND (a.Y_SIND IS NULL
+				OR a.Y_SIND = 'A'
+				OR a.Y_SIND = 'B')
+				AND (A.cntr_no,
+				a.dup_no ) NOT IN (
+				SELECT
+					cntr_no ,
+					dup_no
+				FROM
+					t_mt_pstn
+			UNION ALL
+				SELECT
+					cntr_no ,
+					dup_no
+				FROM
+					t_bklst
+			UNION ALL
+				SELECT
+					cntr_no ,
+					dup_no
+				FROM
+					t_repair_order
+				WHERE
+					od_dt IS NULL )
+				AND a.oper_cd IN ( #{oper} )
+				AND a.dmg_cd IS NOT NULL
+				]]>
+			</if>
+			<if test='curStat == "I"'>
+				<![CDATA[
+			WHERE a.cur_stat = 'IY' 
+				and (a.Y_SIND IS NULL OR a.Y_SIND = 'A' OR a.Y_SIND = 'B') 
+				AND (A.cntr_no, a.dup_no ) not in ( select cntr_no , dup_no from t_mt_pstn 
+				                           union all 
+				                           select cntr_no , dup_no from t_bklst  
+				                           union all 
+				                           select cntr_no , dup_no from t_repair_order where od_dt is null  ) 
+				AND a.oper_cd in ( #{oper} ) 
+				and a.dmg_cd is not null
+				]]>
+			</if>
+		</if>
+		<if test='fmCd != null and fmCd != ""'>
+			<![CDATA[
+				AND a.fm_cd = UPPER( #{fmCd} )
+			]]>
+		</if>
+		<if test='szCd != null and szCd != ""'>
+			<if test='szCd == "20"'>
+				<![CDATA[
+				AND SUBSTR( a.sz_cd, 1, 1 ) = '2'
+				]]>
+			</if>
+			<if test='szCd == "40"'>
+				<![CDATA[
+				AND SUBSTR( a.sz_cd, 1, 1 ) = '4'
+				]]>
+			</if>
+			<if test='szCd == "45"'>
+				<![CDATA[
+				AND ( SUBSTR( a.sz_cd, 1, 1 ) = '9' or SUBSTR( a.sz_cd, 1, 1 ) = 'L' )
+				]]>
+			</if>
+		</if>
+		<![CDATA[
+			ORDER BY a.y_tblock, a.y_tbay, a.y_trow, a.y_ttier DESC
+		]]>
+	</select>
+	
+	<select id="findOneByCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				cntr_no,
+				dup_no,
+				nvl(sz_cd, '') sz_cd,
+				nvl(ty_cd, '') ty_cd,
+				oper_cd,
+				dmg_cd,
+				fm_cd
+			FROM
+				t_cntr
+			WHERE
+				cntr_no = substr( #{cntrNo}, 1, 11 )
+				AND dup_no = substr( #{cntrNo}, 12, 12 )
+		]]>
+	</select>
+	
+	<select id="findCurStatAndDirIdByShipCdAndCallYyAndCallNoAndCntrNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT NVL(cur_stat, '') cur_stat, NVL(dir_id, '') dir_id FROM t_cntr WHERE ship_cd = #{shipCd} and call_no = #{callNo} and call_yy = #{callYy} and cntr_no = #{cntrNo} and cur_stat NOT LIKE '%D'
+		]]>
+	</select>
+	
+	<select id="findMaxDupNoAndCurStatByCntrNoGroupByDupNoAndCurStatOrderByDupNoDesc" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT MAX(dup_no) dup_no, NVL( cur_stat, '' ) cur_stat FROM t_cntr where cntr_no = #{cntrNo} group by dup_no, cur_stat order by dup_no desc
+		]]>
+	</select>
+	
+	<select id="findSzCdAndTyCdAndOperCdAndTempAndTempIdAndPtiYnByCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT NVL(sz_cd, '') sz_cd, NVL(ty_cd, '') ty_cd, NVL(oper_cd, '') oper_cd, NVL(temp, '') temp, NVL(temp_id, '') temp_id, NVL(pti_yn, '') pti_yn from t_cntr
+			WHERE cntr_no = #{cntrNo}
+			AND dup_no = #{pcDupno}
+			AND SUBSTR(cur_stat, 2, 1) = 'D'
+		]]>
+	</select>
+	
+	<select id="findByCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT NVL(cur_stat, '') cur_stat, NVL(ts_id, '') ts_id, NVL(ship_cd, '') ship_cd, NVL(to_char(call_no), '') call_no, NVL(to_char(call_yy), '') call_yy, 
+		   NVL(Rtn_CD, '') rtn_cd, NVL(Dir_ID, '') dir_id, NVL(to_char(GREQ_DT), '') greq_dt,  NVL(pod, '') pod, NVL(imdg, '') imdg, NVL(oper_cd, '') oper_cd, 
+		   NVL(fm_cd, '') fm_cd, NVL(bond_id, '') bond_id, NVL(sz_cd, '') sz_cd, NVL(ty_cd, '') ty_cd, NVL(hold_cd, '') hold_cd, NVL(pick_cd, '') pick_cd, NVL(temp, '') temp, NVL(temp_id, '') temp_id from t_cntr 
+		   WHERE cntr_no = #{cntrNo} and dup_no =#{pcDupno}
+		]]>
+	</select>
+	
+	<select id="afterCopinoFindCurStatAndFmCdByCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT substr(cur_stat,1,1) cur_stat, fm_cd 
+            FROM T_CNTR 
+            WHERE CNTR_NO = #{cntrNo}
+            AND DUP_NO = ${pcDupno}-1 
+		]]>
+	</select>
+	
+	<select id="findCurStatAndRtnCdAndGoutDtWithTCntrByCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT substr(cur_stat,1,1) cur_stat, NVL(rtn_cd,'') rtn_cd , ROUND(SYSDATE - gout_dt + 0.5) gout_dt, 
+            (SELECT nvl(igin_ilsu, 0) FROM t_oper WHERE oper_cd = t_cntr.oper_cd) ilsu from T_CNTR 
+            WHERE CNTR_NO = #{cntrNo} 
+            AND DUP_NO = ( ${pcDupno} - 1 )
+		]]>
+	</select>
+	
+	<select id="findBondIdFromSlcTCntrVyCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			select nvl(bond_id, '') bond_id from SLC.T_CNTR where cntr_no = #{cntrNo} and dup_no = FN_GET_OTHER_CY_DUPNO(#{cntrNo})
+		]]>
+	</select>
+	
+	<select id="findBondIdByCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			select nvl(bond_id, '') bond_id from T_CNTR where cntr_no = #{cntrNo} and dup_no = #{pcDupno}
+		]]>
+	</select>
+	
+	<select id="findCntrNoAndDupNoAndFnGetOverpriceExNewByCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="java.util.HashMap">
+		<![CDATA[
+			select CNTR_NO, DUP_NO, FN_GET_OVERPRICE_EX_NEW( CNTR_NO, DUP_NO, REPLACE(#{searchStartDt}, '-', '') ) cash
+			FROM T_CNTR A
+			WHERE DUP_NO = (SELECT MAX(DUP_NO) FROM T_CNTR B WHERE B.CNTR_NO = A.CNTR_NO )
+			AND CNTR_NO IN 
+		]]>
+		<foreach collection="cntrList" index="index" item="item" open="(" close=")" separator=",">
+			<![CDATA[
+					#{item}
+			]]>
+		</foreach>
+	</select>
+	
+	<select id="findOneCntrNoAndDupNoAndFnGetOverpriceExNewByCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="java.util.HashMap">
+		<![CDATA[
+			select CNTR_NO, DUP_NO, FN_GET_OVERPRICE_EX_NEW( CNTR_NO, DUP_NO, REPLACE(#{searchStartDt}, '-', '') ) cash
+			FROM T_CNTR A
+			WHERE DUP_NO = (SELECT MAX(DUP_NO) FROM T_CNTR B WHERE B.CNTR_NO = A.CNTR_NO )
+			AND CNTR_NO = #{cntrNo} 
+		]]>
+	</select>
+	
+	<update id="updateCopinoYnByCntrNoAndShipCdAndCallYyAndCallNo" parameterType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			UPDATE
+				T_CNTR
+			SET
+				copino_yn = #{copinoYn}
+			WHERE
+				cntr_no = #{cntrNo}
+				AND ship_cd = #{shipCd}
+				AND call_yy = #{callYy}
+				AND call_no = #{callNo}
+		]]>
+	</update>
+	
+	<select id="onDockGatePassList" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				NVL(A.oper_cd, '') oper_cd,
+				NVL(A.cntr_no, '') cntr_no,
+				NVL(A.dup_no, 0) dup_no,
+				NVL(A.ship_cd, '') ship_cd,
+				NVL(TO_CHAR(A.call_no, '000'), '???') call_no,
+				NVL(A.call_yy, '')  call_yy,
+				NVL(A.cur_stat, '') cur_stat,
+				NVL(A.FM_CD, '') fm_cd,
+				NVL(A.sz_cd, 0) sz_cd,
+				NVL(A.ty_cd, '') ty_cd,
+				NVL(B.emp_no, '') emp_no,
+				NVL(B.reject_oper, '') reject_oper,
+				NVL(B.reject_first, '') reject_first,
+				NVL(B.reject_in, '') reject_in,
+				NVL(B.rmk, '') rmk,
+				A.gin_dt gin_dt,
+				A.gout_dt gout_dt,
+				FN_BEFORE_OPER(A.CNTR_NO,
+				A.DUP_NO) fn_before_oper
+			FROM
+				t_cntr A,
+				T_copino_rjct B
+			WHERE
+				A.cntr_no = B.cntr_no
+				AND A.dup_no = B.dup_no
+				AND (B.cntr_no,
+				B.dup_no) IN (
+				SELECT
+					cntr_no,
+					dup_no
+				FROM
+					t_cntr)
+		]]>
+		<if test='searchStartDt != null and searchStartDt != "" and searchEndDt != null and searchEndDt != ""'>
+			<![CDATA[
+				AND A.GIN_DT between to_date(#{searchStartDt}||'000001' ,'yyyymmddhh24miss')
+				AND to_date(#{searchEndDt}||'235959','yyyymmddhh24miss')
+			]]>
+		</if>
+		<![CDATA[
+				AND A.OPER_CD IN
+		]]>
+		<foreach collection="operList" close=")" index="index" item="item" open="(" separator=",">
+			<![CDATA[
+					#{item}
+			]]>
+		</foreach>
+		<if test='reject == "RJ_NOT"'>
+			<![CDATA[
+				AND B.REJECT_OPER IS NULL AND B.REJECT_FIRST IS NULL AND B.REJECT_IN IS NULL
+			]]>
+		</if>
+		<if test='reject == "RJ_OPER"'>
+			<![CDATA[
+				AND B.REJECT_OPER = 'Y'
+			]]>
+		</if>
+		<if test='reject == "RJ_FIRST"'>
+			<![CDATA[
+				AND B.REJECT_FIRST = 'Y'
+			]]>
+		</if>
+		<if test='reject == "RJ_IN"'>
+			<![CDATA[
+				AND B.REJECT_IN = 'Y'
+			]]>
+		</if>
+		<![CDATA[
+			ORDER BY A.GIN_DT DESC, A.OPER_CD, A.CNTR_NO
+		]]>
+	</select>
+	
+	<select id="findDupNoAndCurStatByCntrNo" parameterType="kr.co.e1ct.vo.TCntrVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT MAX(dup_no) dup_no, NVL(cur_stat, '') cur_stat FROM t_cntr WHERE cntr_no = #{cntrNo} AND ROWNUM <= 1 group by DUP_NO,cur_stat ORDER BY DUP_NO DESC
+		]]>
+	</select>
+	
+	<select id="findYtblockAndVanAndTeuByYTblock" parameterType="kr.co.e1ct.vo.TCntrVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT 
+				y_tblock, 
+				COUNT(*) van, 
+				SUM(DECODE(SUBSTR(sz_cd,1,1),'2',1,2)) teu 
+			FROM 
+				t_cntr 
+			WHERE 
+				substr(cur_stat,2,1) = 'Y' 
+				and y_tblock IN
+		]]>
+		<foreach collection="yTblockArr" close=")" index="index" item="item" open="(" separator=",">
+			<![CDATA[
+				#{item}
+			]]>
+		</foreach>
+		<![CDATA[
+			GROUP BY y_tblock 
+		]]>
+	</select>
+	
+	<select id="popupCntrDetailTwo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				a.ship_cd,
+				TO_CHAR(a.call_no, '000') call_no,
+				a.call_yy,
+				a.oper_cd,
+				a.cur_stat,
+				a.fm_cd,
+				a.sz_cd,
+				a.ty_cd,
+				NVL(a.rtn_cd, '') rtn_cd,
+				NVL(a.ts_id, '') ts_id,
+				NVL(a.trucker_cd, '') trucker_cd,
+				NVL(a.car_no, '') car_no,
+				NVL(a.weight, 0) weight,
+				NVL(a.imdg, '') imdg,
+				NVL(a.unno, '') unno,
+				NVL(a.temp, '') temp,
+				NVL(a.s_tbay, '') s_tbay,
+				NVL(a.s_trow, 0) s_trow,
+				NVL(a.s_ttier, 0)s_ttier,
+				NVL(a.y_tblock, 0) y_tblock,
+				NVL(a.y_tbay, 0)y_tbay,
+				NVL(a.y_trow, 0) y_trow,
+				NVL(a.y_ttier, 0) y_ttier,
+				NVL(a.pod, '') pod,
+				NVL(a.pol, '') pol,
+				NVL(a.dmg_cd, '') dmg_cd,
+				NVL(TO_CHAR(a.gin_dt, 'yyyy-mm-dd hh24:mi'), '') gin_dt,
+				NVL(TO_CHAR(a.gc_ddt, 'yyyy-mm-dd hh24:mi'), '') gc_ddt,
+				NVL(TO_CHAR(a.gout_dt, 'yyyy-mm-dd hh24:mi'), '') gout_dt,
+				NVL(TO_CHAR(a.gc_ldt, 'yyyy-mm-dd hh24:mi'), '') gc_ldt,
+				NVL(a.bond_id, '') bond_id,
+				NVL(b.ship_nm, '') ship_nm,
+				NVL(c.oper_knm, '') oper_knm,
+				NVL(a.insp_id, '') insp_id,
+				a.dup_no,
+				NVL(a.seal_no1, '') seal_no2,
+				NVL(d.seal_no, '') seal_no,
+				NVL(a.seal_no, '') seal_no1,
+				NVL(a.temp_id, '') temp_id,
+				NVL(a.trucker_cd_out, '') trucker_cd_out,
+				NVL(a.car_no_out, '') car_no_out,
+				NVL(a.clean_cd, '') clean_cd
+			FROM
+				T_CNTR a,
+				T_VESSEL b,
+				T_OPER c ,
+				T_BSIOT_SUB d
+			WHERE
+				a.cntr_no = #{cntrNo}
+				AND a.ship_cd = b.ship_cd
+				AND a.oper_cd = c.oper_cd
+				AND a.cntr_no = d.cntr_no(+)
+				AND a.dup_no = d.dup_no(+)
+			GROUP BY
+				a.ship_cd ,
+				a.call_no,
+				a.call_yy,
+				a.oper_cd,
+				a.cur_stat,
+				a.fm_cd,
+				a.sz_cd,
+				a.ty_cd,
+				a.rtn_cd,
+				a.ts_id,
+				a.trucker_cd,
+				a.car_no,
+				a.weight,
+				a.imdg,
+				a.unno,
+				a.temp,
+				a.s_tbay,
+				a.s_trow,
+				a.s_ttier,
+				a.y_tblock,
+				a.y_tbay,
+				a.y_trow,
+				a.y_ttier,
+				a.pod,
+				a.pol,
+				a.dmg_cd,
+				a.gin_dt,
+				a.gc_ddt,
+				a.gc_ddt,
+				a.gout_dt,
+				a.gc_ldt,
+				a.gc_ldt,
+				a.bond_id,
+				b.ship_nm,
+				c.oper_knm,
+				a.insp_id,
+				a.dup_no,
+				a.seal_no1,
+				d.seal_no,
+				a.seal_no,
+				a.temp_id,
+				a.trucker_cd_out,
+				a.car_no_out,
+				a.clean_cd
+			ORDER BY
+				a.dup_no DESC
+		]]>
+	</select>
+	
+	<select id="onDockInsertOrderSpareCheckTotalSum" parameterType="kr.co.e1ct.vo.SearchVo" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT
+				COUNT(CNTR_NO)
+			FROM
+				T_CNTR
+			WHERE
+				SUBSTR(cur_stat, 2, 1) NOT IN ('B',
+				'D')
+				AND ((cur_stat IN ('MY',
+				'ML',
+				'MW',
+				'IY',
+				'IL',
+				'IW')
+				AND fm_cd = 'M')
+				OR (cur_stat IN ('XY',
+				'XL',
+				'XW')
+				AND RTN_CD = 'C'
+				AND fm_cd = 'M'))
+				AND HOLD_CD IS NULL
+				AND DMG_CD IS NULL
+				AND PICK_CD IS NULL
+				AND oper_cd IN 
+		]]>
+		<foreach collection="operList" close=")" index="index" item="item" open="(" separator=",">
+			<![CDATA[
+				#{item}
+			]]>
+		</foreach>
+		<![CDATA[
+				AND SUBSTR(sz_cd, 1, 1) = SUBSTR( #{szCd}, 1, 1 )
+		]]>
+		<choose>
+			<when test='szCd == 40 and tyCd == "HQ"'>
+				<![CDATA[
+					AND sz_cd BETWEEN '44' AND '45'
+					AND (ty_cd BETWEEN '00' AND '29') AND (NVL(TY_GRP_CD, ' ') <> 'HG')
+				]]>
+			</when>
+			<when test='szCd == 40 and tyCd == "RH"'>
+				<![CDATA[
+					AND sz_cd BETWEEN '44' AND '45'
+					AND (ty_cd BETWEEN '30' AND '49') AND (NVL(TY_GRP_CD, ' ') <> 'HG')
+				]]>
+			</when>
+			<otherwise>
+				<if test='szCd == 20'>
+					<![CDATA[
+						AND sz_cd BETWEEN '20' AND '29'
+					]]>
+				</if>
+				<if test='szCd == 40'>
+					<![CDATA[
+						AND ((sz_cd BETWEEN '40' AND '43') OR (sz_cd BETWEEN '46' AND '49'))
+					]]>
+				</if>
+				<if test='szCd == 45'>
+					<![CDATA[
+						AND SUBSTR(sz_cd,1,1) IN ('9','L')
+					]]>
+				</if>
+				<if test='tyCd == "HG"'>
+					<![CDATA[
+						AND ty_grp_cd = 'HG'
+					]]>
+				</if>
+				<if test='tyCd == "GP" or tyCd == "HQ"'>
+					<![CDATA[
+						AND (ty_cd BETWEEN '00' AND '29') AND (NVL(TY_GRP_CD, ' ') <> 'HG')
+					]]>
+				</if>
+				<if test='tyCd == "RF" or tyCd == "RH"'>
+					<![CDATA[
+						AND (ty_cd BETWEEN '30' AND '49') AND (NVL(TY_GRP_CD, ' ') <> 'HG')
+					]]>
+				</if>
+				<if test='tyCd == "OT"'>
+					<![CDATA[
+						AND (ty_cd BETWEEN '50' AND '59') AND (NVL(TY_GRP_CD, ' ') <> 'HG')
+					]]>
+				</if>
+				<if test='tyCd == "PF"'>
+					<![CDATA[
+						AND (ty_cd BETWEEN '60' AND '69') AND (NVL(TY_GRP_CD, ' ') <> 'HG')
+					]]>
+				</if>
+				<if test='tyCd == "TK"'>
+					<![CDATA[
+						AND (ty_cd BETWEEN '70' AND '79') AND (NVL(TY_GRP_CD, ' ') <> 'HG')
+					]]>
+				</if>
+				<if test='tyCd == "BK"'>
+					<![CDATA[
+						AND (ty_cd BETWEEN '80' AND '89') AND (NVL(TY_GRP_CD, ' ') <> 'HG')
+					]]>
+				</if>
+				<if test='tyCd == "AR"'>
+					<![CDATA[
+						AND (ty_cd BETWEEN '90' AND '99') AND (NVL(TY_GRP_CD, ' ') <> 'HG')
+					]]>
+				</if>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="onDockInsertOrderSpareCheckRequestSumCntr" parameterType="kr.co.e1ct.vo.SearchVo" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT
+				NVL(SUM(EA_CNT), 0) - NVL(SUM(AA_CNT), 0)
+			FROM
+				(
+				SELECT
+					A.OPER_CD OPER_CD,
+					SUM(BK_EAMT) EA_CNT
+				FROM
+					T_BKMST A,
+					T_BKDTL B
+				WHERE
+					A.OPER_CD IN 
+		]]>
+		<foreach collection="operList" close=")" index="index" item="item" open="(" separator=",">
+			<![CDATA[
+				#{item}
+			]]>
+		</foreach>
+		<![CDATA[
+					AND B.sz_cd = #{szCd}
+					AND B.ty_grp_cd = #{tyCd}
+					AND A.OPER_CD = B.OPER_CD
+					AND A.BK_NO = B.BK_NO
+					AND (A.SHIP_CD,
+					A.CALL_NO,
+					CALL_YY) IN (
+					SELECT
+						SHIP_CD,
+						CALL_NO,
+						CALL_YY
+					FROM
+						T_VESCALL
+					WHERE
+						ATD_DT IS NULL)
+				GROUP BY
+					A.OPER_CD) A,
+				(
+				SELECT
+					B.OPER_CD OPER_CD,
+					COUNT(*) AA_CNT
+				FROM
+					T_CNTR A,
+					T_BKLST B,
+					T_BKMST C
+				WHERE
+					A.OPER_CD IN 
+		]]>
+		<foreach collection="operList" close=")" index="index" item="item" open="(" separator=",">
+			<![CDATA[
+				#{item}
+			]]>
+		</foreach>
+		<choose>
+			<when test='szCd == 40 and tyCd == "HQ"'>
+				<![CDATA[
+					AND B.sz_cd BETWEEN '44' AND '45'
+					AND B.TY_GRP_CD = 'GP'
+				]]>
+			</when>
+			<when test='szCd == 40 and tyCd == "RH"'>
+				<![CDATA[
+					AND B.sz_cd BETWEEN '44' AND '45'
+					AND B.TY_GRP_CD = 'RF'
+				]]>
+			</when>
+			<otherwise>
+				<if test='szCd == 20'>
+					<![CDATA[
+						AND B.sz_cd BETWEEN '20' AND '29'
+						AND B.TY_GRP_CD = #{tyCd}
+					]]>
+				</if>
+				<if test='szCd == 40'>
+					<![CDATA[
+						AND ((B.sz_cd BETWEEN '40' AND '43') OR (B.sz_cd BETWEEN '46' AND '49'))
+						AND B.TY_GRP_CD = #{tyCd}
+					]]>
+				</if>
+				<if test='szCd == 45'>
+					<![CDATA[
+						AND SUBSTR(B.sz_cd,1,1) IN ('9','L')
+						AND B.TY_GRP_CD = #{tyCd}
+					]]>
+				</if>
+			</otherwise>
+		</choose>
+		<![CDATA[
+			AND A.CNTR_NO = B.CNTR_NO
+			AND A.DUP_NO = B.DUP_NO
+			AND B.COP_YN = 'Y'
+			AND C.OPER_CD = B.OPER_CD
+			AND C.BK_NO = B.BK_NO
+			AND (C.SHIP_CD,C.CALL_NO,C.CALL_YY) IN (SELECT SHIP_CD,CALL_NO,CALL_YY FROM T_VESCALL WHERE ATD_DT IS NULL) GROUP BY B.OPER_CD ) B
+			WHERE A.OPER_CD = B.OPER_CD
+		]]>
+	</select>
+	
+	<select id="onDockInsertOrderSpareCheckDeliverySumCntr" parameterType="kr.co.e1ct.vo.SearchVo" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT
+				NVL(SUM(AA_CNT), 0)
+			FROM
+				(
+				SELECT
+					A.OPER_CD OPER_CD,
+					A.BK_NO BK_NO,
+					SUM(BK_EAMT) EA_CNT
+				FROM
+					T_BKMST A,
+					T_BKDTL B
+				WHERE
+					A.OPER_CD IN 
+		]]>
+		<foreach collection="operList" close=")" index="index" item="item" open="(" separator=",">
+			<![CDATA[
+				#{item}
+			]]>
+		</foreach>
+		<![CDATA[
+					AND B.sz_cd = #{szCd}
+					AND B.ty_grp_cd = #{tyCd}
+					AND A.OPER_CD = B.OPER_CD
+					AND A.BK_NO = B.BK_NO
+					AND (A.SHIP_CD,
+					A.CALL_NO,
+					CALL_YY) IN (
+					SELECT
+						SHIP_CD,
+						CALL_NO,
+						CALL_YY
+					FROM
+						T_VESCALL
+					WHERE
+						ATD_DT IS NULL)
+				GROUP BY
+					A.OPER_CD,
+					A.BK_NO ) A,
+				(
+				SELECT
+					B.OPER_CD OPER_CD,
+					B.BK_NO BK_NO,
+					COUNT(*) AA_CNT
+				FROM
+					T_CNTR A,
+					T_BKLST B,
+					T_BKMST C
+				WHERE
+					A.OPER_CD IN 
+		]]>
+		<foreach collection="operList" close=")" index="index" item="item" open="(" separator=",">
+			<![CDATA[
+				#{item}
+			]]>
+		</foreach>
+		<choose>
+			<when test='szCd == 40 and tyCd == "HQ"'>
+				<![CDATA[
+					AND B.sz_cd BETWEEN '44' AND '45'
+					AND B.TY_GRP_CD = 'GP'
+				]]>
+			</when>
+			<when test='szCd == 40 and tyCd == "RH"'>
+				<![CDATA[
+					AND B.sz_cd BETWEEN '44' AND '45'
+					AND B.TY_GRP_CD = 'RF'
+				]]>
+			</when>
+			<otherwise>
+				<if test='szCd == 20'>
+					<![CDATA[
+						AND B.sz_cd BETWEEN '20' AND '29'
+						AND B.TY_GRP_CD = #{tyCd}
+					]]>
+				</if>
+				<if test='szCd == 40'>
+					<![CDATA[
+						AND ((B.sz_cd BETWEEN '40' AND '43') OR (B.sz_cd BETWEEN '46' AND '49'))
+						AND B.TY_GRP_CD = #{tyCd}
+					]]>
+				</if>
+				<if test='szCd == 45'>
+					<![CDATA[
+						AND SUBSTR(B.sz_cd,1,1) IN ('9','L')
+						AND B.TY_GRP_CD = #{tyCd}
+					]]>
+				</if>
+			</otherwise>
+		</choose>
+		<![CDATA[
+			AND A.CNTR_NO = B.CNTR_NO
+			AND A.DUP_NO = B.DUP_NO
+			AND B.COP_YN = 'Y'
+			AND C.OPER_CD = B.OPER_CD
+			AND C.BK_NO = B.BK_NO
+			AND (C.SHIP_CD,C.CALL_NO,C.CALL_YY) IN (SELECT SHIP_CD,CALL_NO,CALL_YY FROM T_VESCALL WHERE ATD_DT IS NULL) GROUP BY B.OPER_CD, B.BK_NO ) B 
+			WHERE A.OPER_CD = B.OPER_CD AND A.BK_NO = B.BK_NO AND EA_CNT <> AA_CNT
+		]]>
+	</select>
+	
+	<select id="onDockInsertOrderSpareCheckAppointSumCntr" parameterType="kr.co.e1ct.vo.SearchVo" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT
+				COUNT(*)
+			FROM
+				(
+				SELECT
+					A.OPER_CD,
+					A.BK_NO
+				FROM
+					T_BKMST A,
+					T_BKDTL B
+				WHERE
+					A.OPER_CD IN 
+		]]>
+		<foreach collection="operList" close=")" index="index" item="item" open="(" separator=",">
+			<![CDATA[
+				#{item}
+			]]>
+		</foreach>
+		<![CDATA[
+					AND A.OPER_CD = B.OPER_CD
+					AND A.BK_NO = B.BK_NO
+					AND (A.SHIP_CD,
+					A.CALL_NO,
+					CALL_YY) IN (
+					SELECT
+						SHIP_CD,
+						CALL_NO,
+						CALL_YY
+					FROM
+						T_VESCALL
+					WHERE
+						ATD_DT IS NULL)
+				GROUP BY
+					A.OPER_CD,
+					A.BK_NO ) A,
+				T_BKLST B
+			WHERE
+				A.OPER_CD IN 
+		]]>
+		<foreach collection="operList" close=")" index="index" item="item" open="(" separator=",">
+			<![CDATA[
+				#{item}
+			]]>
+		</foreach>
+		<![CDATA[
+				AND A.OPER_CD = B.OPER_CD
+				AND A.BK_NO = B.BK_NO
+				AND B.COP_YN IS NULL
+				AND A.oper_cd IN 
+		]]>
+		<foreach collection="operList" close=")" index="index" item="item" open="(" separator=",">
+			<![CDATA[
+				#{item}
+			]]>
+		</foreach>
+		<choose>
+			<when test='szCd == 40 and tyCd == "HQ"'>
+				<![CDATA[
+					AND B.sz_cd BETWEEN '44' AND '45'
+					AND B.TY_GRP_CD = 'GP'
+				]]>
+			</when>
+			<when test='szCd == 40 and tyCd == "RH"'>
+				<![CDATA[
+					AND B.sz_cd BETWEEN '44' AND '45'
+					AND B.TY_GRP_CD = 'RF'
+				]]>
+			</when>
+			<otherwise>
+				<if test='szCd == 20'>
+					<![CDATA[
+						AND B.sz_cd BETWEEN '20' AND '29'
+						AND B.TY_GRP_CD = #{tyCd}
+					]]>
+				</if>
+				<if test='szCd == 40'>
+					<![CDATA[
+						AND ((B.sz_cd BETWEEN '40' AND '43') OR (B.sz_cd BETWEEN '46' AND '49'))
+						AND B.TY_GRP_CD = #{tyCd}
+					]]>
+				</if>
+				<if test='szCd == 45'>
+					<![CDATA[
+						AND SUBSTR(B.sz_cd,1,1) IN ('9','L')
+						AND B.TY_GRP_CD = #{tyCd}
+					]]>
+				</if>
+			</otherwise>
+		</choose>
+	</select>
+	
+	<select id="findOneByCntrNoLastest" parameterType="kr.co.e1ct.vo.TCntrVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				cntr_no,
+				dup_no,
+				sz_cd,
+				ty_cd,
+				cur_stat,
+				ship_cd,
+				call_no,
+				call_yy
+			FROM
+				T_CNTR
+			WHERE
+				cntr_no = #{cntrNo}
+				AND ROWNUM <= 1
+			ORDER BY
+				dup_no DESC
+		]]>
+	</select>
+	
+	<select id="findOneFromCntrInfoDetails" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+		
+		]]>
+	</select>
+	
+	<select id="terminalYardStackDoNoList" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			select a.cntr_no, FN_GET_SZTP(a.SZ_CD, a.TY_CD, 'GP') fnGetSztp, a.y_tblock, a.y_tbay, a.y_trow, a.y_ttier
+			from t_cntr a, t_dodtl b where a.cntr_no = b.cntr_no and
+			a.dup_no = b.dup_no and a.cur_stat = 'IY' and a.fm_cd = 'F' and b.do_no = #{doNo} order by a.y_tblock, a.y_tbay, a.y_trow ASC, a.y_ttier DESC
+			
+		]]>
+	</select>
+	
+	<select id="onDockDeliveryConfirmList" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				DISTINCT d.cntr_no,
+				d.oper_cd
+			FROM
+				(
+				SELECT
+					DISTINCT a.mstbl_no,
+					b.cntr_no
+				FROM
+					t_bsiot a,
+					t_bsiot_sub b
+				WHERE
+					a.cargo_no = b.cargo_no
+					AND a.banip_cd = '10'
+					AND a.ship_cd = #{shipCd}
+					AND b.ship_cd = #{shipCd}
+					AND a.call_yy = #{callYy}
+					AND b.ship_cd = #{shipCd}
+					AND b.call_no = #{callNo}
+					AND b.call_yy = #{callYy}
+					AND a.mstbl_no = #{blNo}
+					AND a.banip_cd = b.banip_cd ) C ,
+				t_cntr d
+			WHERE
+				c.cntr_no = d.cntr_no
+				AND d.ship_cd = #{shipCd}
+				AND d.call_no = #{callNo}
+				AND d.call_yy = #{callYy}
+				AND d.cur_stat LIKE 'I%'
+				AND d.oper_cd IN
+		]]>
+		<foreach collection="operList" close=")" index="index" item="item" open="(" separator=",">
+			<![CDATA[
+				#{item}
+			]]>
+		</foreach>
+		<![CDATA[
+				AND d.fm_cd = 'F'
+		]]>
+	</select>
+	
+	<select id="onDockDeliveryConfirmRs1" parameterType="kr.co.e1ct.vo.TCntrVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				NVL(a.cntr_no, ' ') cntr_no,
+				NVL(TO_CHAR(b.rls_dt, 'yyyy-mm-dd hh24:mi'), ' ') rls_dt,
+				NVL(a.copino_yn, ' ') copino_yn,
+				NVL(b.cop_yn, ' ') cop_yn,
+				NVL(a.cur_stat, ' ') cur_stat,
+				NVL(TO_CHAR(b.closing_dt, 'yyyy-mm-dd hh24:mi'), ' ') closing_dt
+			FROM
+				t_cntr a,
+				t_dodtl b
+			WHERE
+				a.cntr_no = #{cntrNo}
+				AND b.do_no = #{doNo}
+				AND a.cntr_no = b.cntr_no(+)
+				AND a.dup_no = b.dup_no(+)
+			ORDER BY
+				A.DUP_NO DESC
+		]]>
+	</select>
+	
+	<select id="onDockDeliveryConfirmRss" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				DISTINCT SUBSTR(d.cur_stat, 2, 1) cur_stat
+			FROM
+				(
+				SELECT
+					DISTINCT a.mstbl_no ,
+					b.cntr_no
+				FROM
+					t_bsiot a,
+					t_bsiot_sub b
+				WHERE
+					a.cargo_no = b.cargo_no
+					AND a.banip_cd = '10'
+					AND a.ship_cd = #{shipCd}
+					AND a.call_no = #{callNo} 
+					AND a.call_yy = #{callYy} 
+					AND b.ship_cd = #{shipCd} 
+					AND b.call_no = #{callNo} 
+					AND b.call_yy = #{callYy} 
+					AND a.mstbl_no = #{blNo}
+					AND a.banip_cd = b.banip_cd ) C ,
+				t_cntr d
+			WHERE
+				c.cntr_no = d.cntr_no
+				AND d.ship_cd = #{shipCd}
+				AND d.call_no = #{callNo}
+				AND d.call_yy = #{callYy}
+				AND d.cur_stat LIKE 'I%'
+				AND d.oper_cd IN 
+		]]>
+		<foreach collection="operList" open="(" close=")" index="index" item="item" separator=",">
+			<![CDATA[
+				#{item}
+			]]>
+		</foreach>
+		<![CDATA[
+				AND d.fm_cd = 'F'
+				AND d.cntr_no = #{cntrNo}
+		]]>
+	</select>
+	
+	<select id="findByShipCdAndCallNoAndCallYyAndFmCdAndCurStatAndCntrNoAndOperCd" parameterType="kr.co.e1ct.vo.TCntrVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				d.cntr_no,
+				d.dup_no,
+				NVL(d.sz_cd, '') sz_cd,
+				NVL(d.ty_cd, '') ty_cd,
+				NVL(d.pick_cd, '') pick_cd
+			FROM
+				(
+				SELECT
+					DISTINCT a.mstbl_no ,
+					b.cntr_no
+				FROM
+					t_bsiot a,
+					t_bsiot_sub b
+				WHERE
+					a.cargo_no = b.cargo_no
+					AND a.banip_cd = '10'
+					AND a.ship_cd = #{shipCd}
+					AND a.call_no = #{callNo}
+					AND a.call_yy = #{callYy}
+					AND b.ship_cd = #{shipCd}
+					AND b.call_no = #{callNo}
+					AND b.call_yy = #{callYy}
+					AND a.mstbl_no = #{blNo}
+					AND a.banip_cd = b.banip_cd ) C ,
+				t_cntr d
+			WHERE
+				c.cntr_no = d.cntr_no
+				AND d.ship_cd = #{shipCd}
+				AND d.call_no = #{callNo}
+				AND d.call_yy = #{callYy}
+				AND d.fm_cd = 'F'
+				AND d.cur_stat LIKE 'I%'
+				AND d.cntr_no = #{cntrNo}
+				AND d.oper_cd IN ( #{operCd} )
+		]]>
+	</select>
+	
+	<update id="updateCopinoYnByCntrNoAndDupNoAndOperCd" parameterType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			UPDATE T_CNTR SET COPINO_YN = '' WHERE CNTR_NO = #{cntrNo} AND DUP_NO = #{dupNo} AND OPER_CD IN ( #{operCd} )
+		]]>
+	</update>
+	
+	<select id="terminalEmptyContainer" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
+		<![CDATA[
+			SELECT
+				OPER_CD ,
+				SUM(DECODE(SUBSTR(SZ_CD, 1, 1), '2', 1, 0)) GP20,
+				SUM(DECODE(SUBSTR(SZ_CD, 1, 1), '4', DECODE(SUBSTR(SZ_CD, 2, 1), '5', 0, 1), 0)) GP40,
+				SUM(DECODE(SUBSTR(SZ_CD, 1, 1), '4', DECODE(SUBSTR(SZ_CD, 2, 1), '5', 1, 0), 0)) HQ40,
+				SUM(DECODE(SUBSTR(SZ_CD, 1, 1), '9', 1, 'L', 1, 0)) GP45,
+				COUNT(*) TOT
+			FROM
+				T_CNTR
+			WHERE
+				FM_CD = 'M'
+				AND SUBSTR(CUR_STAT, 2, 1) = 'Y'
+				AND NVL(DIR_ID, '9') = '9'
+				AND CUR_STAT NOT IN ( 'XY' )
+				AND TY_CD <= '29'
+				AND DMG_CD IS NULL
+				AND HOLD_CD IS NULL
+				AND PICK_CD IS NULL
+			GROUP BY
+				OPER_CD
+			ORDER BY
+				OPER_CD
+		]]>
+	</select>
+</mapper>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.CommonRepository">
+
+	<select id="findOperCdListFromSession" parameterType="kr.co.e1ct.vo.TSecretVo" resultType="java.util.HashMap">
+		<if test='jo == "S" or jo == "G"'>
+			<![CDATA[
+				SELECT
+					DISTINCT( oper_cd ) as OPER_CD
+				FROM
+					T_OPER
+				ORDER BY
+					oper_cd
+			]]>
+		</if>
+		<if test='jo != "S" and jo != "G"'>
+			<![CDATA[
+				SELECT
+					b.OPER_CD
+				FROM
+					t_secret a,
+					t_secret_sub b
+				WHERE
+					a.emp_no = b.emp_no
+					AND a.emp_no = #{empNo}
+				ORDER BY
+					b.oper_cd
+			]]>
+		</if>
+	</select>
+	
+	<select id="getSysdate" resultType="java.lang.String">
+		<![CDATA[
+			SELECT to_char( SYSDATE, 'yyyymmddhh24miss' ) FROM dual
+		]]>
+	</select>
+	
+	<select id="smsDetailVacctNo" resultType="java.lang.String">
+		<![CDATA[
+			SELECT FN_GET_VACCT_NO('00101111') FROM DUAL
+		]]>
+	</select>	
+</mapper>

@@ -1,0 +1,262 @@
+\<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content">
+		<div class="sub-visual sub-vs-3">
+			<h1>정보조회서비스</h1>
+			<p>E1컨테이너터미널은 세계를 목표로 나아갑니다.</p>
+		</div><!--sub-visual-->
+		<div class="sub-nav">
+			<div class="wr"> 
+				<a href="/" class="sub-home"></a>
+				<div class="sub-depth">
+					<h3>정보조회서비스</h3>
+					<ul>
+						<li><a href="/company/greeting">회사소개</a></li>
+						<li><a href="/terminal/facilities">터미널소개</a></li>
+						<li><a href="/info/terminal/berthText">정보조회서비스</a></li>
+						<li><a href="/community/news">커뮤니티</a></li>
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3>컨테이너목록</h3>
+					<ul>
+						<li th:each="submenu, i:${subMenuList}">
+							<a th:href="${submenu.url}" th:text="${i18n} == 'en' ? ${submenu.menuNameEn} : ${submenu.menuNameKo}"></a>
+						</li>
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3>장기체화목록</h3>
+					<ul>
+						<li><a href="/info/cntrList/copino">반출입 예정 목록</a></li>
+						<li><a href="/info/cntrList/gateInOut">반출입 목록</a></li>
+						<li><a href="/info/cntrList/notGateInOut">미반출 목록</a></li>
+						<li><a href="/info/cntrList/byVslDisLod">모선별 양적하 목록</a></li>
+						<li><a href="/info/cntrList/cllOverStorage">CLL 경과 목록</a></li>
+						<li><a href="/info/cntrList/longStack">장기체화목록</a></li>
+						<li><a href="/info/cntrList/cntrCancel">선적취소 목록</a></li>
+						<li><a href="/info/cntrList/cntrRehandling">재조작 목록</a></li>
+						<li><a href="/info/cntrList/reeferCargo">냉동 목록</a></li>
+						<li><a href="/info/cntrList/cntrDanger">위험물 목록</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<section id="info_section">
+			<h1 class="title">장기체화목록</h1>
+			<form id="form" name="searchForm" action="/info/cntrList/longStack" method="POST">
+				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+				<div class="date_sch">
+					<label for="" th:text="'조회일자'"></label>
+					<input type="text" id="searchStartDt" name="searchStartDt" class="datepicker-here" data-language="en" th:value="${searchParams.searchStartDt}">
+				
+					<label for="" th:text="'선사'"></label>
+					<select name="oper">
+						<div th:each="oper, i:${operList}" th:remove="tag">
+							<option th:value="${oper}" th:text="${oper}" th:selected="${searchParams.oper} == ${oper} ? 'true'"></option>
+						</div>
+					</select>
+					
+					<label for="" th:text="모선항차"></label>
+					<input type="text" name="shipCd" th:value="${searchParams.shipCd}">
+					-
+					<input type="text" name="callNo" th:value="${searchParams.callNo}">
+					-
+					<input type="text" name="callYy" th:value="${searchParams.callYy}">
+					
+					<br/>
+					
+					<label for="" th:text="'Sz/Tp'"></label>
+					<select name="szCd">
+						<option value="">-Size-</option>
+						<option value="20" th:selected="${searchParams.szCd} == '20' ? 'true'">20</option>
+						<option value="40" th:selected="${searchParams.szCd} == '40' ? 'true'">40</option>
+						<option value="45" th:selected="${searchParams.szCd} == '45' ? 'true'">45</option>
+					</select>
+					<select name="fmCd">
+						<option value="">-F/M-</option>
+						<option value="F" th:selected="${searchParams.fmCd} == 'F' ? 'true'">Full</option>
+						<option value="M" th:selected="${searchParams.fmCd} == 'M' ? 'true'">Empty</option>
+					</select>
+					
+					<label for="" th:text="'수출입'"></label>
+					<select name="ioCd">
+						<option value="">-I/O-</option>
+						<option value="I" th:text="'수입'" th:selected="${searchParams.ioCd} == 'I' ? 'true'"></option>
+						<option value="X" th:text="'수출'" th:selected="${searchParams.ioCd} == 'X' ? 'true'"></option>
+						<option value="M" th:text="'On-Dock'" th:selected="${searchParams.ioCd} == 'M' ? 'true'"></option>
+					</select>
+					
+					<label for="" th:text="'컨테이너번호'"></label>
+					<input type="text" name="cntrNo" th:value="${searchParams.cntrNo}">
+					
+					<label for="" th:text="'장치일수(이상)'"></label>
+					<select name="yardDay">
+						<option value="10" th:selected="${searchParams.yardDay} == 10 ? 'true'" th:text="10일이상"></option>
+						<option value="30" th:selected="${searchParams.yardDay} == 30 ? 'true'" th:text="30일이상"></option>
+						<option value="50" th:selected="${searchParams.yardDay} == 50 ? 'true'" th:text="50일이상"></option>
+						<option value="100" th:selected="${searchParams.yardDay} == 100 ? 'true'" th:text="100일이상"></option>
+						<option value="500" th:selected="${searchParams.yardDay} == 500 ? 'true'" th:text="500일이상"></option>
+					</select>
+					
+					<a id="searchBtn" class="btn_lookup">조회</a>
+				</div>
+			</form>
+			
+			<div class="tb_hd">
+				<div class="btn_left">
+				</div>
+				<div class="btn_right">
+					<a id="printBtn" th:href="@{/info/cntrList/longStackPrint(
+													searchStartDt=${searchParams.searchStartDt},
+													oper=${searchParams.oper},
+													shipCd=${searchParams.shipCd},
+													callNo=${searchParams.callNo},
+													callYy=${searchParams.callYy},
+													szCd=${searchParams.szCd},
+													fmCd=${searchParams.fmCd},
+													ioCd=${searchParams.ioCd},
+													cntrNo=${searchParams.cntrNo},
+													yardDay=${searchParams.yardDay}
+												)}">인쇄하기</a>
+					<a id="exportBtn" th:href="@{/excel/cntrList/longStack(
+													searchStartDt=${searchParams.searchStartDt},
+													oper=${searchParams.oper},
+													shipCd=${searchParams.shipCd},
+													callNo=${searchParams.callNo},
+													callYy=${searchParams.callYy},
+													szCd=${searchParams.szCd},
+													fmCd=${searchParams.fmCd},
+													ioCd=${searchParams.ioCd},
+													cntrNo=${searchParams.cntrNo},
+													yardDay=${searchParams.yardDay}
+												)}">엑셀저장</a>
+				</div>
+			</div>
+			
+			<div class="tb_tmnl">
+				<table>
+					<thead>
+						<tr>
+							<th>No</th>
+							<th>컨테이너번호</th>
+							<th>Sz/Tp</th>
+							<th>상태코드</th>
+							<th>장치위치</th>
+							<th>선사</th>
+							<th>모선항차</th>
+							<th>반입|양하일시</th>
+							<th>경과일수</th>
+							<th>장치일수</th>
+							<th>Booking No</th>
+							<th>M. B/L No</th>
+						</tr>
+					</thead>
+					<tbody th:if="${list} != null">
+						<tr th:each="list, i:${list}">
+							<td th:text="${i.index}+1"></td>
+							<td th:text="${list.cntrNo}" th:style="'cursor: pointer'" th:onclick="javascript:cntrDetailModal([[${list.cntrNo}]])"></td>
+							<td th:text="${list.szCd} + '/' + ${list.tyCd}"></td>
+							<td th:text="${list.curStat} + '' + ( ${list.fmCd} == null ? '' : ${list.fmCd} ) + '-' + ( ${list.tsId} == null ? '' : ${list.tsId} ) + '' + ( ${list.rtnCd} == null ? '' : ${list.rtnCd} )"></td>
+							<td th:text="${list.yTblock} + '-' + ${list.yTbay} + '-' + ${list.yTrow} + '-' + ${list.yTtier}"></td>
+							<td th:text="${list.operCd}"></td>
+							<td th:text="${list.shipCd} + '-' + ${#numbers.formatInteger(list.callNo, 3)} + '-' + ${list.callYy}"></td>
+							<td th:text="${list.ginDt}"></td>
+							<td th:text="${list.overdays}"></td>
+							<td th:text="${list.yardDay}"></td>
+							<td th:text="${list.bkNo}"></td>
+							<td>
+								<div th:each="cargoNo, j:${list.cargoNoList}" th:remove="tag" th:utext="'<span>' + ${cargoNo} + '</span><br/>'"></div>
+								<div th:each="cargoNo1, j:${list.cargoNo1List}" th:remove="tag">
+									<span style="color: #66cc33;" th:utext="${cargoNo1}"></span>
+									<br/>
+								</div>
+							</td>
+						</tr>
+					</tbody>
+					<tbody th:if="${#lists.isEmpty(list)}">
+						<tr>
+							<td th:colspan="12">조회된 데이터가 존재하지 않습니다.</td>
+						</tr>
+					</tbody>
+				</table>
+				<br/>
+				<table>
+					<tbody>
+						<tr>
+							<th>
+							<th>20'</th>
+							<th>40'</th>
+							<th>40'(HQ)</th>
+							<th>45'(JB)</th>
+							<th>VAN</th>
+							<th>TEU</th>
+						</tr>
+						<tr>
+							<th>FULL</th>
+							<td th:text="${sumMap.f20}"></td>
+							<td th:text="${sumMap.f40}"></td>
+							<td th:text="${sumMap.f40h}"></td>
+							<td th:text="${sumMap.f45}"></td>
+							<td th:text="${sumMap.f20} + ${sumMap.f40} + ${sumMap.f40h} + ${sumMap.f45}"></td>
+							<td th:text="${sumMap.f20} + ${sumMap.f40} * 2 + ${sumMap.f40h} * 2 + ${sumMap.f45} * 2"></td>
+						</tr>
+						<tr>
+							<th>EMPTY</th>
+							<td th:text="${sumMap.m20}"></td>
+							<td th:text="${sumMap.m40}"></td>
+							<td th:text="${sumMap.m40h}"></td>
+							<td th:text="${sumMap.m45}"></td>
+							<td th:text="${sumMap.m20} + ${sumMap.m40} + ${sumMap.m40h} + ${sumMap.m45}"></td>
+							<td th:text="${sumMap.m20} + ${sumMap.m40} * 2 + ${sumMap.m40h} * 2 + ${sumMap.m45} * 2"></td>
+						</tr>
+						<tr>
+							<th>TOTAL</th>
+							<td th:text="${sumMap.f20} + ${sumMap.m20}"></td>
+							<td th:text="${sumMap.f40} + ${sumMap.m40}"></td>
+							<td th:text="${sumMap.f40h} + ${sumMap.m40h}"></td>
+							<td th:text="${sumMap.f45} + ${sumMap.m45}"></td>
+							<td th:text="${sumMap.f20} + ${sumMap.f40} + ${sumMap.f40h} + ${sumMap.f45} + ${sumMap.m20} + ${sumMap.m40} + ${sumMap.m40h} + ${sumMap.m45}"></td>
+							<td th:text="${sumMap.f20} + ${sumMap.f40} * 2 + ${sumMap.f40h} * 2 + ${sumMap.f45} * 2 + ${sumMap.m20} + ${sumMap.m40} * 2 + ${sumMap.m40h} * 2 + ${sumMap.m45} * 2"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<script type="text/javascript">
+				$(function(){
+					var searchStartDt = '[[${searchParams.searchStartDt}]]';
+					
+					if( !searchStartDt ) {
+						$("#searchStartDt").val( moment().format('YYYY-MM-DD') );	
+					} else {
+						$("#searchStartDt").val( moment( searchStartDt, 'YYYYMMDD').format('YYYY-MM-DD') );
+					}
+					
+					$("#searchBtn").click(function() {
+						var f = $("#form").serializeObject();
+						if( f.oper == "" ) {
+							alert( "선사를 선택해주세요." );	
+						} else {
+							document.searchForm.submit();
+						}
+					});
+					
+					$("#printBtn").click( function() {
+					});
+				});
+			</script>
+		</section>
+		
+	</div>
+</html>

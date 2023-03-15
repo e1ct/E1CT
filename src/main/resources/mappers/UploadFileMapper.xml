@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.UploadFileRepository">
+	<select id="findAll" parameterType="kr.co.e1ct.vo.UploadFileVo" resultType="kr.co.e1ct.vo.UploadFileVo">
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				W_UPLOAD_FILE
+		]]>
+	</select>
+	
+	<select id="findOne" parameterType="kr.co.e1ct.vo.UploadFileVo" resultType="kr.co.e1ct.vo.UploadFileVo">
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				W_UPLOAD_FILE
+			WHERE
+				UF_IDX = #{ufIdx}
+		]]>
+	</select>
+	
+	<insert id="save" parameterType="kr.co.e1ct.vo.UploadFileVo" useGeneratedKeys="true" keyProperty="ufIdx">
+		<selectKey keyProperty="ufIdx" resultType="long" order="BEFORE">
+			<![CDATA[
+				SELECT upload_file_seq.NEXTVAL from dual
+			]]>
+		</selectKey>
+		<![CDATA[
+			INSERT INTO 
+				W_UPLOAD_FILE( 
+					UF_IDX,
+					UF_FILE_NAME, 
+					UF_SAVE_FILE_NAME, 
+					UF_FILE_PATH, 
+					UF_CONTENT_TYPE, 
+					UF_FILE_SIZE, 
+					UF_ENROL_DT 
+				) VALUES(
+					#{ufIdx},
+					#{ufFileName},
+					#{ufSaveFileName},
+					#{ufFilePath},
+					#{ufContentType},
+					#{ufFileSize},
+					#{ufEnrolDt}
+				)
+		]]>
+	</insert>
+</mapper>

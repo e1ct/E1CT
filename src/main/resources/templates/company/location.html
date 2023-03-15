@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content" th:remove="tag">
+		<div class="sub-visual sub-vs-1">
+			<h1 th:text="#{header.company}">회사소개</h1>
+			<p th:text="#{subvisual.subtitle.1}">E1컨테이너터미널은 세계를 목표로 나아갑니다.</p>
+		</div>
+		<div class="sub-nav">
+			<div class="wr"> 
+				<a href="/" class="sub-home"></a>
+				<div class="sub-depth">
+					<h3 th:text="#{header.company}">회사소개</h3>
+					<ul>
+						<li><a href="/company/greeting" th:text="#{header.company}">회사소개</a></li>
+						<li><a href="/terminal/facilities" th:text="#{header.terminal}">터미널소개</a></li>
+						<li><a href="/info/terminal/berthText" th:text="#{header.info}">정보조회서비스</a></li>
+						<li><a href="/community/news" th:text="#{header.community}">커뮤니티</a></li> 
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3 th:text="#{menu.company.location}">오시는길</h3>
+					<ul>
+						<li><a href="/company/greeting" th:text="#{menu.company.greeting}">인사말</a></li>
+						<li><a href="/company/history" th:text="#{menu.company.history}">연혁</a></li>
+						<li><a href="/company/organization" th:text="#{menu.company.organization}">조직 및 연락처</a></li>
+						<li><a href="/company/ci" th:text="#{menu.company.ci}">CI</a></li>
+						<li><a href="/company/notice" th:text="#{menu.company.notice}">공고</a></li>
+						<li><a href="/company/location" th:text="#{menu.company.location}">오시는길</a></li>
+						<li><a href="/company/safeservice" th:text="#{menu.company.safeservice}">안전서비스</a></li>
+						<li><a href="/company/hr" th:Text="#{menu.company.hr}">인사제도</a></li>
+						<li><a href="/company/recruit" th:text="#{menu.company.recruit}">채용정보</a></li>
+						<li><a href="/company/support" th:text="#{menu.company.support}">관련사이트</a></li>
+					</ul>
+				</div>
+			</div> 
+		</div><!--sub-visual-->
+		<section id="wrap">
+			<h1 class="cont-tit" th:text="#{menu.company.location}">오시는길</h1>
+			<div id="location">  
+				<div class="cont-wr"> 
+					<div class="one">
+						<h2>E1CT</h2>
+						<!-- * 카카오맵 - 지도퍼가기 -->
+<!-- 1. 지도 노드 -->
+<div id="daumRoughmapContainer1583903360251" class="root_daum_roughmap root_daum_roughmap_landing"></div>
+
+<!--
+	2. 설치 스크립트
+	* 지도 퍼가기 서비스를 2개 이상 넣을 경우, 설치 스크립트는 하나만 삽입합니다.
+-->
+<script charset="UTF-8" class="daum_roughmap_loader_script" src="https://ssl.daumcdn.net/dmaps/map_js_init/roughmapLoader.js"></script>
+
+<!-- 3. 실행 스크립트 -->
+<script charset="UTF-8">
+	new daum.roughmap.Lander({
+		"timestamp" : "1583903360251",
+		"key" : "xg6g",
+		"mapWidth" : "1200",
+		"mapHeight" : "360"
+	}).render();
+</script>
+						<div class="address">
+							<h3>E1CT</h3>
+							<p>인천광역시 중구 항동 7가 112번지<br />
+							112 7th Street in Hangdong, Jung-gu, Incheon, Korea<br/>
+							<span>Tel. 032-880-2222　fax. 032-880-2381</span>
+							</p>
+						</div>
+					</div>
+					<div class="two">
+						<h2>CY</h2> 
+<!-- * 카카오맵 - 지도퍼가기 -->
+<!-- 1. 지도 노드 -->
+<div id="daumRoughmapContainer1583903495828" class="root_daum_roughmap root_daum_roughmap_landing"></div>
+
+<!--
+	2. 설치 스크립트
+	* 지도 퍼가기 서비스를 2개 이상 넣을 경우, 설치 스크립트는 하나만 삽입합니다.
+-->
+
+<!-- 3. 실행 스크립트 -->
+<script charset="UTF-8">
+	new daum.roughmap.Lander({
+		"timestamp" : "1583903495828",
+		"key" : "xg6j",
+		"mapWidth" : "1200",
+		"mapHeight" : "360"
+	}).render();
+</script>
+						<div class="address">
+							<h3>CY</h3>
+							<p>인천광역시 중구 서해대로93번길 42(항동7가)<br />
+							42, Seohae-daero 93beon-gil, Jung-gu, Incheon, 22342, Korea<br />
+							<span>Tel. 032-880-2222　fax. 032-880-2381</span>
+							</p>
+						</div>
+					</div>
+				</div>
+			</div> 
+		</section>
+	</div>
+</html>

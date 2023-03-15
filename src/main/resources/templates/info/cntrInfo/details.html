@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content">
+		<div class="sub-visual sub-vs-3">
+			<h1>정보조회서비스</h1>
+			<p>E1컨테이너터미널은 세계를 목표로 나아갑니다.</p>
+		</div><!--sub-visual-->
+		<div class="sub-nav">
+			<div class="wr"> 
+				<a href="/" class="sub-home"></a>
+				<div class="sub-depth">
+					<h3>정보조회서비스</h3>
+					<ul>
+						<li><a href="/company/greeting">회사소개</a></li>
+						<li><a href="/terminal/facilities">터미널소개</a></li>
+						<li><a href="/info/terminal/berthText">정보조회서비스</a></li>
+						<li><a href="/community/news">커뮤니티</a></li>
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3>컨테이너정보</h3>
+					<ul>
+						<li th:each="submenu, i:${subMenuList}">
+							<a th:href="${submenu.url}" th:text="${i18n} == 'en' ? ${submenu.menuNameEn} : ${submenu.menuNameKo}"></a>
+						</li>
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3>컨테이너 명세/이력</h3>
+					<ul>
+						<li><a href="/info/cntrInfo/details">컨테이너 명세/이력</a></li>
+						<li><a href="/info/cntrInfo/stock">재고현황</a></li>
+						<li><a href="/info/cntrInfo/workingTime">양적하 예상시간 조회</a></li>
+						<li><a href="/info/cntrInfo/freeTime">양하 Free Time 일시조회</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<section id="info_section">
+			<h1 class="title">컨테이너 명세/이력</h1>
+			<form name="searchForm" action="/info/cntrInfo/details" method="POST">
+				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+				<div class="date_sch">
+					<label for="" th:text="'컨테이너번호'"></label>
+					<input type="text" id="search" name="search" th:value="${searchParams.search}">
+					<a id="searchBtn" class="btn_lookup">조회</a>
+				</div>
+			</form>
+			
+			<div class="tb_tmnl">
+				<table style="width: 70%; float:left; border-right: 1px solid #eb6800;">
+					<tbody th:if="${data} != null">
+						<tr>
+							<th th:text="'모선항차'"></th>
+							<td th:text="${data.shipCd} + '-' + ${#numbers.formatInteger(data.callNo, 3)} + '-' + ${data.callYy}"></td>
+							<td th:colspan="2" th:text="${data.shipNm}"></td>
+						</tr>
+						<tr>
+							<th th:text="'선사'"></th>
+							<td th:text="${data.operCd}"></td>
+							<td th:colspan="2" th:text="${data.operKnm}"></td>
+						</tr>
+						<tr>
+							<th th:text="'상태'"></th>
+							<td>
+								<div th:text="${data.curStat} + '-' + ${data.fmCd}"></div>
+								<a id="statusDetail" th:onclick="javascript:statusDetail([[${data.curStat}]], [[${data.fmCd}]])" style="cursor: pointer; font-size: 0.9rem; font-weight: 600;">Click</a>
+							</td>
+							<th th:text="'Size/Type'"></th>
+							<td th:if="${data.tyCd} >= 30 and ${data.tyCd} < 50">
+								<div th:utext="${data.szCd} + '/' + ${data.tyCd} + ' <span style=color:#000080>(Reefer)</span>'"></div>
+							</td>
+							<td th:if="${data.tyCd} >= 50 and ${data.tyCd} < 60">
+								<div th:utext="${data.szCd} + '/' + ${data.tyCd} + ' <span style=color:#000080>(Open Top)</span>'"></div>
+							</td>
+							<td th:if="${data.tyCd} >= 60 and ${data.tyCd} < 70">
+								<div th:utext="${data.szCd} + '/' + ${data.tyCd} + ' <span style=color:#000080>(Platform)</span>'"></div>
+							</td>
+							<td th:if="${data.tyCd} >= 70 and ${data.tyCd} < 80">
+								<div th:utext="${data.szCd} + '/' + ${data.tyCd} + ' <span style=color:#000080>(Tank)</span>'"></div>
+							</td>
+							<td th:if="${data.tyCd} >= 80 and ${data.tyCd} < 90">
+								<div th:utext="${data.szCd} + '/' + ${data.tyCd} + ' <span style=color:#000080>(Special)</span>'"></div>
+							</td>
+							<td th:if="${data.tyCd} >= 90 and ${data.tyCd} < 100">
+								<div th:utext="${data.szCd} + '/' + ${data.tyCd} + ' <span style=color:#000080>(Air)</span>'"></div>
+							</td>
+							<td th:if="${data.tyCd} > 100 or ${data.tyCd} < 30">
+								<div th:utext="${data.szCd} + '/' + ${data.tyCd} + ' <span style=color:#000080>(General)</span>'"></div>
+							</td>
+						</tr>
+						<tr>
+							<th th:text="'Return/Cancel'"></th>
+							<td th:if="${data.rtnCd} == 'C'" th:text="'Cancel'"></td>
+							<td th:if="${data.rtnCd} == 'R'" th:text="'Return'"></td>
+							<td th:if="${data.rtnCd} != 'C' and ${data.rtnCd} != 'R'"></td>
+							<th th:text="'T/S'"></th>
+							<td th:text="${data.tsId}"></td>
+						</tr>
+						<tr>
+							<th th:text="'차량번호(Seal No.)'"></th>
+<!-- 							<td th:if="${data.truckerCdOut} != ''" th:text="( ${data.truckerCdOut} == null ? '' : ${data.truckerCdOut} ) + '-' + ( ${data.carNoOut} == null ? '' : ${data.carNoOut} ) + '(' + (${data.sealNo} == null ? '' : ${data.sealNo}) + ')'"></td> -->
+<!-- 							<td th:unless="${data.truckerCdOut} != ''" th:text="( ${data.truckerCd} == null ? '' : ${data.truckerCd} ) + '-' + ( ${data.carNo} == null ? '' : ${data.carNo} ) + '(' + (${data.sealNo} == null ? '' : ${data.sealNo}) + ')'"></td> -->
+							<td th:if="${data.truckerCdOut} != null">
+								<th:block th:text="( ${data.truckerCdOut} == null ? '' : ${data.truckerCdOut} ) + '-' + ( ${data.carNoOut} == null ? '' : ${data.carNoOut} )"></th:block>
+								(<th:block th:text="${data.sealNo2} != null ? ${data.sealNo2} : ( ${data.sealNo1} != null ? ${data.sealNo1} : ( ${data.sealNo} != null ? ${data.sealNo} : '' ) ) "></th:block>)
+							</td>
+							<td th:unless="${data.truckerCdOut} != null">
+								<th:block th:text="( ${data.truckerCd} == null ? '' : ${data.truckerCd} ) + '-' + ( ${data.carNo} == null ? '' : ${data.carNo} )"></th:block>
+								(<th:block th:text="${data.sealNo2} != null ? ${data.sealNo2} : ( ${data.sealNo1} != null ? ${data.sealNo1} : ( ${data.sealNo} != null ? ${data.sealNo} : '' ) ) "></th:block>)
+							</td>
+							<th th:text="'무게'"></th>
+							<td th:text="${data.weight}"></td>
+						</tr>
+						<tr>
+							<th th:text="'위험물'"></th>
+							<td th:text="'IMDG : ' + ( ${data.imdg} == null ? '' : ${data.imdg} ) + ' UNNO : ' + ( ${data.unno} == null ? '' : ${data.unno} )"></td>
+							<th th:text="'냉동온도'"></th>
+							<td th:if="${data.tempId} == 'CEL'" th:text="${data.temp} + '˚C'"></td>
+							<td th:if="${data.tempId} == 'FAH'" th:text="${data.temp} + '˚F'"></td>
+							<td th:if="${data.tempId} != 'CEL' and ${data.tempId} != 'FAH'"></td>
+						</tr>
+						<tr>
+							<th th:text="'선내위치'"></th>
+							<td th:if="${data.sTbay} != null and ${data.sTbay} != ''" th:text="${data.sTbay} + '-' + ${data.sTrow} + '-' + ${data.sTtier}"></td>
+							<td th:unless="${data.sTbay} != null and ${data.sTbay} != ''"></td>
+							<th th:text="'야드위치'"></th>
+							<td th:if="${data.yTblock} != null and ${data.yTblock} != ''" th:text="${data.yTblock} + '-' + ${data.yTbay} + '-' + ${data.yTrow} + '-' + ${data.yTtier}"></td>
+							<td th:unless="${data.yTblock} != null and ${data.yTblock} != ''"></td>
+						</tr>
+						<tr>
+							<th th:text="'양하항/적하항'"></th>
+							<td th:text="( ${data.pod} == null ? '' : ${data.pod} ) + '/' + ( ${data.pol} == null ? '' : ${data.pol} )"></td>
+							<th th:text="'X-Ray 검색'"></th>
+							<td th:text="${data.inspId}"></td>
+						</tr>
+						<tr>
+							<th th:text="'반입(양하)일시'"></th>
+							<td th:if="( ${data.ginDt} != null and ${data.ginDt} != '' ) or ( ${data.gcDdt} == null and ${data.gcDdt} == '' )" th:text="${data.ginDt}"></td>
+							<td th:unless="( ${data.ginDt} != null and ${data.ginDt} != '' ) or ( ${data.gcDdt} == null and ${data.gcDdt} == '' )" th:text="${data.gcDdt} == null ? '' : '(' + ${data.gcDdt} + ')'"></td>
+							<th th:text="'반출(적하)일시'"></th>
+							<td th:if="( ${data.goutDt} != null and ${data.goutDt} != '' ) or ( ${data.gcLdt} == null and ${data.gcLdt} == '' )" th:text="${data.goutDt}"></td>
+							<td th:unless="( ${data.goutDt} != null and ${data.goutDt} != '' ) or ( ${data.gcLdt} == null and ${data.gcLdt} == '' )" th:text="${data.gcLdt} == null ? '' : '(' + ${data.gcLdt} + ')'"></td>
+						</tr>
+						<tr>
+							<th th:text="'보세구분'"></th>
+							<td th:if="${data.bondId} == 'B'" th:text="'보세'"></td>
+							<td th:if="${data.bondId} == 'C'" th:text="'부두통관'"></td>
+							<td th:if="${data.bondId} != 'B' and ${data.bondId} != 'C'"></td>
+							<th th:text="'Stock Days'"></th>
+							<td th:if="${data.yardDay} > 0" th:text="${data.yardDay} + '일'"></td>
+							<td th:unless="${data.yardDay} > 0" th:text="'0'"></td>
+						</tr>
+						<tr>
+							<th th:text="'Order No.'"></th>
+							<td th:colspan="3" th:text="${data.orderNo}"></td>
+						</tr>
+					</tbody>
+				</table>
+				
+				<table th:if="${data} != null" style="width: 30%; float: left;">
+					<tr>
+						<th th:colspan="2" th:text="'거래명세서 조회'"></th>
+					</tr>
+					<tr>
+						<td th:colspan="2">
+							<a th:utext="'거래명세서 출력'" th:href="@{/info/sms/details}"></a>
+						</td>
+					</tr>
+					<tr>
+						<th th:colspan="2" th:text="'화물관리번호'"></th>
+					</tr>
+					<tr>
+						<td th:colspan="2">
+							<select th:name="cargoNo">
+								<div th:if="${cargoList} != null" th:remove="tag">
+									<option th:each="list, i:${cargoList}" th:text="${list.cargoNo}"></option>
+								</div>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<th th:colspan="2" th:text="'Holding여부'"></th>
+					</tr>
+					<tr>
+						<td th:colspan="2">
+							<select th:name="'holdCd'">
+								<div th:if="${holdList} != null" th:remove="tag">
+									<option th:each="list, i:${holdList}" th:text="${list.cdNm}"></option>
+								</div>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<th th:text="'검사품여부'"></th>
+						<th th:text="'컨손상여부'"></th>
+					</tr>
+					<tr style="height: 35px;">
+							<td th:if="${data} != null and ${data.inspId} == 'Y'" th:text="'YES'"></td>
+							<td th:unless="${data.inspId} == 'Y'"></td>
+							<td th:if="${data.dmgCd} == 'S' or ${data.dmgCd} == 'L'" th:text="'부분손상'"></td>
+							<td th:if="${data.dmgCd} != 'S' and ${data.dmgCd} != 'L' and ( ${data.dmgCd} == 'B' or ${data.dmgCd} == 'H' )" th:text="'전체손상'"></td>
+							<td th:if="${data.dmgCd} != 'S' and ${data.dmgCd} != 'L' and ( ${data.dmgCd} != 'B' and ${data.dmgCd} != 'H' ) and ( ${data.cleanCd} == 'Y' or ${data.cleanCd} == 'C' )" th:text="'클리닝'"></td>
+							<td th:if="!(${data.dmgCd} == 'S' or ${data.dmgCd} == 'L') 
+							and !(${data.dmgCd} != 'S' and ${data.dmgCd} != 'L' and ( ${data.dmgCd} == 'B' or ${data.dmgCd} == 'H' )) 
+							and !(${data.dmgCd} != 'S' and ${data.dmgCd} != 'L' and ( ${data.dmgCd} != 'B' and ${data.dmgCd} != 'H' ) and ( ${data.cleanCd} == 'Y' or ${data.cleanCd} == 'C' ))"></td>
+					</tr>
+				</table>
+				
+				<br/>
+				<table th:if="${data} != null">
+					 <thead>
+					 	<tr>
+					 		<th>No</th>
+					 		<th>모선항차</th>
+					 		<th colspan="2">차량번호</th>
+					 		<th>F/M</th>
+					 		<th>Sz/Tp</th>
+					 		<th>반입(양하)일시</th>
+					 		<th>반출(적하)일시</th>
+					 		<th>Order No.</th>
+					 	</tr>
+					 </thead>
+					 <tbody>
+					 	<tr th:each="list, i:${list}">
+					 		<td th:text="${i.index}+1"></td>
+					 		<td th:text="${list.shipCd} + '-' + ${#numbers.formatInteger(list.callNo,3)} + '-' + ${list.callYy}"></td>
+					 		<td th:utext="${list.carrier}"></td>
+					 		<td th:utext="${list.truckerName}"></td>
+					 		<td th:text="${list.fmCd}"></td>
+					 		<td th:text="${list.szCd} + '/' + ${list.tyCd}"></td>
+					 		
+					 		<td th:if="( ${list.ginDt} != null and ${list.ginDt} != '' ) or ( ${list.gcDdt} == null or ${list.gcDdt} == '' )" th:text="${list.ginDt}">
+					 		<td th:unless="( ${list.ginDt} != null and ${list.ginDt} != '' ) or ( ${list.gcDdt} == null or ${list.gcDdt} == '' )" th:text="'(' + ${list.gcDdt} + ')'">
+					 		
+					 		<td th:if="( ${list.goutDt} != null and  ${list.goutDt} != '' ) or ( ${list.gcLdt} == null or ${list.gcLdt} == '')" th:text="${list.goutDt}"></td>
+					 		<td th:unless="( ${list.goutDt} != null and  ${list.goutDt} != '' ) or ( ${list.gcLdt} == null or ${list.gcLdt} == '')" th:text="'(' + ${list.gcLdt} + ')'"></td>
+					 		
+					 		<td th:if="${list.bkNo} == '' or ( ${#strings.substring(list.curStat,1,2)} != 'D' and ${list.fmCd} == 'F' )"></td>
+					 		<td th:unless="${list.bkNo} == '' or ( ${#strings.substring(list.curStat,1,2)} != 'D' and ${list.fmCd} == 'F' )" th:text="${list.bkNo}">
+					 	</tr>
+					 </tbody>
+				</table>
+			</div>
+			
+			<div id="statusDetailModal" style="display: none; width: 230px;">
+				<dl>
+					<dt>수출입 구분</dt>
+					<dd id="modal_ixCd"></dd>
+				</dl>
+				<dl>
+					<dt>상태</dt>
+					<dd id="modal_yCd"></dd>
+				</dl>
+				<dl>
+					<dt>Full / Empty</dt>
+					<dd id="modal_fmCd"></dd>
+				</dl>
+			</div>
+			
+			<script type="text/javascript">
+				$(function(){
+					$("#statusDetailModal").iziModal({
+						padding: '20px',
+						radius: 10,
+						title: '컨테이너상세코드 조회',
+						headerColor: "#eb6800"
+					});
+					
+					$("#searchBtn").click(function() {
+						document.searchForm.submit();
+					});
+					
+					$("#printBtn").click( function() {
+					});
+				});
+				
+				function statusDetail( curStat, fmCd ) {
+					var ixCd = curStat.substring(0,1);
+					var yCd = curStat.substring(1,2);
+					console.log( ixCd + "," + yCd + "," +fmCd );
+					
+					$("#modal_ixCd").text("");
+					$("#modal_yCd").text("");
+					$("#modal_fmCd").text("");
+					
+					if( ixCd == "X" ) {
+						$("#modal_ixCd").text("수출컨테이너");
+					} else if( ixCd == "I" ) {
+						$("#modal_ixCd").text("수입컨테이너");
+					} else if( ixCd == "M" ) {
+						$("#modal_ixCd").text("온독컨테이너");
+					} else if( ixCd == "S" ) {
+						$("#modal_ixCd").text("Shifting 컨테이너");
+					} 
+					
+					if( yCd == "Y" ) {
+						$("#modal_yCd").text("YARD 장치 상태");
+					} else if( yCd == "D" ) {
+						$("#modal_yCd").text("모든 처리 완료상태");
+					} else if( yCd == "B" ) {
+						$("#modal_yCd").text("예정상태");
+					} else if( yCd == "G" ) {
+						$("#modal_yCd").text("GATE 통과 처리상태" );
+					} else if( yCd == "P" ) {
+						$("#modal_yCd").text("반출상차 요청");
+					} 
+					
+					if( fmCd == "F" ) {
+						$("#modal_fmCd").text("Full 컨테이너");
+					} else if( fmCd == "M" ) {
+						$("#modal_fmCd").text("Empty 컨테이너");
+					}
+					
+					$("#statusDetailModal").iziModal( 'open' );
+				}
+			</script>
+		</section>
+		
+	</div>
+</html>

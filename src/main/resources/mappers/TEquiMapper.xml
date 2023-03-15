@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TEquiRepository">
+	<select id="intraVesselDetailGetCcInfo" resultType="kr.co.e1ct.vo.TEquiVo">
+		<![CDATA[
+			SELECT eq_no FROM t_equi WHERE substr( eq_no, 1, 1 ) = '1' ORDER BY eq_no
+		]]>
+	</select>		
+</mapper>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<header th:fragment="headerFragment" id="header">
+   		<div class="hd-wr">
+   			<a th:if="${i18n} == 'ko'" href="/" class="logo"><img src="/static/img/logo.png" alt="상단로고" style="border: 0;"></a>
+   			<a th:if="${i18n} == 'en'" href="/" class="logo"><img src="/static/img/logo-eng.png" alt="상단로고" style="border: 0;"></a>
+			<div id="nav">
+				<span class="nav-close"><img src="/static/img/btn/menu-close.png" alt="메뉴닫기"></span>
+				<ul>
+					<li>
+						<a th:text="#{header.company}">회사소개</a>
+						<ul>
+							<li><a href="/company/greeting" th:text="#{menu.company.greeting}">인사말</a></li>
+							<li><a href="/company/history" th:text="#{menu.company.history}">연혁</a></li>
+							<li><a href="/company/organization" th:text="#{menu.company.organization}">조직 및 연락처</a></li>
+							<li><a href="/company/ci" th:text="#{menu.company.ci}">CI</a></li>
+							<li><a href="/company/notice" th:text="#{menu.company.notice}">공고</a></li>
+							<li><a href="/company/location" th:text="#{menu.company.location}">오시는길</a></li>
+							<li><a href="/company/safeservice" th:text="#{menu.company.safeservice}">안전서비스</a></li>
+							<li><a href="/company/hr" th:text="#{menu.company.hr}">인사제도</a></li>
+							<li><a href="/company/recruit" th:text="#{menu.company.recruit}">채용정보</a></li>
+							<li><a href="/company/support" th:text="#{menu.company.support}">관련사이트</a></li>
+						</ul>
+					</li>
+					<li>
+						<a th:text="#{header.terminal}">터미널소개</a>
+						<ul>
+							<li><a href="/terminal/facilities" th:text="#{menu.terminal.facilities}">터미널시설</a></li>
+							<li><a href="/terminal/equipment" th:text="#{menu.terminal.equipment}">터미널장비</a></li>
+							<li><a href="/terminal/feature" th:text="#{menu.terminal.feature}">터미널특징</a></li>
+							<li><a href="/terminal/movie" th:text="#{menu.terminal.movie}">홍보동영상</a></li>
+							<li><a href="/terminal/brochure" th:text="#{menu.terminal.brochure}">온라인브로슈어</a></li>
+							<li><a href="/terminal/gallery" th:text="#{menu.terminal.gallery}">Gallery</a></li> 
+						</ul>
+					</li>
+					<li>
+						<a th:text="#{header.info}">정보조회서비스</a>
+						<ul>
+							<li th:each="submenu, i:${subMenuList}">
+								<a th:href="${submenu.url}" th:text="${i18n} == 'en' ? ${submenu.menuNameEn} : ${submenu.menuNameKo}"></a>
+							</li>
+							
+<!-- 							<li><a href="/info/terminal/berthText" th:text="#{menu.info.terminal}">터미널정보</a></li> -->
+<!-- 							<li><a href="/info/cntrList/copino" th:text="#{menu.info.cntrlist}">컨테이너목록</a></li> -->
+<!-- 							<li><a href="/info/cntrInfo/details" th:text="#{menu.info.cntrinfo}">컨테이너정보</a></li> -->
+<!-- 							<li><a href="/info/onDock/insertOrder" th:text="#{menu.info.ondock}">On-Dock</a></li> -->
+<!-- 							<li><a href="/info/cust/inspection" th:text="#{menu.info.inspection}">세관업무</a></li> -->
+<!-- 							<li><a href="/info/edi/copinoList" th:text="#{menu.info.edi}">EDI전송</a></li> -->
+<!-- 							<li><a href="/info/sms/customer" th:text="#{menu.info.sms}">정산업무</a></li> -->
+<!-- 							<li><a href="/info/intra/vesselDetail" th:text="#{menu.info.intra}">인트라넷</a></li> -->
+						</ul>
+					</li>
+					<li>
+						<a th:text="#{header.community}">커뮤니티</a>
+						<ul>
+							<li><a href="/community/news" th:text="#{menu.community.news}">News</a></li>
+							<li><a href="/community/notice" th:text="#{menu.community.notice}">공지사항</a></li>
+							<li><a href="/community/reference" th:text="#{menu.community.reference}">자료실</a></li> 
+							<li><a href="/community/faq" th:text="#{menu.community.faq}">FAQ</a></li>
+							<li><a href="/community/shipping" th:text="#{menu.community.shipping}">해운용어</a></li>
+						</ul>
+					</li>
+				</ul>
+			</div><!--nav-->
+			<span class="nav-open"><img src="/static/img/btn/menu-open.png" alt="메뉴열기"></span>
+			
+			
+			<a sec:authorize="isAuthenticated()" href="/member/signOut" class="logout">LOGOUT</a>
+			<a sec:authorize="isAnonymous()" href="/member/signIn" class="logout">LOGIN</a>
+			
+			<div class="lang">
+				<a href="/lang?lang=ko" th:class="${i18n} == 'ko' ? 'active'">KOR<span>EAN</span></a>
+				<a href="/lang?lang=en" th:class="${i18n} == 'en' ? 'active'">ENG<span>LISH</span></a>
+			</div><!--lang-->
+			
+			
+		</div>
+	</header>
+</html>

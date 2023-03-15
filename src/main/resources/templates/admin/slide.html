@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.w3.org/1999/xhtml"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	layout:decorator="layout/adminLayout">
+	<body>
+		<section layout:fragment="content" id="main-content">
+			<section class="wrapper">
+				<div class="row mt">
+					<div class="col-lg-12">
+						<div class="form-panel">
+							<h4><i class="fa fa-angle-right"></i> 메인슬라이드 관리 <a th:href="@{'/admin/slide/enrol'}"><button class="btn btn-theme pull-right">추가</button></a> </h4>
+							<table class="table table-bordered table-striped table-condensed">
+								<thead>
+									<tr>
+										<th>번호</th>
+										<th>이미지</th>
+										<th>타이틀</th>
+										<th>서브타이틀</th>
+										<th>비고</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="list, i:${list}">
+										<td th:text="${i.index}+1"></td>
+										<td>
+											<img th:src="'/file/' + ${list.mFilename}" style="max-width: 400px;">
+										</td>
+										<td th:text="${list.mTitle}"></td>
+										<td th:text="${list.mContent}"></td>
+										<td>
+											<a th:href="'/admin/slide/modify/' + ${list.MSeq}">수정</a>
+											<a href="#" th:onclick="javascript:slideDelete([[${list.mSeq}]])">삭제</a>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</section>
+			<script type="text/javascript">
+				function slideDelete( MSeq ) {
+					if( confirm("삭제하시겠습니까?") ) {
+						$.ajax({
+							type: 'POST',
+							data: {
+								'MSeq': MSeq,
+								'[[${_csrf.parameterName}]]': '[[${_csrf.token}]]'
+							},
+							url: '/admin/slide/delete',
+							success: function(d) {
+								console.log( d );
+								alert( d.msg );
+								if( d.code == 200 ) {
+									location.href="/admin/slide";
+								}
+							}
+						});
+					}
+				}
+			</script>
+		</section>
+	</body>
+</html>

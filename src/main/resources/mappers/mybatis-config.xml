@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+	<settings>
+		<setting name="mapUnderscoreToCamelCase" value="true"/>
+	</settings>
+	
+	<typeAliases>
+		<typeAlias type="kr.co.e1ct.vo.TBkdtlVo" 			alias="TBkdtlVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TBklstVo" 			alias="TbklstVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TBkmstVo" 			alias="TbkmstVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TBsiotSubVo" 		alias="TbsiotSubVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TBsiotVo" 			alias="TBsiotVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TCarbklstVo" 		alias="TCarbklstVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TCarVo" 				alias="TCarVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TCashPlanVo" 		alias="TCashPlanVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TCashVo" 			alias="TCashVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TCntrVo" 			alias="TCntrVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TCodeVo" 			alias="TCodeVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TColdltVo" 			alias="TColdltVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TCopinoChkinVo" 		alias="TCopinoChkinVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TCopinoRjctVo" 		alias="TCopinoRjctVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TCubicVo" 			alias="TCubicVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TCustomerHdrVo" 		alias="TCustomerHdrVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TCustomerVo" 		alias="TCustomerVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TDamageVo" 			alias="TDamageVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TDgcargoVo" 			alias="TDgcargoVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TDodtlVo" 			alias="TDodtlVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TDomstVo" 			alias="TDomstVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TEdicustomerVo" 		alias="TEdicustomerVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TEquiVo" 			alias="TEquiVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TFreedayVo" 			alias="TFreedayVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TFreevanpoolVo" 		alias="TFreevanpoolVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TGatehisVo" 			alias="TGatehisVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TGateVo" 			alias="TGateVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TGcorderVo" 			alias="TGcorderVo"/>
+		<typeAlias type="kr.co.e1ct.vo.THoldngVo" 			alias="THoldngVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TInLiftCashCntrVo" 	alias="TInLiftCashCntrVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TMailVo" 			alias="TMailVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TMovelogVo" 			alias="TMovelogVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TMtPstnVo" 			alias="TMtPstnVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TOperVo" 			alias="TOperVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TOwnerBklstVo" 		alias="TOwnerBklstVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TPortVo" 			alias="TPortVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TRepairOrderVo" 		alias="TRepairOrderVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TRfcargoVo" 			alias="TRfcargoVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TSecretVo" 			alias="TSecretVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TTcorderVo" 			alias="TTcorderVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TTmnlVo" 			alias="TTmnlVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TTruckerVo" 			alias="TTruckerVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TTypeVo" 			alias="TTypeVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TUnnoVo" 			alias="TUnnoVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TVescallVo" 			alias="TVescallVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TVesselVo" 			alias="TVesselVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TYpmasterVo" 		alias="TYpmasterVo"/>
+		<typeAlias type="kr.co.e1ct.vo.WBoardVo" 			alias="WBoardVo"/>
+		<typeAlias type="kr.co.e1ct.vo.WCustHdVo" 			alias="WCustHdVo"/>
+		<typeAlias type="kr.co.e1ct.vo.WCustItemVo" 		alias="WCustItemVo"/>
+		<typeAlias type="kr.co.e1ct.vo.WSajunVo" 			alias="WSajunVo"/>
+		<typeAlias type="kr.co.e1ct.vo.TempVo"				alias="TempVo"/>
+		<typeAlias type="kr.co.e1ct.vo.SearchVo"			alias="SearchVo"/>
+	</typeAliases>
+</configuration>

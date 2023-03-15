@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content" th:remove="tag">
+		<div class="sub-visual sub-vs-4">
+			<h1>커뮤니티</h1>
+			<p>최신 소식을 빠르게 전달해 드립니다.</p>
+		</div>
+		<div class="sub-nav">
+			<div class="wr"> 
+				<a href="/" class="sub-home"></a>
+				<div class="sub-depth">
+					<h3>커뮤니티</h3>
+					<ul>
+						<li><a href="/company/greeting">회사소개</a></li>
+						<li><a href="/terminal/facilities">터미널소개</a></li>
+						<li><a href="/info/terminal/berthText">정보조회서비스</a></li>
+						<li><a href="/community/news">커뮤니티</a></li> 
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3>News</h3>
+					<ul>
+						<li><a href="/community/news">News</a></li>
+						<li><a href="/community/notice">공지사항</a></li>
+						<li><a href="/community/reference">자료실</a></li>
+						<li><a href="/community/faq">FAQ</a></li>
+						<li><a href="/community/shipping">해운용어</a></li>
+					</ul>
+				</div>
+			</div>
+		</div><!--sub-visual-->
+		<section id="wrap">
+			<h1 class="cont-tit">News</h1>
+			<div class="cont-wr">
+				<!--채용정보 상단 시작 -->
+				<div id="hire">  
+					<h2>새롭게 출발하는 E1CT는<br /><span>유능한 인력개발</span>을 위해 노력하겠습니다.
+						<small>E1CT는 여러분을 향해 항상 열려 있습니다. 당당히 도전하십시오.</small>
+					</h2>
+					<div class="cont-top">
+						<h3>채용 문의 안내</h3>
+						<p>아래의 채용 계획이 없는 경우, 담당자에게 e-mail(e1cthr@e1ct.co.kr)
+						문의 혹은 고객센터로 연락주시면 신속히 답변드리겠습니다.</p>
+					</div> 
+				</div>
+				<!--채용정보 상단 끝--> 
+				<div id="board-view"> 
+					<table>
+						<colgroup>
+							<col width="15%">
+							<col width="85%">
+						</colgroup>
+						<tbody th:with="sdf=${ new java.text.SimpleDateFormat('yyyy-MM-dd')}">
+							<tr>
+								<th th:text="'공고명'"></th>
+								<td th:text="${data.mTitle}"></td>
+							</tr>
+							<tr>
+								<th th:text="'경력'"></th>
+								<td th:text="${data.mName}"></td>
+							</tr>
+							<tr>
+								<th th:text="'근무지'"></th>
+								<td th:text="${data.mEmail}"></td>
+							</tr>
+							<tr>
+								<th th:text="'인원'"></th>
+								<td th:text="${data.mTel} + ' 명'"></td>
+							</tr>
+							<tr>
+								<th th:text="'채용기한'"></th>
+								<td th:text="${#dates.format( sdf.parse( data.mWriteday ), 'yyyy-MM-dd' )}"></td>
+							</tr>
+							<tr>
+								<th th:text="'상태'"></th>
+								<td th:if="${ T(Integer).valueOf( #dates.format( sdf.parse( data.mWriteday ), 'yyyyMMdd' ) ) } < ${ T(Integer).valueOf( #dates.format( #dates.createNow(), 'yyyyMMdd') ) }" th:text="'마감'"></td>
+								<td th:unless="${ T(Integer).valueOf( #dates.format( sdf.parse( data.mWriteday ), 'yyyyMMdd' ) ) } < ${ T(Integer).valueOf( #dates.format( #dates.createNow(), 'yyyyMMdd') ) }" th:text="'접수중'"></td>
+							</tr>
+							<tr>
+								<th th:text="'내용'"></th>
+								<td th:utext="${data.mContent}"></td>
+							</tr>
+						</tbody>
+					</table>
+					<div class="list-btn">
+						<a th:href="@{'/company/recruit'(page=${params.pageNumber})}" th:text="'목록'"></a>
+					</div>
+					<div class="board-btn-wrap" sec:authorize="hasAnyRole('G', 'S')">
+						<a th:href="@{'/company/recruit/modify'(mSeq=${data.mSeq})}" class="btn-enrol" th:text="'수정'"></a>
+						<a th:onclick="javascript:boardDelete([[${data.mSeq}]])" class="btn-enrol" th:text="'삭제'"></a>
+					</div>
+				</div>
+			</div>
+			
+			<script type="text/javascript" sec:authorize="hasAnyRole('G', 'S')">
+				function boardDelete( mSeq ) {
+					if( confirm( "삭제하시겠습니까?" ) ) {
+						$.ajax({
+							data: {
+								'mSeq': mSeq,
+								'[[${_csrf.parameterName}]]': '[[${_csrf.token}]]'
+							},
+							url: '/board/delete',
+							type: 'POST',
+							success: function(d) {
+								alert( d.msg );
+								if( d.code == 200 ) {
+									location.href = "/company/recruit";
+								}
+							}
+						});
+					}
+				}
+			</script>
+		</section>
+	</div>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+	<aside th:fragment="adminAside">
+		<div th:text="${boardList}"></div>
+		<div id="sidebar" class="nav-collapse ">
+			<!-- sidebar menu start-->
+			<ul class="sidebar-menu" id="nav-accordion">
+				
+				<li class="sub-menu">
+					<a href="/admin/member" th:with="uri=${#httpServletRequest.requestURI}" th:class="${#strings.indexOf(uri, '/admin/member')} >= 0 ? 'active'">
+						<i class="fa fa-desktop"></i>
+						<span>회원 관리</span>
+					</a>
+				</li>
+				<li class="sub-menu">
+					<a href="/admin/slide" th:with="uri=${#httpServletRequest.requestURI}" th:class="${#strings.indexOf(uri, '/admin/slide')} >= 0 ? 'active'">
+						<i class="fa fa-th"></i>
+						<span>메인 슬라이드 관리</span>
+					</a>
+				</li>
+			</ul>
+        <!-- sidebar menu end-->
+		</div>
+	</aside>
+</html>

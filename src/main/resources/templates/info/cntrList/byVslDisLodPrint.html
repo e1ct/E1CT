@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<style>
+			* {
+				font-size: 0.75rem;
+				-webkit-print-color-adjust: exact;
+				printer-colors: exact;
+				color-adjust: exact;
+			}
+			
+			table {
+				border-spacing: 0px;
+			}
+			
+			thead {
+				color: #fff;
+				background-color: #eb6800;
+			}
+			
+			@media print {
+				thead th {
+					color: #000;
+					border: 1px solid black;
+				}
+			}
+			
+			td {
+				border-left: 1px solid #aaa;
+				border-bottom: 1px solid #aaa;
+			}
+			
+			td:last-child {
+	 			border-right: 1px solid #aaa;
+			}
+		</style>
+	</head>
+	
+	<table>
+		<thead>
+			<tr>
+				<th>No</th>
+				<th>Cntr</th>
+				<th>Sz/Tp</th>
+				<th>상태</th>
+				<th>F/M</th>
+				<th>TS</th>
+				<th>무게</th>
+				<th>냉동</th>
+				<th>IMDG</th>
+				<th>선내위치</th>
+				<th>장치위치</th>
+				<th>선사</th>
+				<th>반입(양하)</th>
+				<th>반출(적하)</th>
+			</tr>
+		</thead>
+		<tbody th:if="${list} != null">
+			<tr th:each="list, i:${list}">
+				<td th:text="${i.index}+1"></td>
+				<td th:text="${list.cntrNo}" th:style="'cursor:pointer;'" th:onclick="javascript:cntrDetailModal([[${list.cntrNo}]])"></td>
+				<td th:text="${list.szCd} + '/' + ${list.tyCd}"></td>
+				<td th:text="${list.curStat}"></td>
+				<td th:text="${list.fmCd}"></td>
+				<td th:text="${list.tsId}"></td>
+				<td th:text="${list.weight}"></td>
+				<td th:text="${list.reefId}"></td>
+				<td th:text="${list.imdg}"></td>
+				<td th:if="${list.sTbay} == ' '"></td>
+				<td th:unless="${list.sTbay} == ' '" th:text="${list.sTbay} + '-' + ${list.sTrow} + '-' + ${list.sTtier}"></td>							
+				<td th:if="${list.yTblock} == ' '"></td>
+				<td th:unless="${list.yTblock} == ' '" th:text="${list.yTblock} + '-' + ${list.yTbay} + '-' + ${list.yTrow} + '-' + ${list.yTtier}"></td>
+				<td th:text="${list.operCd}"></td>
+				<div th:if="${searchParams.gubun} == 'down'" th:remove="tag">
+					<td th:text="'(' + ${list.gcDdt} + ')'"></td>
+					<td th:if="${#strings.substring( list.curStat, 0, 1 )} == 'S'" th:text="'(' + ${list.gcLdt} + ')'"></td>
+					<td th:unless="${#strings.substring( list.curStat, 0, 1 )} == 'S'" th:text="'(' + ${list.goutDt} + ')'"></td>
+				</div> 
+				<div th:unless="${searchParams.gubun} == 'down'" th:remove="tag">
+					<td th:if="${#strings.substring( list.curStat, 0, 1 )} == 'S'" th:text="'(' + ${list.gcDdt} + ')'"></td>
+					<td th:unless="${#strings.substring( list.curStat, 0, 1 )} == 'S'" th:text="'(' + ${list.ginDt} + ')'"></td>
+					<td th:text="'(' + ${list.gcLdt} + ')'"></td>
+				</div>
+			</tr>
+		</tbody>
+		<tbody th:if="${#lists.isEmpty(list)}">
+			<tr>
+				<td th:colspan="14">조회된 데이터가 존재하지 않습니다.</td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<script type="text/javascript">
+		setTimeout( window.print(), 2000 );
+	</script>
+</html>

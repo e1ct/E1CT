@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+	<style>
+			* {
+				font-size: 0.75rem;
+				-webkit-print-color-adjust: exact;
+				printer-colors: exact;
+				color-adjust: exact;
+			}
+			
+			table {
+				border-spacing: 0px;
+			}
+			
+			thead {
+				color: #fff;
+				background-color: #eb6800;
+			}
+			
+			@media print {
+				thead th {
+					color: #000;
+					border: 1px solid black;
+				}
+			}
+			
+			td {
+				border-left: 1px solid #aaa;
+				border-bottom: 1px solid #aaa;
+			}
+			
+			td:last-child {
+	 			border-right: 1px solid #aaa;
+			}
+		</style>
+	<table>
+		<thead>
+			<tr>
+				<th th:rowspan="2" th:colspan="2" th:text="'구분'"></th>
+				<th th:colspan="15" th:text="'FULL'"></th>
+			</tr>
+			<tr>
+				<th th:colspan="4" th:text="'수입'"></th>
+				<th th:rowspan="2" th:text="'합계'"></th>
+				<th th:colspan="4" th:text="'수출'"></th>
+				<th th:rowspan="2" th:text="'합계'"></th>
+				<th th:colspan="4" th:text="'기타'"></th>
+				<th th:rowspan="2" th:text="'합계'"></th>
+			</tr>
+			<tr>
+				<th th:text="'Cargo Tp'"></th>
+				<th th:text="'S/D'"></th>
+				<th th:text="'20˚'"></th>
+				<th th:text="'40˚'"></th>
+				<th th:text="'40H'"></th>
+				<th th:text="'45˚'"></th>
+				<th th:text="'20˚'"></th>
+				<th th:text="'40˚'"></th>
+				<th th:text="'40H'"></th>
+				<th th:text="'45˚'"></th>
+				<th th:text="'20˚'"></th>
+				<th th:text="'40˚'"></th>
+				<th th:text="'40H'"></th>
+				<th th:text="'45˚'"></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="list, i:${list}">
+				<td th:if="${list.tyGrpCd} == 'RF'" th:text="'Reefer'"></td>
+				<td th:if="${list.tyGrpCd} == 'OT'" th:text="'Open Top'"></td>
+				<td th:if="${list.tyGrpCd} == 'PF'" th:text="'Platform'"></td>
+				<td th:if="${list.tyGrpCd} == 'BK'" th:text="'Bulk'"></td>
+				<td th:if="${list.tyGrpCd} == 'AR'" th:text="'Air'"></td>
+				<td th:if="${list.tyGrpCd} == 'TK'" th:text="'Tank'"></td>
+				<td th:if="${list.tyGrpCd} == 'HG'" th:text="'Hanger'"></td>
+				<td th:if="${list.tyGrpCd} != 'RF' and ${list.tyGrpCd} != 'OT' and ${list.tyGrpCd} != 'PF' and ${list.tyGrpCd} != 'BK' and ${list.tyGrpCd} != 'AR' and ${list.tyGrpCd} != 'TK' and ${list.tyGrpCd} != 'TK' and ${list.tyGrpCd} != 'HG'"
+					th:text="'General'"></td>
+					
+				<td th:if="${list.dmgCd} == 'N'" th:text="'Sound'"></td>
+				<td th:if="${list.dmgCd} != 'N'" th:text="'Damage'"></td>
+				
+				<td th:text="${list.ff20i} == 0 ? '-' : ${list.ff20i}"></td>
+				<td th:text="${list.ff40i} == 0 ? '-' : ${list.ff40i}"></td>
+				<td th:text="${list.ff40hqi} == 0 ? '-' : ${list.ff40hqi}"></td>
+				<td th:text="${list.ff45i} == 0 ? '-' : ${list.ff45i}"></td>
+				<td th:text="${list.tifful} == 0 ? '-' : ${list.tifful}"></td>
+				
+				<td th:text="${list.ff20x} == 0 ? '-' : ${list.ff20x}"></td>
+				<td th:text="${list.ff40x} == 0 ? '-' : ${list.ff40x}"></td>
+				<td th:text="${list.ff40hqx} == 0 ? '-' : ${list.ff40hqx}"></td>
+				<td th:text="${list.ff45x} == 0 ? '-' : ${list.ff45x}"></td>
+				<td th:text="${list.txfful} == 0 ? '-' : ${list.txfful}"></td>
+				
+				<td th:text="${list.ff20m} == 0 ? '-' : ${list.ff20m}"></td>
+				<td th:text="${list.ff40m} == 0 ? '-' : ${list.ff40m}"></td>
+				<td th:text="${list.ff40hqm} == 0 ? '-' : ${list.ff40hqm}"></td>
+				<td th:text="${list.ff45m} == 0 ? '-' : ${list.ff45m}"></td>
+				<td th:text="${list.tofful} == 0 ? '-' : ${list.tofful}"></td>
+			</tr>
+		</tbody>
+		<tfoot>
+			<tr>
+				<td th:colspan="2" th:text="'Total Van'"></td>
+				<td th:text="${sumMap.get('SUM_FF20I_V')} == 0 ? '-' : ${sumMap.get('SUM_FF20I_V')}"></td>
+				<td th:text="${sumMap.get('SUM_FF40I_V')} == 0 ? '-' : ${sumMap.get('SUM_FF40I_V')}"></td>
+				<td th:text="${sumMap.get('SUM_FF40HQI_V')} == 0 ? '-' : ${sumMap.get('SUM_FF40HQI_V')}"></td>
+				<td th:text="${sumMap.get('SUM_FF45I_V')} == 0 ? '-' : ${sumMap.get('SUM_FF45I_V')}"></td>
+				<td th:text="${sumMap.get('SUM_TIFFUL_V')} == 0 ? '-' : ${sumMap.get('SUM_TIFFUL_V')}"></td>
+				
+				<td th:text="${sumMap.get('SUM_FF20X_V')} == 0 ? '-' : ${sumMap.get('SUM_FF20X_V')}"></td>
+				<td th:text="${sumMap.get('SUM_FF40X_V')} == 0 ? '-' : ${sumMap.get('SUM_FF40X_V')}"></td>
+				<td th:text="${sumMap.get('SUM_FF40HQX_V')} == 0 ? '-' : ${sumMap.get('SUM_FF40HQX_V')}"></td>
+				<td th:text="${sumMap.get('SUM_FF45X_V')} == 0 ? '-' : ${sumMap.get('SUM_FF45X_V')}"></td>
+				<td th:text="${sumMap.get('SUM_TXFFUL_V')} == 0 ? '-' : ${sumMap.get('SUM_TXFFUL_V')}"></td>
+				
+				<td th:text="${sumMap.get('SUM_FF20M_V')} == 0 ? '-' : ${sumMap.get('SUM_FF20M_V')}"></td>
+				<td th:text="${sumMap.get('SUM_FF40M_V')} == 0 ? '-' : ${sumMap.get('SUM_FF40M_V')}"></td>
+				<td th:text="${sumMap.get('SUM_FF40HQM_V')} == 0 ? '-' : ${sumMap.get('SUM_FF40HQM_V')}"></td>
+				<td th:text="${sumMap.get('SUM_FF45M_V')} == 0 ? '-' : ${sumMap.get('SUM_FF45M_V')}"></td>
+				<td th:text="${sumMap.get('SUM_TOFFUL_V')} == 0 ? '-' : ${sumMap.get('SUM_TOFFUL_V')}"></td>
+			</tr>
+			<tr>
+				<td th:colspan="2" th:text="'Total Teu'"></td>
+				<td th:text="${sumMap.get('SUM_FF20I_T')} == 0 ? '-' : ${sumMap.get('SUM_FF20I_T')}"></td>
+				<td th:text="${sumMap.get('SUM_FF40I_T')} == 0 ? '-' : ${sumMap.get('SUM_FF40I_T')}"></td>
+				<td th:text="${sumMap.get('SUM_FF40HQI_T')} == 0 ? '-' : ${sumMap.get('SUM_FF40HQI_T')}"></td>
+				<td th:text="${sumMap.get('SUM_FF45I_T')} == 0 ? '-' : ${sumMap.get('SUM_FF45I_T')}"></td>
+				<td th:text="${sumMap.get('SUM_TIFFUL_T')} == 0 ? '-' : ${sumMap.get('SUM_TIFFUL_T')}"></td>
+				
+				<td th:text="${sumMap.get('SUM_FF20X_T')} == 0 ? '-' : ${sumMap.get('SUM_FF20X_T')}"></td>
+				<td th:text="${sumMap.get('SUM_FF40X_T')} == 0 ? '-' : ${sumMap.get('SUM_FF40X_T')}"></td>
+				<td th:text="${sumMap.get('SUM_FF40HQX_T')} == 0 ? '-' : ${sumMap.get('SUM_FF40HQX_T')}"></td>
+				<td th:text="${sumMap.get('SUM_FF45X_T')} == 0 ? '-' : ${sumMap.get('SUM_FF45X_T')}"></td>
+				<td th:text="${sumMap.get('SUM_TXFFUL_T')} == 0 ? '-' : ${sumMap.get('SUM_TXFFUL_T')}"></td>
+				
+				<td th:text="${sumMap.get('SUM_FF20M_T')} == 0 ? '-' : ${sumMap.get('SUM_FF20M_T')}"></td>
+				<td th:text="${sumMap.get('SUM_FF40M_T')} == 0 ? '-' : ${sumMap.get('SUM_FF40M_T')}"></td>
+				<td th:text="${sumMap.get('SUM_FF40HQM_T')} == 0 ? '-' : ${sumMap.get('SUM_FF40HQM_T')}"></td>
+				<td th:text="${sumMap.get('SUM_FF45M_T')} == 0 ? '-' : ${sumMap.get('SUM_FF45M_T')}"></td>
+				<td th:text="${sumMap.get('SUM_TOFFUL_T')} == 0 ? '-' : ${sumMap.get('SUM_TOFFUL_T')}"></td>
+			</tr>
+		</tfoot>
+	</table>
+	<br/>
+	<table>
+		<thead>
+			<tr>
+				<th th:colspan="2" th:rowspan="2" th:text="'구분'"></th>
+				<th th:colspan="20" th:text="'EMPTY'"></th>
+			</tr>
+			<tr>
+				<th th:colspan="4" th:text="'수입'"></th>
+				<th th:rowspan="2" th:text="'합계'"></th>
+				<th th:colspan="4" th:text="'수출'"></th>
+				<th th:rowspan="2" th:text="'합계'"></th>
+				<th th:colspan="4" th:text="'Return(재유통)'"></th>
+				<th th:rowspan="2" th:text="'합계'"></th>
+				<th th:colspan="4" th:text="'Holding'"></th>
+				<th th:rowspan="2" th:text="'합계'"></th>
+			</tr>
+			<tr>
+				<th th:text="'Cargo Tp'"></th>
+				<th th:text="'S/D'"></th>
+				<th th:text="'20˚'"></th>
+				<th th:text="'40˚'"></th>
+				<th th:text="'40H'"></th>
+				<th th:text="'45˚'"></th>
+				<th th:text="'20˚'"></th>
+				<th th:text="'40˚'"></th>
+				<th th:text="'40H'"></th>
+				<th th:text="'45˚'"></th>
+				<th th:text="'20˚'"></th>
+				<th th:text="'40˚'"></th>
+				<th th:text="'40H'"></th>
+				<th th:text="'45˚'"></th>
+				<th th:text="'20˚'"></th>
+				<th th:text="'40˚'"></th>
+				<th th:text="'40H'"></th>
+				<th th:text="'45˚'"></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="list, i:${list}">
+				<td th:if="${list.tyGrpCd} == 'RF'" th:text="'Reefer'"></td>
+				<td th:if="${list.tyGrpCd} == 'OT'" th:text="'Open Top'"></td>
+				<td th:if="${list.tyGrpCd} == 'PF'" th:text="'Platform'"></td>
+				<td th:if="${list.tyGrpCd} == 'BK'" th:text="'Bulk'"></td>
+				<td th:if="${list.tyGrpCd} == 'AR'" th:text="'Air'"></td>
+				<td th:if="${list.tyGrpCd} == 'TK'" th:text="'Tank'"></td>
+				<td th:if="${list.tyGrpCd} == 'HG'" th:text="'Hanger'"></td>
+				<td th:if="${list.tyGrpCd} != 'RF' and ${list.tyGrpCd} != 'OT' and ${list.tyGrpCd} != 'PF' and ${list.tyGrpCd} != 'BK' and ${list.tyGrpCd} != 'AR' and ${list.tyGrpCd} != 'TK' and ${list.tyGrpCd} != 'TK' and ${list.tyGrpCd} != 'HG'"
+					th:text="'General'"></td>
+					
+				<td th:if="${list.dmgCd} == 'N'" th:text="'Sound'"></td>
+				<td th:if="${list.dmgCd} != 'N'" th:text="'Damage'"></td>
+				
+				<td th:text="${list.mm20i} == 0 ? '-' : ${list.mm20i}"></td>
+				<td th:text="${list.mm40i} == 0 ? '-' : ${list.mm40i}"></td>
+				<td th:text="${list.mm40hqi} == 0 ? '-' : ${list.mm40hqi}"></td>
+				<td th:text="${list.mm45i} == 0 ? '-' : ${list.mm45i}"></td>
+				<td th:text="${list.timmul} == 0 ? '-' : ${list.timmul}"></td>
+				
+				<td th:text="${list.mm20x} == 0 ? '-' : ${list.mm20x}"></td>
+				<td th:text="${list.mm40x} == 0 ? '-' : ${list.mm40x}"></td>
+				<td th:text="${list.mm40hqx} == 0 ? '-' : ${list.mm40hqx}"></td>
+				<td th:text="${list.mm45x} == 0 ? '-' : ${list.mm45x}"></td>
+				<td th:text="${list.txmmul} == 0 ? '-' : ${list.txmmul}"></td>
+				
+				<td th:text="${list.mm20m} == 0 ? '-' : ${list.mm20m}"></td>
+				<td th:text="${list.mm40m} == 0 ? '-' : ${list.mm40m}"></td>
+				<td th:text="${list.mm40hqm} == 0 ? '-' : ${list.mm40hqm}"></td>
+				<td th:text="${list.mm45m} == 0 ? '-' : ${list.mm45m}"></td>
+				<td th:text="${list.tmmmul} == 0 ? '-' : ${list.tmmmul}"></td>
+				
+				<td th:text="${list.hm20ixm} == 0 ? '-' : ${list.hm20ixm}"></td>
+				<td th:text="${list.hm40ixm} == 0 ? '-' : ${list.hm40ixm}"></td>
+				<td th:text="${list.hm40hqixm} == 0 ? '-' : ${list.hm40hqixm}"></td>
+				<td th:text="${list.hm45ixm} == 0 ? '-' : ${list.hm45ixm}"></td>
+				<td th:text="${list.htmmmul} == 0 ? '-' : ${list.htmmmul}"></td>
+			</tr>
+		</tbody>
+		<tfoot>
+			<tr>
+				<td th:colspan="2" th:text="'Total Van'"></td>
+				<td th:text="${sumMap.get('SUM_MM20I_V')} == 0 ? '-' : ${sumMap.get('SUM_MM20I_V')}"></td>
+				<td th:text="${sumMap.get('SUM_MM40I_V')} == 0 ? '-' : ${sumMap.get('SUM_MM40I_V')}"></td>
+				<td th:text="${sumMap.get('SUM_MM40HQI_V')} == 0 ? '-' : ${sumMap.get('SUM_MM40HQI_V')}"></td>
+				<td th:text="${sumMap.get('SUM_MM45I_V')} == 0 ? '-' : ${sumMap.get('SUM_MM45I_V')}"></td>
+				<td th:text="${sumMap.get('SUM_TIMMUL_V')} == 0 ? '-' : ${sumMap.get('SUM_TIMMUL_V')}"></td>
+				
+				<td th:text="${sumMap.get('SUM_MM20X_V')} == 0 ? '-' : ${sumMap.get('SUM_MM20X_V')}"></td>
+				<td th:text="${sumMap.get('SUM_MM40X_V')} == 0 ? '-' : ${sumMap.get('SUM_MM40X_V')}"></td>
+				<td th:text="${sumMap.get('SUM_MM40HQX_V')} == 0 ? '-' : ${sumMap.get('SUM_MM40HQX_V')}"></td>
+				<td th:text="${sumMap.get('SUM_MM45X_V')} == 0 ? '-' : ${sumMap.get('SUM_MM45X_V')}"></td>
+				<td th:text="${sumMap.get('SUM_TXMMUL_V')} == 0 ? '-' : ${sumMap.get('SUM_TXMMUL_V')}"></td>
+				
+				<td th:text="${sumMap.get('SUM_MM20M_V')} == 0 ? '-' : ${sumMap.get('SUM_MM20M_V')}"></td>
+				<td th:text="${sumMap.get('SUM_MM40M_V')} == 0 ? '-' : ${sumMap.get('SUM_MM40M_V')}"></td>
+				<td th:text="${sumMap.get('SUM_MM40HQM_V')} == 0 ? '-' : ${sumMap.get('SUM_MM40HQM_V')}"></td>
+				<td th:text="${sumMap.get('SUM_MM45M_V')} == 0 ? '-' : ${sumMap.get('SUM_MM45M_V')}"></td>
+				<td th:text="${sumMap.get('SUM_TMMMUL_V')} == 0 ? '-' : ${sumMap.get('SUM_TMMMUL_V')}"></td>
+				
+				<td th:text="${sumMap.get('SUM_HM20IXM_V')} == 0 ? '-' : ${sumMap.get('SUM_HM20IXM_V')}"></td>
+				<td th:text="${sumMap.get('SUM_HM40IXM_V')} == 0 ? '-' : ${sumMap.get('SUM_HM40IXM_V')}"></td>
+				<td th:text="${sumMap.get('SUM_HM40HQIXM_V')} == 0 ? '-' : ${sumMap.get('SUM_HM40HQIXM_V')}"></td>
+				<td th:text="${sumMap.get('SUM_HM45IXM_V')} == 0 ? '-' : ${sumMap.get('SUM_HM45IXM_V')}"></td>
+				<td th:text="${sumMap.get('SUM_HTMMMUL_V')} == 0 ? '-' : ${sumMap.get('SUM_HTMMMUL_V')}"></td>
+			</tr>
+			<tr>
+				<td th:colspan="2" th:text="'Total Teu'"></td>
+				<td th:text="${sumMap.get('SUM_MM20I_T')} == 0 ? '-' : ${sumMap.get('SUM_MM20I_T')}"></td>
+				<td th:text="${sumMap.get('SUM_MM40I_T')} == 0 ? '-' : ${sumMap.get('SUM_MM40I_T')}"></td>
+				<td th:text="${sumMap.get('SUM_MM40HQI_T')} == 0 ? '-' : ${sumMap.get('SUM_MM40HQI_T')}"></td>
+				<td th:text="${sumMap.get('SUM_MM45I_T')} == 0 ? '-' : ${sumMap.get('SUM_MM45I_T')}"></td>
+				<td th:text="${sumMap.get('SUM_TIMMUL_T')} == 0 ? '-' : ${sumMap.get('SUM_TIMMUL_T')}"></td>
+				
+				<td th:text="${sumMap.get('SUM_MM20X_T')} == 0 ? '-' : ${sumMap.get('SUM_MM20X_T')}"></td>
+				<td th:text="${sumMap.get('SUM_MM40X_T')} == 0 ? '-' : ${sumMap.get('SUM_MM40X_T')}"></td>
+				<td th:text="${sumMap.get('SUM_MM40HQX_T')} == 0 ? '-' : ${sumMap.get('SUM_MM40HQX_T')}"></td>
+				<td th:text="${sumMap.get('SUM_MM45X_T')} == 0 ? '-' : ${sumMap.get('SUM_MM45X_T')}"></td>
+				<td th:text="${sumMap.get('SUM_TXMMUL_T')} == 0 ? '-' : ${sumMap.get('SUM_TXMMUL_T')}"></td>
+				
+				<td th:text="${sumMap.get('SUM_MM20M_T')} == 0 ? '-' : ${sumMap.get('SUM_MM20M_T')}"></td>
+				<td th:text="${sumMap.get('SUM_MM40M_T')} == 0 ? '-' : ${sumMap.get('SUM_MM40M_T')}"></td>
+				<td th:text="${sumMap.get('SUM_MM40HQM_T')} == 0 ? '-' : ${sumMap.get('SUM_MM40HQM_T')}"></td>
+				<td th:text="${sumMap.get('SUM_MM45M_T')} == 0 ? '-' : ${sumMap.get('SUM_MM45M_T')}"></td>
+				<td th:text="${sumMap.get('SUM_TMMMUL_T')} == 0 ? '-' : ${sumMap.get('SUM_TMMMUL_T')}"></td>
+				
+				<td th:text="${sumMap.get('SUM_HM20IXM_T')} == 0 ? '-' : ${sumMap.get('SUM_HM20IXM_T')}"></td>
+				<td th:text="${sumMap.get('SUM_HM40IXM_T')} == 0 ? '-' : ${sumMap.get('SUM_HM40IXM_T')}"></td>
+				<td th:text="${sumMap.get('SUM_HM40HQIXM_T')} == 0 ? '-' : ${sumMap.get('SUM_HM40HQIXM_T')}"></td>
+				<td th:text="${sumMap.get('SUM_HM45IXM_T')} == 0 ? '-' : ${sumMap.get('SUM_HM45IXM_T')}"></td>
+				<td th:text="${sumMap.get('SUM_HTMMMUL_T')} == 0 ? '-' : ${sumMap.get('SUM_HTMMMUL_T')}"></td>
+			</tr>
+		</tfoot>
+	</table>
+	<script type="text/javascript">
+		setTimeout( window.print(), 200 );
+	</script>
+</html>

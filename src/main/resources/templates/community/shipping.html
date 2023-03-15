@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content" th:remove="tag">
+		<div class="sub-visual sub-vs-4">
+			<h1>커뮤니티</h1>
+			<p>최신 소식을 빠르게 전달해 드립니다.</p>
+		</div>
+		<div class="sub-nav">
+			<div class="wr"> 
+				<a href="/" class="sub-home"></a>
+				<div class="sub-depth">
+					<h3>커뮤니티</h3>
+					<ul>
+						<li><a href="/company/greeting">회사소개</a></li>
+						<li><a href="/terminal/facilities">터미널소개</a></li>
+						<li><a href="/info/terminal/berthText">정보조회서비스</a></li>
+						<li><a href="/community/news">커뮤니티</a></li> 
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3>해운용어</h3>
+					<ul>
+						<li><a href="/community/news">News</a></li>
+						<li><a href="/community/notice">공지사항</a></li>
+						<li><a href="/community/reference">자료실</a></li>
+						<li><a href="/community/faq">FAQ</a></li>
+						<li><a href="/community/shipping">해운용어</a></li>
+					</ul>
+				</div>
+			</div>
+		</div><!--sub-visual-->
+		<section id="wrap">
+			<h1 class="cont-tit">해운용어</h1> 
+			<div id="shipping">
+				<div class="cont-wr"> 
+					<div id="apb-search" class="apb-search">
+						<a data-gc="" >전체보기</a>
+						<a data-gc="A" >A</a>
+						<a data-gc="B" >B</a>
+						<a data-gc="C" >C</a>
+						<a data-gc="D" >D</a>
+						<a data-gc="E" >E</a>
+						<a data-gc="F" >F</a>
+						<a data-gc="G" >G</a>
+						<a data-gc="H" >H</a>
+						<a data-gc="I" >I</a>
+						<a data-gc="J" >J</a>
+						<a data-gc="K" >K</a>
+						<a data-gc="L" >L</a>
+						<a data-gc="M" >M</a>
+						<a data-gc="N" >N</a>
+						<a data-gc="O" >O</a>
+						<a data-gc="P" >P</a>
+						<a data-gc="Q" >Q</a>
+						<a data-gc="R" >R</a>
+						<a data-gc="S" >S</a>
+						<a data-gc="T" >T</a>
+						<a data-gc="U" >U</a>
+						<a data-gc="V" >V</a>
+						<a data-gc="W" >W</a>
+					</div>
+					<div class="board-atc">
+						<p class="count" id="count">총 <span>5</span>건</p>
+						<div class="board-search">
+							<select name="" id="searchType">
+								<option value="">전체</option>
+								<option value="code">약어</option>
+								<option value="content">내용</option>
+							</select>
+							<input type="text" id="searchValue">
+							<button></button>
+						</div> 
+					</div>
+					<div class="sp-wr">
+						<div class="left">
+							<h3>A</h3>
+							<ul id="gc">
+								<li><a href="" class="active">AAABS</a></li>
+								<li><a href="">ACOPS</a></li>
+								<li><a href="">AIDE</a></li>
+								<li><a href="">AIP</a></li>
+								<li><a href="">ALAMAR</a></li>
+								<li><a href="">APEC</a></li>
+								<li><a href="">API</a></li>
+								<li><a href="">ARPA</a></li>
+								<li><a href="">AWES</a></li> 
+							</ul>
+						</div>
+						<div class="right">
+							 <div class="cont" id="cont">
+								<h3>AAABS</h3>
+								<p class="en">American Bureau of Shipping</p>
+								<p>미국선급협회</p>
+							 </div>
+						</div>
+					</div><!--sp-wr-->
+					<!-- 
+					<div class="paging">
+						<a href="" class="first"></a>
+						<a href="" class="prev"></a>
+						<a href="" class="active">1</a>
+						<a href="">2</a>
+						<a href="">3</a>
+						<a href="" class="next"></a>
+						<a href="" class="last"></a>
+					</div>
+					 -->
+				</div> 
+			</div>
+			
+			<script type="text/javascript">
+			var g = [{ gc: 'A', code: 'AAABS',                            en: 'American Bureau of Shipping', kr: '미국선급협회'},
+				{ gc: 'A', code: 'ACOPS',                            en: 'Advisory Committee on Protection of the Sea, 1983', kr: '해양보호자문위원회'},
+				{ gc: 'A', code: 'AIDE',                             en: 'International Association of European General Average Adjusters, 1989', kr: '유럽공동손해산정인 국제협회'},
+				{ gc: 'A', code: 'AIP',                              en: 'Aeronautical Information Publication'},
+				{ gc: 'A', code: 'ALAMAR',                           en: 'Association Latinoamericana De Armadores, 1971'},
+				{ gc: 'A', code: 'APEC',                             en: 'Asia-Pacific Economic Cooperation', kr: '아시아-태평양경제협력 각료회의'},
+				{ gc: 'A', code: 'API',                              en: 'American petroleum Institution', kr: '미국석유협회'},
+				{ gc: 'A', code: 'ARPA',                             en: 'Automatic Radar Plotting Aids', kr: ''},
+				{ gc: 'A', code: 'AWES',                             en: 'Association of West European Shipbuilders, 1979', kr: '서유럽조선소연합회'},
+				{ gc: 'A', code: 'AWES',                             en: 'The Association of Western European Shipbuilders', kr: '서구조선공업협회'},
+				{ gc: 'B', code: 'BAF',                              en: 'Sub-committee on Bunker Adjustment', kr: '유류할증료'},
+				{ gc: 'B', code: 'BBC',                              en: 'Bare Boat Charter', kr: '나용선계약'},
+				{ gc: 'B', code: 'BC Code',                          en: 'Code of Safe Practice for Solid Bulk Cargoes', kr: '고체벌크화물의 안전한 취급에 관한 코드'},
+				{ gc: 'B', code: 'BCH Code',                         en: 'the Code for the Construction and Equipment of Ships Carrying Dangerous Chemicals in Bulk', kr: '산적위험화학물 운반선의 건조와 설비에 관한 코드'},
+				{ gc: 'B', code: 'BCTOC',                            en: 'Busan Container Terminal Operation Company', kr: '부산컨테이너부두운영공사'},
+				{ gc: 'B', code: 'BIMCO',                            en: 'The Baltic and International Maritime Conference', kr: '발틱국제해운회의소'},
+				{ gc: 'B', code: 'BIPAR',                            en: 'International Association of Producers of Insurance and Reinsurance, 1975', kr: '국제보험 및 재보험경영자협회'},
+				{ gc: 'B', code: 'BLG',                              en: 'Sub-Committee on Bulk Liquids and Gases(formally BHC)', kr: '산적액체 및 가스 소위원회'},
+				{ gc: 'B', code: 'BV',                               en: 'Bureau Veritas', kr: '프랑스선급협회'},
+				{ gc: 'C', code: 'CAF',                              en: 'Currency Adjustment Factor', kr: '통화할증료'},
+				{ gc: 'C', code: 'CBM',                              en: 'Cubic Meter', kr: '세제곱미터'},
+				{ gc: 'C', code: 'CBT',                              en: 'Clean Ballast Tank', kr: '크린밸러스트탱크'},
+				{ gc: 'C', code: 'CCIR',                             en: 'International Radio Consultative Committee', kr: '국제무선자문위원회'},
+				{ gc: 'C', code: 'CDS',                              en: 'Construction Differential Subsidy', kr: '건조차액보조'},
+				{ gc: 'C', code: 'CEFIC',                            en: 'European Council of Chemical Manufacturers Federations', kr: '유럽화학품 제조자 연맹 이사회'},
+				{ gc: 'C', code: 'CES',                              en: 'Coast Earth Stations', kr: '해안지구국'},
+				{ gc: 'C', code: 'CFCs',                             en: 'Chlorofluorocarbon', kr: '염화불화탄소'},
+				{ gc: 'C', code: 'CFR',                              en: 'Code of Federal Regulation', kr: '미연방 규정집'},
+				{ gc: 'C', code: 'CIRM',                             en: 'International Radio-Maritime Committee, 1961', kr: '국제해사무선위원회'},
+				{ gc: 'C', code: 'CIRR',                             en: 'Commercial Interest Reference Rates', kr: '상업표준금리(장기국채 통상 5년 수익률 +1%)'},
+				{ gc: 'C', code: 'CMI',                              en: 'Committee Maritime International', kr: '국제해법회'},
+				{ gc: 'C', code: 'COA',                              en: 'Contract of Afreightment', kr: '장기운송계약'},
+				{ gc: 'C', code: 'COFR',                             en: 'Certificate of Financial Responsibility', kr: '재정책임 증명서'},
+				{ gc: 'C', code: 'COGSA',                            en: 'Carriage of Goods by Sea Act', kr: '해상물건운송법'},
+				{ gc: 'C', code: 'Correspondence Group',             en: '', kr: '통신연락작업반'},
+				{ gc: 'C', code: 'CQD ',                             en: 'Customary Quick Dispatch', kr: '관습적 조속하역'},
+				{ gc: 'C', code: 'CSS',                              en: 'Co-ordinator Surface Search', kr: '해상수색조정선'},
+				{ gc: 'D', code: 'DE',                               en: 'Sub-Committee on Ship Design and Equipment', kr: '설계 및 설비 소위원회'},
+				{ gc: 'D', code: 'DNV',                              en: 'Det Norske Veritas', kr: '노르웨이 선급협회'},
+				{ gc: 'D', code: 'DSC',                              en: 'Digital Selection Calling', kr: '디지털 선택호출'},
+				{ gc: 'D', code: 'DOC',                              en: 'Document of Compliance (for a Company)', kr: '안전경영적합증서'},
+				{ gc: 'D', code: 'DSC',                              en: 'Sub-committee on Dangerous Goods, Soild Cargoes and Container', kr: '위험물, 고체화물 및 컨테이너 소위원회'},
+				{ gc: 'E', code: 'E and P Forum',                    en: 'Oil Industry International Exploration and Production Forum, 1975', kr: '석유산업 국제탐사 및 생산평의회'},
+				{ gc: 'E', code: 'EDI',                              en: 'Electronic Data Interchange', kr: '전자정보교환'},
+				{ gc: 'E', code: 'EFMA',                             en: 'European Fertilizer Manufacturers Association, 1967', kr: '유럽비료제조자연합회'},
+				{ gc: 'E', code: 'EPIRB',                            en: 'Emergency Position Indicating Radio Beacon', kr: '비상위치표시무선비이콘'},
+				{ gc: 'E', code: 'ESPH',                             en: 'Evaluation of Safety and Pollution Hazards of Chemicals', kr: '화학물질의 안전 및 오염위험성 평가'},
+				{ gc: 'E', code: 'ETA',                              en: 'Estimated Time of Arrival', kr: '도착예정시간'},
+				{ gc: 'E', code: 'ETA',                              en: "European Tugowners' Association, 1973", kr: '유럽예인선 선주협회'},
+				{ gc: 'E', code: 'ETD',                              en: 'Estimated Time of Departure', kr: '출항예정시간'},
+				{ gc: 'E', code: 'EUROMOT',                          en: 'Association of European Manufacturers of International Combustion Engines, 1993', kr: '유럽내연기관제조자협회'},
+				{ gc: 'F', code: 'FAL 1965',                         en: 'Convention on Facilitation of International Maritime Traffic', kr: '1965년 국제해상교통간소화협약'},
+				{ gc: 'F', code: 'FAO',                              en: '(United Nations) Food and Agriculture Organization', kr: '유엔식량농업기구'},
+				{ gc: 'F', code: 'FIATA',                            en: 'Federation Internationale de Associations de Transmigrates et Assiniles', kr: '국제복합운송협회'},
+				{ gc: 'F', code: 'FMC',                              en: 'Federal Maritime Commission', kr: '미국연맹해사위원회'},
+				{ gc: 'F', code: 'FOC',                              en: 'Flag of Convenience', kr: '편의치적'},
+				{ gc: 'F', code: 'FoEI',                             en: 'Friends of the Earth International, 1973', kr: '지구촌동우회'},
+				{ gc: 'F', code: 'FP',                               en: 'Sub-Committee on Fire Protection', kr: '방화 소위원회'},
+				{ gc: 'F', code: 'FSA',                              en: 'Formal Safety Assessment', kr: '공식안전평가'},
+				{ gc: 'F', code: 'FSI',                              en: 'Sub-committee on Flag State Implementation', kr: '기국준수 소위원회'},
+				{ gc: 'G', code: 'GATS',                             en: 'General Agreement on Trade in Services :서비스교역에 관한 일반협정'},
+				{ gc: 'G', code: 'GC Code',                          en: 'the Code for the Construction and Equipment of Ships Carrying Liquefied Gases in Bulk', kr: '산적액화가스운반선의 건조와 설비에 대한 코드'},
+				{ gc: 'G', code: 'GESAMP',                           en: 'Joint Group of Experts on the Scientific Aspects of Marine Environmental Protection', kr: '해양환경보호의 과학적 측면에 관한 합동 전문가 그룹'},
+				{ gc: 'G', code: 'GMDSS',                            en: 'Global Maritime Distress and Safety System', kr: '전세계 해상조난 및 안전제도'},
+				{ gc: 'G', code: 'GOC',                              en: "General Operator's Certificate", kr: '일반통신기능사증서'},
+				{ gc: 'G', code: 'GPS',                              en: 'Global Positioning System', kr: '전세계선위측정장치'},
+				{ gc: 'G', code: 'Greenpeace International, 1991',   en: '그린피스(민간환경보호단체)'},
+				{ gc: 'H', code: 'HMAC',                             en: '',                            kr: '서비스교역에 관한 일반협정'},
+				{ gc: 'H', code: 'HSC',                              en: 'High Speed Craft', kr: '고속정'},
+				{ gc: 'H', code: 'HSSC',                             en: 'Harmonized System of Survey and Certification', kr: '검사와 증서발급의 통일제도'},
+				{ gc: 'I', code: 'IA',                               en: 'Independent Action', kr: '독립행동권'},
+				{ gc: 'I', code: 'IACS',                             en: 'International Association of Classification Societies, 1969', kr: '국제선급협회'},
+				{ gc: 'I', code: 'IADC',                             en: 'International Association of Drilling Contractors, 1975', kr: '국제석유시추계약자협회'},
+				{ gc: 'I', code: 'IAEA',                             en: 'International Atomic Energy Agency', kr: '국제원자력기구'},
+				{ gc: 'I', code: 'IALA',                             en: 'International Association of Lighthouse Authorities, 1961', kr: '국제항해표지협회'},
+				{ gc: 'I', code: 'IAPH',                             en: 'International Association of Ports and Harbours, 1967', kr: '국제항만협회'},
+				{ gc: 'I', code: 'IAPP',                             en: 'International Air Pollution Prevention', kr: '국제대기오염방지증서'},
+				{ gc: 'I', code: 'IBA',                              en: 'International Bar Association, 1991', kr: '국제변호사협회'},
+				{ gc: 'I', code: 'IBC Code',                         en: 'the International Code for the Construction and Equipment of Ships Carrying Dangerous Chemicals in Bulk', kr: '산적위험화학물 운반선의 건조와 설비에 관한 국제코드'},
+				{ gc: 'I', code: 'IBS',                              en: 'Integrated Bridge System', kr: '통합선교장치'},
+				{ gc: 'I', code: 'ICAO',                             en: 'International Civil Aviation Organization :국제민간항공기구'},
+				{ gc: 'I', code: 'ICC',                              en: 'International Chamber of Commerce, 1961', kr: '국제상공회의소'},
+				{ gc: 'I', code: 'ICCL',                             en: 'International Council of Cruise Lines, 1993', kr: '국제여객선이사회'},
+				{ gc: 'I', code: 'ICD',                              en: 'Inland Container Depart', kr: '내륙컨테이너기지'},
+				{ gc: 'I', code: 'ICFTU',                            en: 'International Confederation of Free Trade Unions, 1961', kr: '국제자유무역노조연맹'},
+				{ gc: 'I', code: 'ICHCA',                            en: 'International Cargo Handling Co-operation Association, 1969', kr: '국제화물취급협력협회'},
+				{ gc: 'I', code: 'ICOMIA',                           en: 'International Council of Marine Industry Association, 1975', kr: '국제해양산업협회이사회'},
+				{ gc: 'I', code: 'ICS',                              en: 'International Chamber of Shipping, 1961', kr: '국제해운회의소'},
+				{ gc: 'I', code: 'IEC',                              en: 'International Electrotechnical Commission, 1961', kr: '국제전기표준회의'},
+				{ gc: 'I', code: 'IFA',                              en: 'International Fertilizer Industry Association, 1967', kr: '국제비료산업연합회'},
+				{ gc: 'I', code: 'IFSMA',                            en: 'International Federation of Ship Masters Association', kr: '국제화물취급 협력협회'},
+				{ gc: 'I', code: 'IGS',                              en: 'Inert Gas System', kr: '불활성가스시스템'},
+				{ gc: 'I', code: 'IHO',                              en: 'International Hydrographic Organization', kr: '국제수로기구'},
+				{ gc: 'I', code: 'IICL',                             en: 'Institute of the Earth International Container lessors, 1975', kr: '국제컨테이너임대협회'},
+				{ gc: 'I', code: 'ILA',                              en: 'International Law Association, 1969', kr: '국제법률협회'},
+				{ gc: 'I', code: 'ILAMA',                            en: "International Life-Saving Appliances Manufacturers' Association, 1975", kr: '국제구명설비제조자협회'},
+				{ gc: 'I', code: 'ILF',                              en: 'International Lifeboat Federation, 1985', kr: '국제구명정연맹'},
+				{ gc: 'I', code: 'ILO',                              en: 'International Labour Organization', kr: '국제노동기구'},
+				{ gc: 'I', code: 'IMDG Code',                        en: 'International Maritime Dangerous Goods Code', kr: '국제해상위험물운송규칙'},
+				{ gc: 'I', code: 'IMF',                              en: 'International Monetary Fund', kr: '국제통화기금'},
+				{ gc: 'I', code: 'IMLA',                             en: 'International Maritime Lecturers Association, 1993', kr: '국제해사강사연합회'},
+				{ gc: 'I', code: 'IMO',                              en: 'International Maritime Organization', kr: '국제해사기구'},
+				{ gc: 'I', code: 'IMPA',                             en: 'International Maritime Pilots Association', kr: '국제도선사협회'},
+				{ gc: 'I', code: 'INF Code',                         en: 'The Code for Safe Carriage of Irradiated Nuclear Fuel, Plutonium and High-Level Radioactive Waste', kr: '방사성 핵연료, 플루토늄 및 고준위 방사성폐기물의 안전 운송을 위한 코드'},
+				{ gc: 'I', code: 'INMARSAT',                         en: 'International Mobile Satellites Organization', kr: '국제해사위성기구'},
+				{ gc: 'I', code: 'INTERTANKO',                       en: 'International Assoiation of Independent Tanker Owners, 1979', kr: '국제유조선선주협회'},
+				{ gc: 'I', code: 'IOC',                              en: 'International Oceanographic Commission', kr: '정부간 해양학위원회'},
+				{ gc: 'I', code: 'IOI',                              en: 'International Ocean Institute, 1991: 국제해양연구소'},
+				{ gc: 'I', code: 'IOPC FUND',                        en: 'International Oil Pollution Compensation Fund', kr: '국제 유류오염 배상기금'},
+				{ gc: 'I', code: 'IRU',                              en: 'International Road Transport Union, 1987', kr: '국제육상운송연합회'},
+				{ gc: 'I', code: 'ISA',                              en: "Islamic Shipowners' Association, 1993", kr: '이슬람선주연합회'},
+				{ gc: 'I', code: 'ISF',                              en: 'International Shipping Federation, 1961', kr: '국제해운연맹'},
+				{ gc: 'I', code: 'ISID',                             en: 'International Ship Information Database', kr: '국제선박정보데이터베이스'},
+				{ gc: 'I', code: 'ISM CODE',                         en: 'International Safety Management Code', kr: '국제안전관리규약'},
+				{ gc: 'I', code: 'ISO',                              en: 'International Standardization Organization', kr: '국제표준화기구'},
+				{ gc: 'I', code: 'ISSA',                             en: 'International Ship Suppliers Association, 1989', kr: '국제선용품공급자협회'},
+				{ gc: 'I', code: 'ISU',                              en: 'International Salvage Union, 1975', kr: '국제셀비지협회'},
+				{ gc: 'I', code: 'ITF',                              en: 'International Transport-workers Federation', kr: '국제운수노동자연맹'},
+				{ gc: 'I', code: 'ITOPF',                            en: 'International Tanker Owners Pollution Federation :국제유조선선주오염연맹'},
+				{ gc: 'I', code: 'ITU',                              en: 'International Telecommunication Union', kr: '국제전기통신연합'},
+				{ gc: 'I', code: 'IUCN',                             en: 'International Union of Conservation of Nature and Nautical and Natural Resources, 1981', kr: '국제자원 및 천연자원보존협회'},
+				{ gc: 'I', code: 'IUMI',                             en: 'International Union of Marine Insurance, 1961', kr: '국제해상보험연합'},
+				{ gc: 'K', code: 'KR',                               en: 'Korean Register of Shipping', kr: '한국선급'},
+				{ gc: 'L', code: 'LAIN',                             en: 'International Association of Institute of Navigation, 1975', kr: '국제항해학회연합'},
+				{ gc: 'L', code: 'LAN',                              en: 'Local Area Network', kr: '근거리통신망'},
+				{ gc: 'L', code: 'LASA',                             en: 'Latin America Shipowner Association', kr: '라틴아메리카 선주협회'},
+				{ gc: 'L', code: 'LC 1972',                          en: 'Convention on the Prevention of Marine Pollution by Dumping of Wastes and Other Matter, 1972', kr: '1972년 폐기물 및 그밖의 물질의 투기에 의한 해양오염방지협약'},
+				{ gc: 'L', code: 'LIBO RATES',                       en: 'London Inter-Bank Offered Rates', kr: '런던 일류운행간 자금운용(대출)시 적용되는 금리'},
+				{ gc: 'L', code: 'LL 1966',                          en: 'International Convention on Load Lines, 1966', kr: '1966년 국제만재흘수선협약'},
+				{ gc: 'L', code: 'LL PROTOCOL 1988',                 en: 'Protocol of 1988 Relating to the International Convention on Load Lines, 1966', kr: '1988년 국제만재흘수선협약 의정서'},
+				{ gc: 'L', code: 'LLMC 1976',                        en: 'Convention on Limitation of Liability for Maritime Claims, 1976', kr: '해사채권에 대한 책임제한에 관한 협약'},
+				{ gc: 'L', code: 'LMIS',                             en: 'Lloyd Maritime Information Services', kr: '로이드 해사정보 서비스'},
+				{ gc: 'L', code: 'LOA',                              en: 'Length Overall', kr: '전장'},
+				{ gc: 'L', code: 'LPG',                              en: 'Liquified Petroleum Gas', kr: '액화 석유가스'},
+				{ gc: 'L', code: 'LR',                               en: "Lloyd's Register Shipping", kr: '영국선급'},
+				{ gc: 'L', code: 'LUT',                              en: 'Local User Terminal', kr: '육상수신국'},
+				{ gc: 'M', code: 'MARAD',                            en: 'Maritime Administration', kr: '미국해사청'},
+				{ gc: 'M', code: 'MARPOL 73/78',                     en: 'Protocol of 1978 Relating to the International Convention for the Prevention of Pollution from Ships, 1973', kr: '해양오염방지협약'},
+				{ gc: 'M', code: 'MEPC',                             en: 'Marine Environment Protection Committee', kr: '해양환경보호위원회'},
+				{ gc: 'M', code: 'MIDS',                             en: 'Maritime Identification Digits', kr: '해사식별숫자'},
+				{ gc: 'M', code: 'MSC',                              en: 'Maritime Safety Committee', kr: '해사안전위원회'},
+				{ gc: 'M', code: 'MSI',                              en: 'Maritime Safety Information', kr: '해사안전정보'},
+				{ gc: 'M', code: 'MTO',                              en: 'Multi-modal Transport Operation', kr: '복합운송인'},
+				{ gc: 'N', code: 'NAV',                              en: 'Sub-Committee on Safety of Navigation', kr: '항해안전 소위원회'},
+				{ gc: 'N', code: 'NBDP',                             en: 'Narrow-Band Direct-Printing', kr: '협대역 직접인쇄'},
+				{ gc: 'N', code: 'NOWPAP',                           en: 'Northwest Pacific Action Plan Action Plan for the Protection Management and Development of the Marine and Coastal Environment of Northwest Pacific Region', kr: '북서태평양 해양보전 실천계획'},
+				{ gc: 'N', code: 'NUCLEAR 1971',                     en: 'Convention Relating to Civil Liability in the Field of Maritime Carriage of Nuclear Material, 1971', kr: '1971년 핵물질해상운송의 민사책임에 관한 협약'},
+				{ gc: 'O', code: 'OCIMF',                            en: 'Oil Companies International Marine Forum, 1973', kr: '국제석유회사해사평의회'},
+				{ gc: 'O', code: 'ODA',                              en: 'Overseas Development Aid', kr: '해외개발원조'},
+				{ gc: 'O', code: 'OECD',                             en: 'Organzation for Economic Cooperation and Development', kr: '경제협력개발기구'},
+				{ gc: 'O', code: 'OPA',                              en: 'Oil Pollution Act', kr: '미국 기름오염법'},
+				{ gc: 'O', code: 'OPRC 1990',                        en: 'International Convention on Oil Pollution Preparedness, Response and Co-operation, 1990', kr: '기름오염대비·대응 및 협력에 관한 국제협약'},
+				{ gc: 'O', code: 'OSC',                              en: 'On-scene Commender', kr: 'SAR 현장지휘관'},
+				{ gc: 'P', code: 'PAL 1974',                         en: 'Athens Convention Relating to the Carriage of Passengers and Their Luggage by Sea, 1974', kr: '여객 및 수하물의 해상운송에 관한 아테네협약'},
+				{ gc: 'P', code: 'PIANC',                            en: 'Permanent International Association of Navigation Congress, 1967', kr: '국제상설항해협회'},
+				{ gc: 'P', code: 'Port-MIS',                         en: 'Port Management Information System', kr: '항만관리 정보체계'},
+				{ gc: 'P', code: 'PSC',                              en: 'Port State Control', kr: '항만국통제'},
+				{ gc: 'P', code: 'PTP',                              en: 'Prevention Through People', kr: '사람을 통한 예방'},
+				{ gc: 'R', code: 'RCC',                              en: 'Rescue Coordination Center', kr: '구조조정본부'},
+				{ gc: 'R', code: 'RDF',                              en: 'Radio Direction Finder ( - finding Apparatus)', kr: '무선방향탐지기'},
+				{ gc: 'R', code: 'RO',                               en: 'Response Organization', kr: '대응조직'},
+				{ gc: 'R', code: 'ROC',                              en: "Radio Operator's Certificate", kr: '제한전자지급통신사'},
+				{ gc: 'R', code: 'RSC',                              en: 'Rescue Sub-center', kr: '구조지부'},
+				{ gc: 'R', code: 'RU',                               en: 'Rescue Unit', kr: '구조대'},
+				{ gc: 'S', code: 'SC',                               en: 'SAR Coordinator 수색구조 조정관'},
+				{ gc: 'S', code: 'SC',                               en: 'Service Contract', kr: '대량하주우대계약'},
+				{ gc: 'S', code: 'SIGTTO',                           en: 'Society of International Gas Tanker and Terminal Operators Ltd., 1983', kr: '국제가스탱커 및 터미널운영자연합'},
+				{ gc: 'S', code: 'SLF',                              en: 'Sub-Committee on Stability, Loadline & Fishing Vessel Safety', kr: '복원성, 만재흘수선 및 어선안전 소위원회'},
+				{ gc: 'S', code: 'SPACE STP 1973',                   en: 'Protocol on Space Requirements for Special Trade Passenger Ships, 1973', kr: '1973년 특수상용 여객선의 구역요건에 관한 의정서'},
+				{ gc: 'S', code: 'STCW 1978',                        en: 'International Convention on Standards of Training, Certification and Watchkeeping for Seafarers, 1978', kr: '1978년 선원훈련·자격증명 및 당직근무의 기준에 관한 국제협약'},
+				{ gc: 'S', code: 'STCW-F 1995',                      en: 'International Convention on Standards of Training, Certification and Watchkeeping for Fishing Vessel Personnel, 1995', kr: '어선선원의 훈련·자격증명 및 당직근무의 기준에 관한 국제협약'},
+				{ gc: 'S', code: 'STP 1971',                         en: 'Special Trade Passenger Ships Agreement, 1971', kr: '1971년 특수상용 여객선협정'},
+				{ gc: 'S', code: 'STW',                              en: 'Sub-committee on Standards of Training and Watchkeeping', kr: '선원훈련 및 당직기준 소위원회'},
+				{ gc: 'S', code: 'SUA 1988',                         en: 'Convention for the Suppression of Unlawful Acts Against the Safety of Maritime Navigation', kr: '1988년 항해안전에 관한 불법행위방지협약'},
+				{ gc: 'T', code: 'TOC',                              en: 'Terminal Operation Company', kr: '부두운영회사'},
+				{ gc: 'T', code: 'TONNAGE 1969',                     en: 'International Convention on Tonnage Measurement of Ships, 1969', kr: '1969년 선박톤수측정협약'},
+				{ gc: 'T', code: 'TSR',                              en: 'Trans-Siberian Railroad', kr: '시베리아 횡단열차'},
+				{ gc: 'T', code: 'TVR',                              en: 'Time Volume Rates', kr: '기간 물량별 할인 운임'},
+				{ gc: 'U', code: 'UNCED',                            en: 'United Nations Conference on Environment and Development', kr: '유엔환경개발회의'},
+				{ gc: 'U', code: 'UNDP',                             en: 'United Nations Development Program', kr: '유엔개발계획'},
+				{ gc: 'U', code: 'UNESCO',                           en: 'United Nations Educational, Scientific and Cultural Organization', kr: '유엔교육과학문화기구'},
+				{ gc: 'U', code: 'UPU',                              en: 'Universal Postal Union', kr: '만국우편연합'},
+				{ gc: 'U', code: 'UTC',                              en: 'Co-ordinated Universal Time', kr: '세계표준시'},
+				{ gc: 'V', code: 'VAN',                              en: 'Value Added Network', kr: '부가가치 통신망'},
+				{ gc: 'V', code: 'VMF',                              en: 'Very High Frequency', kr: '초단파'},
+				{ gc: 'V', code: 'VTS',                              en: 'Vessel Traffic System', kr: '선박통항시스템'},
+				{ gc: 'W', code: 'WHO',                              en: 'World Heath Organization', kr: '세계보건기구'},
+				{ gc: 'W', code: 'Working Group',                    en: '',                       kr: '실무작업반'},
+				{ gc: 'W', code: 'WWF',                              en: 'World Wide Fund for Nature, 1993', kr: '자연보호 세계기금 '}]
+			
+				$(function() {
+					
+					$("#apb-search a").click(function() {
+						$("#apb-search a.active").removeClass( "active" );
+						$(this).addClass( "active" );
+						
+						
+						var gc = $(this).attr('data-gc');
+						
+						$("#gc").siblings("h3").text( gc );
+						if( gc == "" ) {
+							$("#gc").siblings("h3").text( "전체보기" );
+						}
+						
+						$("#gc").children().remove();
+						
+						var match = true;
+						for( var i=0; i<g.length; i++ ) {
+							if( g[i].gc == gc ) {
+								$("<li><a href='#' data-code='" + g[i].code + "' class='" + ( match ? 'active' : '' ) + "'>" + g[i].code + "</a></li>" ).appendTo( "#gc" );
+								match = false;
+							} else if( gc == "" ) {
+								$("<li><a href='#' data-code='" + g[i].code + "' class='" + ( match ? 'active' : '' ) + "'>" + g[i].code + "</a></li>" ).appendTo( "#gc" );
+								match = false;
+							}
+						}
+						
+						$("#gc a").click(function() {
+							$("#gc a").removeClass('active');
+							$(this).addClass('active');
+							 var code = $(this).attr('data-code');
+							 $("#cont h3").text(code);
+							 
+							 $("#cont p").remove();
+							 
+							 for( var j=0; j<g.length; j++ ) {
+								 if( g[j].code == code ) {
+									 if( g[j].en != '' ) {
+										 $("#cont").append("<p class='en'>" + g[j].en + "</p>" + "<p>" + g[j].kr + "</p>");
+									 } else {
+										 $("#cont").append("<p class='en' style='display: none;'>" + g[j].en + "</p>" + "<p>" + g[j].kr + "</p>");
+									 }
+								 }
+							 }
+						});
+					});
+					
+					$($("#apb-search a")[0]).trigger('click');
+					
+					$("#searchValue").on('keyup', function() {
+						var searchType = $("#searchType").val();
+						var val = $(this).val();
+						
+						if( searchType == "code" ) {
+							$("#gc a").each(function(idx, item) {
+								if( $(item).attr('data-code').toUpperCase().indexOf( val.toUpperCase() ) < 0 ) {
+									$(item).css('display', 'none');
+								} else {
+									$(item).css('display', '');
+								}
+							});
+						} else if( searchType == "content" ) {
+							$("#gc a").each(function(idx, item) {
+								for( var i=0; i<g.length; i++ ) {
+									if( g[i].code == $(this).attr('data-code') ) {
+										if( g[i].en != undefined && g[i].en.toUpperCase().indexOf( val.toUpperCase() ) < 0 &&  g[i].kr != undefined && g[i].kr.toUpperCase().indexOf( val.toUpperCase() ) < 0 ) {
+											$(item).css( 'display', 'none' );
+										} else {
+											$(item).css( 'display', '' );
+										}
+									}
+								}
+							});
+						} else {
+							$("#gc a").each(function(idx, item) {
+								
+								for( var i=0; i<g.length; i++ ) {
+									if( g[i].code == $(this).attr('data-code') ) {
+										if( $(item).attr('data-code').toUpperCase().indexOf( val.toUpperCase() ) >= 0 ) {
+											$(item).css( 'display', '' );
+										} else if( g[i].en.toUpperCase().indexOf( val.toUpperCase() ) >= 0 && g[i].kr.toUpperCase().indexOf( val.toUpperCase() ) >= 0 )	{
+											$(item).css( 'display', '' );
+										} else {
+											$(item).css( 'display', 'none' );
+										}
+									}
+								}
+							});
+						}
+						
+						if( val == "" ) {
+							$("#gc a").css( "display", "" );
+						}
+					});
+				});
+			</script>
+		</section>  
+	</div>
+</html>

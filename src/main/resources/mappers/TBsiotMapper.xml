@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TBsiotRepository">
+	
+	<select id="deliveryManagerByShip" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TBsiotVo">
+		<![CDATA[
+			SELECT
+				T.MSTBL_NO,
+				SUM(TOTAL) TOTAL,
+				SUM(DSUM) DSUM,
+				oper_cd
+			FROM
+				(
+				SELECT
+					DISTINCT C.MSTBL_NO ,
+					0 TOTAL ,
+					0 DSUM,
+					d.oper_cd
+				FROM
+					(
+					SELECT
+						DISTINCT a.mstbl_no ,
+						b.cntr_no
+					FROM
+						t_bsiot a,
+						t_bsiot_sub b
+					WHERE
+						a.cargo_no = b.cargo_no
+						AND a.banip_cd = '10'
+		]]>
+		<if test='okCd == "bl"'>
+			<![CDATA[
+						AND a.mstbl_no = #{blNo}
+			]]>
+		</if>
+		<![CDATA[
+						AND a.ship_cd = #{shipCd}
+						AND A.CALL_NO = #{callNo}
+						AND A.CALL_YY = #{callYy}
+						AND b.ship_cd = #{shipCd}
+						AND b.CALL_NO = #{callNo}
+						AND b.CALL_YY = #{callYy}
+						AND a.ship_cd = b.ship_cd
+						AND a.call_no = b.call_no
+						AND a.call_yy = b.call_yy
+						AND a.banip_cd = b.banip_cd ) C ,
+					t_cntr d
+				WHERE
+					c.cntr_no = d.cntr_no
+					AND d.ship_cd = #{shipCd}
+					AND d.call_no = #{callNo}
+					AND d.call_yy = #{callYy}
+					AND d.cur_stat LIKE 'I%'
+		]]>
+		<choose>
+			<when test="operList.size != 0">
+				<![CDATA[
+					AND D.OPER_CD IN (
+				]]>
+				<foreach collection="operList" item="item" index="i" separator=",">
+				<![CDATA[
+						#{item}
+				]]>
+				</foreach>
+				<![CDATA[
+					)
+				]]>
+			</when>
+		</choose>
+		<![CDATA[
+			UNION ALL
+				SELECT
+					DISTINCT C.MSTBL_NO ,
+					COUNT(D.CNTR_NO) TOTAL ,
+					SUM(0) DSUM,
+					d.oper_cd
+				FROM
+					(
+					SELECT
+						DISTINCT a.mstbl_no ,
+						b.cntr_no
+					FROM
+						t_bsiot a,
+						t_bsiot_sub b
+					WHERE
+						a.cargo_no = b.cargo_no
+						AND a.banip_cd = '10'
+		]]>
+		<if test='okCd == "bl"'>
+			<![CDATA[
+						AND a.mstbl_no = #{blNo}
+			]]>
+		</if>
+		<![CDATA[
+						AND a.ship_cd = #{shipCd}
+						AND A.CALL_NO = #{callNo}
+						AND A.CALL_YY = #{callYy}
+						AND b.ship_cd = #{shipCd}
+						AND b.CALL_NO = #{callNo}
+						AND b.CALL_YY = #{callYy}
+						AND a.ship_cd = b.ship_cd
+						AND a.call_no = b.call_no
+						AND a.call_yy = b.call_yy
+						AND a.banip_cd = b.banip_cd ) C ,
+					t_cntr d
+				WHERE
+					c.cntr_no = d.cntr_no
+					AND d.ship_cd = #{shipCd}
+					AND d.call_no = #{callNo}
+					AND d.call_yy = #{callYy}
+					AND d.cur_stat LIKE 'I%'
+		]]>
+		<choose>
+			<when test="operList.size != 0">
+				<![CDATA[
+					AND D.OPER_CD IN (
+				]]>
+				<foreach collection="operList" item="item" index="i" separator=",">
+				<![CDATA[
+						#{item}
+				]]>
+				</foreach>
+				<![CDATA[
+					)
+				]]>
+			</when>
+		</choose>
+		<![CDATA[
+				GROUP BY
+					C.MSTBL_NO ,
+					d.oper_cd
+			UNION ALL
+				SELECT
+					DISTINCT C.MSTBL_NO ,
+					SUM(0) TOTAL ,
+					COUNT(D.CNTR_NO) DSUM,
+					d.oper_cd
+				FROM
+					(
+					SELECT
+						DISTINCT a.mstbl_no ,
+						b.cntr_no
+					FROM
+						t_bsiot a,
+						t_bsiot_sub b
+					WHERE
+						a.cargo_no = b.cargo_no
+						AND a.banip_cd = '10'
+		]]>
+		<if test='okCd == "bl"'>
+			<![CDATA[
+						AND a.mstbl_no = #{blNo}
+			]]>
+		</if>
+		<![CDATA[
+						AND a.ship_cd = #{shipCd}
+						AND A.CALL_NO = #{callNo}
+						AND A.CALL_YY = #{callYy}
+						AND b.ship_cd = #{shipCd}
+						AND b.CALL_NO = #{callNo}
+						AND b.CALL_YY = #{callYy}
+						AND a.ship_cd = b.ship_cd
+						AND a.call_no = b.call_no
+						AND a.call_yy = b.call_yy
+						AND a.banip_cd = b.banip_cd ) C ,
+					t_cntr d
+				WHERE
+					c.cntr_no = d.cntr_no
+					AND d.ship_cd = #{shipCd}
+					AND d.call_no = #{callNo}
+					AND d.call_yy = #{callYy}
+					AND d.cur_stat LIKE 'I%'
+		]]>
+		<choose>
+			<when test="operList.size != 0">
+				<![CDATA[
+					AND D.OPER_CD IN (
+				]]>
+				<foreach collection="operList" item="item" index="i" separator=",">
+				<![CDATA[
+						#{item}
+				]]>
+				</foreach>
+				<![CDATA[
+					)
+				]]>
+			</when>
+		</choose>
+		<![CDATA[
+					AND d.CUR_STAT IN ('ID',
+					'IG',
+					'IP')
+				GROUP BY
+					C.MSTBL_NO,
+					d.oper_cd ) T
+			GROUP BY
+				T.MSTBL_NO ,
+				oper_cd
+		]]>
+	</select>
+	
+	<select id="findShipCdAndCallNoAndCallYyByMstblNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TBsiotVo">
+		<![CDATA[
+			SELECT
+				DISTINCT ship_cd,
+				to_char( call_no, '000' ) call_no,
+				call_yy
+			FROM
+				T_BSIOT
+			WHERE
+				MSTBL_NO = #{blNo}
+		]]>
+	</select>
+	
+	<select id="cntrListLongStackMstBlNoList" parameterType="kr.co.e1ct.vo.TCntrVo" resultType="kr.co.e1ct.vo.TBsiotVo">
+		<![CDATA[
+			select distinct mstbl_no from t_bsiot a, t_bsiot_sub b where a.cargo_no = b.cargo_no and b.cntr_no = #{cntrNo} and b.dup_no = #{dupNo}
+		]]>
+	</select>
+	
+	<select id="onDockDeliveryConfirmList" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TBsiotVo">
+		<![CDATA[
+			SELECT distinct d.cntr_no, d.oper_cd FROM 
+			(
+				SELECT distinct a.mstbl_no , b.cntr_no FROM t_bsiot a, t_bsiot_sub b
+				WHERE a.cargo_no = b.cargo_no and a.banip_cd = '10' AND a.ship_cd = #{shipCd} AND b.ship_cd = #{shipCd}
+				AND a.call_yy = #{callYy} AND b.call_no = #{callNo} AND b.call_yy = #{callYy} AND a.mstbl_no = #{blNo}
+				AND a.banip_cd  = b.banip_cd ) C , t_cntr d WHERE c.cntr_no = d.cntr_no
+				AND d.ship_cd = #{shipCd} AND d.call_no = #{callNo} AND d.call_yy = #{callYy}
+				AND d.cur_stat like 'I%'
+				AND d.fm_cd = 'F'
+				AND d.oper_cd in
+		]]>
+		<foreach collection="operList" item="item" index="index" open="(" close=")" separator=",">
+			<![CDATA[
+				#{item}
+			]]>
+		</foreach>
+		
+	</select>
+</mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TVesselRepository">
+	<select id="getVesselNameList" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TVesselVo">
+		<![CDATA[
+			SELECT
+				DISTINCT a.ship_nm ship_nm
+			FROM
+				t_vessel a,
+				t_vescall b
+			WHERE
+				a.ship_cd = b.ship_cd
+				AND ib_voy IS NOT NULL
+				AND ob_voy IS NOT NULL
+			ORDER BY
+				a.ship_nm ASC
+		]]>
+	</select>
+</mapper>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content" th:remove="tag">
+		<div class="sub-visual sub-vs-1">
+			<h1 th:text="#{header.company}">회사소개</h1>
+			<p th:text="#{subvisual.subtitle.1}">E1컨테이너터미널은 세계를 목표로 나아갑니다.</p>
+		</div>
+		<div class="sub-nav">
+			<div class="wr"> 
+				<a href="/" class="sub-home"></a>
+				<div class="sub-depth">
+					<h3 th:text="#{header.company}">회사소개</h3>
+					<ul>
+						<li><a href="/company/greeting" th:text="#{header.company}">회사소개</a></li>
+						<li><a href="/terminal/facilities" th:text="#{header.terminal}">터미널소개</a></li>
+						<li><a href="/info/terminal/berthText" th:text="#{header.info}">정보조회서비스</a></li>
+						<li><a href="/community/news" th:text="#{header.community}">커뮤니티</a></li> 
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3 th:text="#{menu.company.history}">연혁</h3>
+					<ul>
+						<li><a href="/company/greeting" th:text="#{menu.company.greeting}">인사말</a></li>
+						<li><a href="/company/history" th:text="#{menu.company.history}">연혁</a></li>
+						<li><a href="/company/organization" th:text="#{menu.company.organization}">조직 및 연락처</a></li>
+						<li><a href="/company/ci" th:text="#{menu.company.ci}">CI</a></li>
+						<li><a href="/company/notice" th:text="#{menu.company.notice}">공고</a></li>
+						<li><a href="/company/location" th:text="#{menu.company.location}">오시는길</a></li>
+						<li><a href="/company/safeservice" th:text="#{menu.company.safeservice}">안전서비스</a></li>
+						<li><a href="/company/hr" th:Text="#{menu.company.hr}">인사제도</a></li>
+						<li><a href="/company/recruit" th:text="#{menu.company.recruit}">채용정보</a></li>
+						<li><a href="/company/support" th:text="#{menu.company.support}">관련사이트</a></li>
+					</ul>
+				</div>
+			</div> 
+		</div><!--sub-visual-->
+		<section id="wrap">
+			<h1 class="cont-tit" th:text="#{menu.company.history}">연혁</h1>
+			<div id="history">    
+				<div class="cont-wr">  
+					<!-- tab -->
+					<div id="tabWrap" class="type2">
+						<span class="scroll-btm-bar"></span>
+						<div class="scrollbar-inner">
+							<div class="tab-inner-wrap">
+								<a href="#anchor-1" id="tab-item-0" class="on" th:text="#{company.history.tab-inner-wrap.0.span}"><span>2020 ~ 현재</span></a>
+								<a href="#anchor-2" id="tab-item-1"><span>2010 ~ 2019</span></a>
+								<a href="#anchor-3" id="tab-item-2"><span>2000 ~ 2009</span></a> 
+							</div>
+						</div>
+					</div>
+					<h2 class="history-tit" th:utext="#{company.history.history-tit}">최신 물류장비 및 시스템을 기반으로
+						<span>고객과 함께 하는 기업</span>이 되겠습니다.
+						<small>E1 Container Terminal Good Partners Dreams Together</small>
+					</h2>
+					<!--// tab --> 
+					<div class="history-contents-wrap"> 
+						<span class="line">line</span>
+						<span class="ico-d">D</span> 
+						<div class="history-contents-block" data-tab="true" id="anchor-1">
+							<div> 
+								<div class="history-yy">
+									<em>history</em>
+									<strong th:text="#{company.history.tab-inner-wrap.0.span}">2020 - 현재</strong>
+								</div> 
+								<div class="history-block reverse">  
+									<div class="text-box">
+										<dl>
+											<dt>2020</dt>
+											<dd></dd>
+										</dl>
+									</div> 
+									<div class="pic-box">
+										<p class="year"></p>
+										<p class="caption">20<span>20's</span></p>
+									</div>
+								</div> 
+							</div>
+						</div>
+						<div class="history-contents-block" data-tab="true" id="anchor-2">
+							<div> 
+								<div class="history-yy second">
+									<em>history</em>
+									<strong>2010 - 2019</strong>
+								</div>  
+								<div class="history-block reverse">
+									<div class="text-box">
+										<dl>
+											<dt>2017</dt> 
+											<dd th:utext="#{company.history.2017.12}"><span>2017.12</span>CFS 2창고 준공</dd>
+										</dl>
+									</div>
+									<div class="pic-box">
+										<p class="year"></p>
+										<p class="caption">20<span>10's</span></p>
+									</div>
+								</div> 
+								<div class="history-block reverse">
+									<div class="text-box">
+										<dl>
+											<dt>2015</dt>
+											<dd th:utext="#{company.history.2015.03}"><span>2015.03</span>CFS 준공 및 사업개시</dd>
+										</dl>
+									</div> 
+								</div>
+							</div>
+						</div>
+						<div class="history-contents-block" data-tab="true" id="anchor-3">
+							<div> 
+								<div class="history-yy third">
+									<em>history</em>
+									<strong>2000 - 2009</strong>
+								</div> 
+								<div class="history-block reverse">
+									<div class="text-box">
+										<dl>
+											<dt>2009</dt>
+											<dd th:utext="#{company.history.2009.03}"><span>2009.03</span>첫 정기선사 입항 (M/V CAPE FELTON)</dd>
+										</dl>
+									</div>
+									<div class="pic-box">
+										<p class="year"></p>
+										<p class="caption">20<span>00's</span></p>
+									</div>
+								</div>
+								<div class="history-block reverse">
+									<div class="text-box">
+										<dl>
+											<dt>2008</dt>
+											<dd th:utext="#{company.history.2008.11}"><span>2008.11</span>항만운송 사업면허 취득
+											
+											</dd> 
+											<dd th:utext="#{company.history.2008.12}"> 
+												<span>2008.12</span>터미널 준공
+											</dd> 
+										</dl> 
+									</div>
+								</div>
+								<div class="history-block reverse">
+									<div class="text-box">
+										<dl>
+											<dt>2007</dt>
+											<dd th:utext="#{company.history.2007.02}">
+												<span>2007.02</span>컨테이너터미널 착공
+											</dd>
+											<dd th:utext="#{company.history.2007.04}">
+												<span>2007.04</span>㈜E1컨테이너터미널 볍인 설립테이너터미널 착공
+											</dd>
+										</dl>
+									</div>
+								</div>
+								<div class="history-block reverse">
+									<div class="text-box">
+										<dl>
+											<dt>2006</dt>
+											<dd th:utext="#{company.history.2006.06}">
+												<span>2006.06</span>항공공사 실시 계획 승인
+											</dd> 
+										</dl>
+									</div>
+								</div>
+								<div class="history-block reverse">
+									<div class="text-box">
+										<dl>
+											<dt>2005</dt>
+											<dd th:utext="#{company.history.2005.07}">
+												<span>2005.07</span>비관리청 항만공사 시행 허가
+											</dd> 
+										</dl>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<script type="text/javascript">
+				/* 연혁 스크롤 */
+				var Ci =(function(){
+	
+				    function init(){
+				    	addEvents();
+				    }
+	
+				    function addEvents(){
+				    	
+				    	var icoobj, lineobj;
+				    	var toppos = 0;
+				    	var current_obj = 0;
+				    	var current_val = 0;
+	
+	
+				    	$(window).on("scroll", function() {
+				    		var scroll = $(window).scrollTop();
+				    		var start_position = $(".history-contents-wrap").offset().top;
+				    		lineobj = $(".line");
+				    		icoobj = $(".ico-d");
+	
+				    		if(scroll > start_position-$(window).height()/3) {
+				    			var d_pos = start_position-$(window).height()/3;
+				    			$(".history-block").each(function(idx) {
+				    				var pos_y = $(".history-block").eq(idx).offset().top;
+				    				if(scroll > pos_y-$(window).height()/2) {
+				    					icoobj.css("top", pos_y-start_position);
+				    					lineobj.css("height", pos_y-start_position+10);
+				    					$(".history-block").eq(idx).addClass("active");
+				    				} else {
+				    					$(".history-block").eq(idx).removeClass("active");
+				    				}
+				    			});
+				    		}
+	
+				    		if(scroll>=$(document).height()-$(window).height()-$("#Footer").height()) {
+				    			$(".intro-btm-slogan").addClass("end");
+				    		}
+				    	});
+	
+				    }
+				    
+				    init();
+	
+				})(); 
+				
+				$(function() {
+					
+						$(window).on("scroll", function() { 
+							var scroll = $(window).scrollTop(); 
+							var scrollTop = $(document).scrollTop();
+							var tabWrapPos = $(".cont-tit").offset();
+						
+							if( scrollTop >= tabWrapPos.top){
+								console.log( "scrollTop :" + scrollTop + " / tabWrapPos.top : " + tabWrapPos.top);
+								if( !$("#tabWrap").hasClass('fixed') ) {
+									$("#tabWrap").addClass( 'fixed' );
+								}
+							} else {
+								$("#tabWrap").removeClass("fixed");
+							}
+						
+							if($("#tabWrap").hasClass("fixed")) {
+								var docH = $(document).height()-$(window).height();
+								var bar_percent = scroll/docH * 100;
+								$(".scroll-btm-bar").css("display", "");
+								$(".scroll-btm-bar").css("width",bar_percent+"%");
+							} else {
+								$(".scroll-btm-bar").css("display", "none");
+								$(".scroll-btm-bar").css("width",0);
+							}
+						});
+
+				})		
+			</script>
+		</section>
+	</div>
+</html>

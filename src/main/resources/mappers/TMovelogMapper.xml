@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TMovelogRepository">
+
+	<delete id="deleteByCntrNoAndOperCdAndDupNo" parameterType="kr.co.e1ct.vo.TBklstVo">
+		<![CDATA[
+			DELETE
+				t_movelog
+			WHERE
+				cntr_no = #{cntrNo}
+				AND oper_cd = #{operCd}
+				AND dup_no = #{dupNo}
+				AND ix_cd = 'O'
+		]]>
+	</delete>
+	
+	<select id="findTruckerCdAndCarNoAndSndIdANdIxIdByCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TMovelogVo">
+		<![CDATA[
+			SELECT
+				trucker_cd, car_no, snd_id, ix_cd
+			FROM
+				t_movelog
+			WHERE
+				cntr_no = #{cntrNo}
+				AND dup_no = #{dupNo}
+		]]>
+	</select>
+	
+	<select id="findByCntrNoAndDupNoAndIxCd" parameterType="kr.co.e1ct.vo.TMovelogVo" resultType="kr.co.e1ct.vo.TMovelogVo">
+		<![CDATA[
+			SELECT * FROM t_movelog WHERE cntr_no = #{cntrNo} AND dup_no = #{dupNo} AND ix_cd = 'O'
+		]]>
+	</select>
+	
+	<insert id="insert" parameterType="kr.co.e1ct.vo.TMovelogVo">
+		<![CDATA[
+			INSERT
+				INTO
+				t_movelog (
+					cntr_no,
+					dup_no,
+					ix_cd,
+					ship_cd,
+					call_yy,
+					call_no,
+					oper_cd,
+					owner_nm,
+					owner_loc,
+					order_no,
+					cre_dt,
+					emp_no)
+				VALUES( 
+					#{cntrNo},
+					#{dupNo},
+					'O',
+					#{shipCd},
+					#{callYy},
+					#{callNo},
+					#{operCd},
+					#{ownerNm},
+					#{ownerLoc},
+					#{doNo},
+					SYSDATE,
+					'WEB' )
+		]]>
+	</insert>
+	
+	<update id="update" parameterType="kr.co.e1ct.vo.TMovelogVo">
+		<![CDATA[
+			UPDATE
+				t_movelog
+			SET
+				oper_cd = #{operCd},
+				owner_nm = #{ownerNm},
+				owner_loc = #{ownerLoc},
+				order_no = #{doNo},
+				emp_no = 'WEB'
+			WHERE
+				CNTR_NO = #{cntrNo}
+				AND DUP_NO = #{dupNo}
+				AND ix_cd = 'O'
+		]]>
+	</update>
+	
+	<delete id="deleteByCntrNoAndDupNoAndIxCd" parameterType="kr.co.e1ct.vo.TMovelogVo">
+		<![CDATA[
+			DELETE FROM t_movelog WHERE cntr_no = #{cntrNo} AND dup_no = #{dupNo} AND ix_cd = 'O'
+		]]>
+	</delete>
+</mapper>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content" th:remove="tag">
+		<div class="sub-visual sub-vs-2">
+			<h1 th:text="#{header.terminal}">터미널소개</h1>
+			<p th:text="#{subvisual.subtitle.2}">최고의 물류서비스를 통해 고객 감동을 만들어갑니다.</p>
+		</div>
+		<div class="sub-nav">
+			<div class="wr"> 
+				<a href="/" class="sub-home"></a>
+				<div class="sub-depth">
+					<h3 th:text="#{header.terminal}">터미널소개</h3>
+					<ul>
+						<li><a href="/company/greeting" th:text="#{header.company}">회사소개</a></li>
+						<li><a href="/terminal/facilities" th:text="#{header.terminal}">터미널소개</a></li>
+						<li><a href="/info/terminal/berthText" th:text="#{header.info}">정보조회서비스</a></li>
+						<li><a href="/community/news" th:text="#{header.community}">커뮤니티</a></li> 
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3 th:text="#{menu.terminal.equipment}">터미널장비</h3>
+					<ul>
+						<li><a href="/terminal/facilities" th:text="#{menu.terminal.facilities}">터미널시설</a></li>
+						<li><a href="/terminal/equipment" th:text="#{menu.terminal.equipment}">터미널장비</a></li>
+						<li><a href="/terminal/feature" th:text="#{menu.terminal.feature}">터미널특징</a></li>
+						<li><a href="/terminal/movie" th:text="#{menu.terminal.movie}">홍보동영상</a></li>
+						<li><a href="/terminal/brochure" th:text="#{menu.terminal.brochure}">온라인브로슈어</a></li>
+						<li><a href="/terminal/gallery" th:text="#{menu.terminal.gallery}">갤러리</a></li>
+					</ul>
+				</div>
+			</div> 
+		</div><!--sub-visual-->
+		<section id="wrap">
+			<h1 class="cont-tit" th:text="#{menu.terminal.equipment}">터미널장비</h1>
+			<div id="tmnEquip">    
+				<div class="cont-wr">     
+					<ul>
+						<li>
+							<img src="/static/img/sub/tmnEquip-img-1.jpg" alt="Container Crane"> 
+							<div class="txt">
+								<h2>Container Crane</h2>
+								<p>Lifting Capacity : 50 ton</p>
+								<p>Lifting Height : 30m</p>
+								<p>Out / Back Reach : 39m / 15m</p>
+								<p>Unit : 2</p> 
+							</div>
+						</li>
+						<li>
+							<img src="/static/img/sub/tmnEquip-img-2.jpg" alt="Transfer Crane"> 
+							<div class="txt">
+								<h2>Transfer Crane</h2>
+								<p>Lifting Capacity : 40.6 ton</p>
+								<p>Lifting Height : 20.9m</p>
+								<p>Out / Back Reach : 39m / 15m</p>
+								<p>Unit : 6</p> 
+							</div>
+						</li>
+						<li>
+							<img src="/static/img/sub/tmnEquip-img-3.jpg" alt="Reach Stacker"> 
+							<div class="txt">
+								<h2>Reach Stacker</h2>
+								<p>Lifting Capacity : 42 ton</p> 
+								<p>Unit : 3</p> 
+							</div>
+						</li>
+						<li>
+							<img src="/static/img/sub/tmnEquip-img-4.jpg" alt="Empty Handler"> 
+							<div class="txt">
+								<h2>Empty Handler</h2>
+								<p>Lifting Capacity : 8 ton</p>
+								<p>Unit : 1</p> 
+							</div>
+						</li>
+						<li>
+							<img src="/static/img/sub/tmnEquip-img-5.jpg" alt="Yard Tractor"> 
+							<div class="txt">
+								<h2>Yard Tractor</h2>
+								<p>Lifting Capacity : 70 ton</p>
+								<p>Unit : 10</p> 
+							</div>
+						</li>
+						<li>
+							<img src="/static/img/sub/tmnEquip-img-6.jpg" alt="Container Chassis"> 
+							<div class="txt">
+								<h2>Container Chassis</h2>
+								<p>Lifting Capacity : 60 ton</p>
+								<p>Unit : 25</p> 
+							</div>
+						</li>
+					</ul>
+				</div>
+			</div> 
+		</section> 
+	</div>
+</html>

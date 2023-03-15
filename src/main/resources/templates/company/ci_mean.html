@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content" th:remove="tag">
+		<div class="sub-visual sub-vs-1">
+			<h1 th:text="#{header.company}">회사소개</h1>
+			<p th:text="#{subvisual.subtitle.1}">E1컨테이너터미널은 세계를 목표로 나아갑니다.</p>
+		</div>
+		<div class="sub-nav">
+			<div class="wr"> 
+				<a href="/" class="sub-home"></a>
+				<div class="sub-depth">
+					<h3 th:text="#{header.company}">회사소개</h3>
+					<ul>
+						<li><a href="/company/greeting" th:text="#{header.company}">회사소개</a></li>
+						<li><a href="/terminal/facilities" th:text="#{header.terminal}">터미널소개</a></li>
+						<li><a href="/info/terminal/berthText" th:text="#{header.info}">정보조회서비스</a></li>
+						<li><a href="/community/news" th:text="#{header.community}">커뮤니티</a></li> 
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3 th:text="#{menu.company.ci}">CI</h3>
+					<ul>
+						<li><a href="/company/greeting" th:text="#{menu.company.greeting}">인사말</a></li>
+						<li><a href="/company/history" th:text="#{menu.company.history}">연혁</a></li>
+						<li><a href="/company/organization" th:text="#{menu.company.organization}">조직 및 연락처</a></li>
+						<li><a href="/company/ci" th:text="#{menu.company.ci}">CI</a></li>
+						<li><a href="/company/notice" th:text="#{menu.company.notice}">공고</a></li>
+						<li><a href="/company/location" th:text="#{menu.company.location}">오시는길</a></li>
+						<li><a href="/company/safeservice" th:text="#{menu.company.safeservice}">안전서비스</a></li>
+						<li><a href="/company/hr" th:Text="#{menu.company.hr}">인사제도</a></li>
+						<li><a href="/company/recruit" th:text="#{menu.company.recruit}">채용정보</a></li>
+						<li><a href="/company/support" th:text="#{menu.company.support}">관련사이트</a></li>
+					</ul>
+				</div>
+			</div> 
+		</div><!--sub-visual-->
+		<section id="wrap">
+			<h1 class="cont-tit">CI</h1>
+			<div id="ci">    
+				<div class="cont-wr">   
+					<div class="cont-tab">
+						<a href="/company/ci/intro" th:text="#{company.ci.tab.intro}">CI 소개</a>
+						<a href="/company/ci/mean" class="active" th:text="#{company.ci.tab.mean}">의미</a>
+						<a href="/company/ci/design" th:text="#{company.ci.tab.design}">디자인요소</a>
+						<a href="/company/ci/apply" th:text="#{company.ci.tab.apply}">적용사례</a>
+					</div> 
+					<div class="tab-two">
+						<ul>
+							<li><img src="/static/img/sub/ci-logo-3.jpg" alt=""></li> 
+						</ul>
+						<div class="txt">
+							<h4>E1 Corporate Mark</h4>
+							<p>
+							<th:block th:utext="#{company.ci.mean.thblock}"></th:block>
+<!-- 							<span>Corporate Mark는 새롭게 출발하는 주식회사 E1의 핵심가치와 미래상을 상징하는 CORPORATE IDENTITY의 요체입니다.</SPAN><BR /> -->
+<!-- 							ENERGY, ENVIRONMENT, EXCELLENCE, ESSENCE, EFFICIENCY 등의 다양한 의미를 상징하는 영문 이니셜 "E"와 FIRST, BEST, 근원, ONE 등을 표현한 숫자"1"의 -->
+<!-- 							조합을 통해 ENERGY FIRST, ENVIRONMENT FIRST를 상징화 하였으며 에너지의 열정과 고객친화를 상징하는 E1 오렌지 COLOR로 감싸고 둥근 라운드로 마무리함으로써 -->
+<!-- 							환경친화와 안전을 표현하였습니다.<BR /> -->
+<!-- 							CORPORATE MARK는 E1을 대표하는 대외 Communication의 핵심요소로서 최대한 형태와 색상을 유지하여야 하며 최소 10mm이상에서만 사용합니다. -->
+							</p>
+						</div>
+					</div>
+				</div>
+			</div> 
+		</section>  
+	</div>
+</html>

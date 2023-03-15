@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.TBkdtlRepository">
+
+	<select id="findBkAamtByBknoAndOperCdAndSzCdAndTyGrpCd" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TBkdtlVo">
+		<![CDATA[
+			SELECT
+				NVL( bk_aamt, 0 ) bk_aamt
+			FROM
+				T_BKDTL
+			WHERE
+				bk_no = #{bkNo}
+				AND oper_cd IN ( #{operCd} )
+				AND sz_cd = #{szCd}
+				AND ty_grp_cd = #{tyCd} 
+		]]>
+	</select>
+	
+	<delete id="deleteByBkNoAndOperCdAndSzCdAndTyGrpCd" parameterType="kr.co.e1ct.vo.SearchVo">
+		<![CDATA[
+			DELETE
+				t_bkdtl
+			WHERE
+				bk_no = #{bkNo}
+				AND oper_cd IN ( #{operCd} )
+				AND sz_cd = #{szCd}
+				AND ty_grp_cd = #{tyCd}
+		]]>
+	</delete>
+	
+	<select id="findCountByBkNoAndOperCd" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TBkdtlVo">
+		<![CDATA[
+			SELECT
+				NVL(COUNT(*), '0') cnt
+			FROM
+				t_bkdtl
+			WHERE
+				bk_no = #{bkNo}
+				AND oper_cd IN ( #{operCd} )
+		]]>
+	</select>
+	
+	<select id="findByBkNoAndOperCdAndBkCd" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TBkdtlVo">
+		<![CDATA[
+			SELECT * FROM t_bkdtl where bk_no = #{orderNo} and oper_cd = #{operCd} and bk_cd = 'RF'
+		]]>
+	</select>
+	
+	<select id="findSzCdAndTyGrpCdAndBkEamtByOperCdANdBkNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TBkdtlVo">
+		<![CDATA[
+			SELECT sz_cd, ty_grp_cd, bk_eamt FROM t_bkdtl where oper_cd in ( #{operCd} ) AND bk_no =#{bkNo} AND sz_cd = #{szCd} AND ty_grp_cd = #{tyCd}
+		]]>
+	</select>
+	
+	<insert id="insertOperCdAndBkNoAndSzCdAndTyGrpCdAndBkEamtAndReqArrDtAndCyCd" parameterType="kr.co.e1ct.vo.TBkdtlVo">
+		<![CDATA[
+			INSERT INTO t_bkdtl( oper_cd, bk_no, sz_cd, ty_grp_cd, bk_eamt, req_arr_dt, cy_cd )
+			VALUES( #{operCd}, #{bkNo}, #{szCd}, #{tyGrpCd}, #{bkEamt}, SYSDATE, #{cyCd} )
+		]]>
+	</insert>
+	
+	<delete id="onDockInsertOrderUpdateDelete" parameterType="kr.co.e1ct.vo.SearchVo">
+		<![CDATA[
+			DELETE FROM T_BKDTL WHERE oper_cd IN
+		]]>
+		<foreach collection="operList" item="item" open="(" close=")" separator="," index="index">
+			<![CDATA[
+				#{item}
+			]]>
+		</foreach>
+	</delete>
+	
+	<select id="onDockBookingDetailUpdate" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TBkdtlVo">
+		<![CDATA[
+			SELECT sz_cd, ty_grp_cd, bk_eamt FROM t_bkdtl where oper_cd in
+		]]>
+		<foreach collection="operList" close=")" index="index" item="item" open="(" separator=",">
+			<![CDATA[
+				#{item}
+			]]>
+		</foreach>
+		<![CDATA[
+			AND bk_no = #{bkNo}
+			AND sz_cd = #{szCd}
+			AND ty_grp_cd = #{tyCd}
+		]]>
+	</select>
+	
+	<select id="findByOperCdAndBkNoAndSzCdAndTyGrpCd" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TBkdtlVo">
+		<![CDATA[
+			SELECT * FROM T_BKDTL WHERE oper_cd = #{operCd} AND bk_no = #{bkNo} AND sz_cd = #{szCd} AND ty_grp_cd = #{tyCd}
+		]]>
+	</select>
+	
+	<insert id="insertBookingDetail" parameterType="kr.co.e1ct.vo.SearchVo">
+		<![CDATA[
+			INSERT INTO t_bkdtl(oper_cd, bk_no, sz_cd, ty_grp_cd, bk_eamt, req_arr_dt )
+			VALUES( #{operCd}, #{bkNo}, #{szCd}, #{tyCd}, #{bkEamt}, SYSDATE )
+		]]>
+	</insert>
+	
+	<update id="updateBookingDetail" parameterType="kr.co.e1ct.vo.SearchVo">
+		<![CDATA[
+			UPDATE t_bkdtl
+			SET
+				sz_cd = #{szCd},
+				ty_grp_cd = #{tyCd},
+				bk_eamt = #{bkEamt},
+				req_arr_dt = SYSDATE
+			WHERE
+				oper_cd = #{operCd}
+				AND bk_no = #{bkNo}
+				AND sz_cd = #{szCd}
+				AND ty_grp_cd = #{tyCd}
+		]]>
+	</update>
+</mapper>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/default">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content" th:remove="tag">
+		<div class="sub-visual sub-vs-1">
+			<h1 th:text="#{header.company}">회사소개</h1>
+			<p th:text="#{subvisual.subtitle.1}">E1컨테이너터미널은 세계를 목표로 나아갑니다.</p>
+		</div>
+		<div class="sub-nav">
+			<div class="wr"> 
+				<a href="/" class="sub-home"></a>
+				<div class="sub-depth">
+					<h3 th:text="#{header.company}">회사소개</h3>
+					<ul>
+						<li><a href="/company/greeting" th:text="#{header.company}">회사소개</a></li>
+						<li><a href="/terminal/facilities" th:text="#{header.terminal}">터미널소개</a></li>
+						<li><a href="/info/terminal/berthText" th:text="#{header.info}">정보조회서비스</a></li>
+						<li><a href="/community/news" th:text="#{header.community}">커뮤니티</a></li> 
+					</ul>
+				</div>
+				<div class="sub-depth">
+					<h3 th:text="#{menu.company.ci}">CI</h3>
+					<ul>
+						<li><a href="/company/greeting" th:text="#{menu.company.greeting}">인사말</a></li>
+						<li><a href="/company/history" th:text="#{menu.company.history}">연혁</a></li>
+						<li><a href="/company/organization" th:text="#{menu.company.organization}">조직 및 연락처</a></li>
+						<li><a href="/company/ci" th:text="#{menu.company.ci}">CI</a></li>
+						<li><a href="/company/notice" th:text="#{menu.company.notice}">공고</a></li>
+						<li><a href="/company/location" th:text="#{menu.company.location}">오시는길</a></li>
+						<li><a href="/company/safeservice" th:text="#{menu.company.safeservice}">안전서비스</a></li>
+						<li><a href="/company/hr" th:Text="#{menu.company.hr}">인사제도</a></li>
+						<li><a href="/company/recruit" th:text="#{menu.company.recruit}">채용정보</a></li>
+						<li><a href="/company/support" th:text="#{menu.company.support}">관련사이트</a></li>
+					</ul>
+				</div>
+			</div> 
+		</div><!--sub-visual-->
+		<section id="wrap">
+			<h1 class="cont-tit">CI</h1>
+			<div id="ci">    
+				<div class="cont-wr">   
+					<div class="cont-tab">
+						<a href="/company/ci/intro" class="active" th:text="#{company.ci.tab.intro}">CI 소개</a>
+						<a href="/company/ci/mean" th:text="#{company.ci.tab.mean}">의미</a>
+						<a href="/company/ci/design" th:text="#{company.ci.tab.design}">디자인요소</a>
+						<a href="/company/ci/apply" th:text="#{company.ci.tab.apply}">적용사례</a>
+					</div> 
+					<div class="tab-one">
+						<ul>
+							<li><img src="/static/img/sub/ci-logo-1.jpg" alt=""></li>
+							<li><img src="/static/img/sub/ci-logo-2.jpg" alt=""></li>
+						</ul>
+						<div class="txt">
+							<h4>E1 Corporate Mark</h4>
+							<p>
+							<th:block th:utext="#{company.ci.intro.thblock}"></th:block>
+<!-- 							<span>E1의 의미를 쉽게 'Energy First'로 자칭할 수 있으며  100와 결합된 기술 슬로건으로서 사용할 수 있습니다.</span><br /> -->
+<!-- 							E1의 ‘Energy’는 ‘환경과 인간을 위한 미래에너지’를 축약한 말로써 환경을 위한 청정 에너지인 LPG의 공급을 통해 깨끗한 미래를 열어가겠다는 주식회사 E1의 -->
+<!-- 							다짐과 나아가 단순한 연료나 동력차원의 에너지가 아닌 환경, 건강, 지식, 문화에너지 등 인간의 삶을 윤택하고 풍요롭게 하는 다양하고 역동적인 ‘삶의 에너지'를 -->
+<!-- 							창조하는 최고 기업으로 성장하려는 회사의 미래상을 담았습니다.<br /> -->
+<!-- 							또한 한자로는 利源, 利元으로 나타낼 수 있으며, 고객의 이로움이 원천이요 으뜸이므로 고객에게 최고의 서비스로 보답하겠다는 의지를 담고 있기도 합니다. -->
+							</p>
+						</div>
+					</div>
+				</div>
+			</div> 
+		</section>  
+	</div>
+</html>

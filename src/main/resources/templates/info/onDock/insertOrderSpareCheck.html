@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/popup">
+
+	<!-- index.html 고유 CSS 추가 -->
+	<th:block layout:fragment="css">
+	</th:block>
+
+	<!-- index.html 고유 스크립트 추가 -->
+	<th:block layout:fragment="script">
+	</th:block>
+
+	<div layout:fragment="content">
+	
+		<section id="info_section">
+			<h1 class="title">컨테이너 잔량 조회</h1>
+			
+			<div class="tb_hd">
+				<div class="btn_left">
+					<p style='color: red;'>[공통조회조건] : 출항모선제외, ALL반출완료된 부킹 제외</p>
+					<p style='color: blue;'>1. 순수장치수량 : <span style='color: #4169e1;'>부킹가능한 컨테이너 갯수(Damage, Holding 제외)</span></p>
+					<p style='color: blue;'>2. 부킹요청수량 : <span style='color: #4169e1;'>현재까지 부킹요청한 컨테이너 갯수</span></p>
+					<p style='color: #a0522d;'>3. 반출완료수량 : <span style='color: #cd853f;'>부킹요청중에서 반출완료(상차)한 컨테이너 갯수</span></p>
+					<p style='color: #228b22;'>4. 컨&nbsp;&nbsp;지정수량 : <span style='color: #6b8e23'>부킹요청중에서 컨테이너를 지정해서 요청한 갯수</span></p>
+					<p style='color: #dc143c;'>5. 부킹가능수량 : <span style='color: #ff1493;'>순수장치수량을 기준으로 추가로 부킹가능한 갯수</span></p>
+				</div>
+			</div>
+			
+			<div class="tb_tmnl">
+				<table>
+					<tbody>
+						<tr>
+							<th>선사</th>
+							<td>
+								<th:block th:each="oper, i:${data.get('operList')}" th:text="${oper} + ' '"></th:block>
+							</td>
+							<th>Size/Type</th>
+							<td th:text="${data.get('szCd')} + '/' + ${data.get('tyCd')}"></td>
+						</tr>
+						<tr>
+							<th>순수장치량</th>
+							<td th:text="${data.get('totalSumCntr')} + ' VAN(픽업제외)'"></td>
+							<th>부킹요청량</th>
+							<td th:text="${data.get('requestSumCntr')} + ' VAN'"></td>
+						</tr>
+						<tr>
+							<th>반출완료량</th>
+							<td th:text="${data.get('deliverySumCntr')} + ' VAN'"></td>
+							<th>컨' 지정량</th>
+							<td th:text="${data.get('appointSumCntr')} + ' VAN'"></td>
+						</tr>
+						<tr>
+							<th>부킹 가능량</th>
+							<td colspan="3" th:text="${data.get('spareSumCntr')} + ' VAN'" style="color: red;"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<script type="text/javascript">
+				$(function(){
+				});
+			</script>
+		</section>
+		
+	</div>
+</html>

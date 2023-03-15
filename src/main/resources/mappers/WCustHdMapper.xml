@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.WCustHdRepository">
+	<select id="custInspection" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.WCustHdVo">
+		<![CDATA[
+			SELECT 
+				*
+			FROM
+				W_CUST_HD
+			WHERE
+				crt_dt BETWEEN TO_DATE( REPLACE( #{searchStartDt}, '-', '' ) || '000001', 'yyyymmddhh24miss' )
+				AND TO_DATE( REPLACE( #{searchEndDt}, '-', '' ) || '235959', 'yyyymmddhh24miss' )
+				AND cargo_type = 'INS'
+				AND req_id = #{reqId}
+		]]>
+	</select>
+	
+	<delete id="custInspectionDeleteCust" parameterType="kr.co.e1ct.vo.SearchVo">
+		<![CDATA[
+			DELETE FROM
+				W_CUST_HD
+			WHERE
+				cust_id = #{custId}
+		]]>
+	</delete>
+	
+	<select id="custInspectionCustItemWindow" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.WCustHdVo">
+		<![CDATA[
+			SELECT
+				cargo_no,
+				substr( cargo_no, 1, 11 ) as mrn,
+				substr( cargo_no, 12, 4 ) as msn,
+				substr( cargo_no, 16, 3 ) as hsn,
+				cntr_no,
+				space,
+				oper_cd,
+				insp_type,
+				iso
+			FROM
+				W_CUST_HD
+			WHERE
+				cust_id = #{custId}
+		]]>
+	</select>
+	
+	<update id="updateInspStatByCustId" parameterType="kr.co.e1ct.vo.SearchVo">
+		<![CDATA[
+			UPDATE W_CUST_HD SET insp_stat = 'RE' WHERE cust_id = #{custId}
+		]]>
+	</update>
+	
+	<update id="updateInspStatEdByCustId" parameterType="kr.co.e1ct.vo.SearchVo">
+		<![CDATA[
+			UPDATE W_CUST_HD SET insp_stat = 'ED' WHERE cust_id = #{custId}
+		]]>
+	</update>
+	
+	<select id="inspectionManage" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.WCustHdVo">
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				W_CUST_HD
+			WHERE
+				crt_dt BETWEEN TO_DATE( REPLACE(#{searchStartDt}, '-', '') || '000001' , 'yyyymmddhh24miss') AND TO_DATE( REPLACE(#{searchEndDt}, '-', '') || '235959' , 'yyyymmddhh24miss')
+				AND cargo_type = 'INS'
+				AND insp_stat IS NOT NULL
+		]]>
+		<if test='gubun == 1'>
+			<![CDATA[
+				AND notice_dt IS NOT NULL
+				AND notice_dt NOT IN ( '미통보', '품목미기재', '검사신청미완료' )
+			]]>
+		</if>
+		<if test='gubun == 2'>
+			<![CDATA[
+				AND notice_dt IN ( '미통보', '품목미기재', '검사신청미완료' )
+			]]>
+		</if>
+	</select>
+	
+	<select id="custInspectionView" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.WCustHdVo">
+		<![CDATA[
+			SELECT
+				cargo_no,
+				SUBSTR(cargo_no, 1, 11) AS mrn,
+				SUBSTR(cargo_no, 12, 4) AS msn,
+				SUBSTR(cargo_no, 16, 4) AS hsn,
+				cntr_no,
+				SPACE,
+				oper_cd,
+				insp_type,
+				iso,
+				req_comp,
+				req_emp,
+				req_tel,
+				adm_dt,
+				notice_dt
+			FROM
+				w_cust_hd
+			WHERE
+				cust_id = #{custId}
+		]]>
+	</select>
+	
+	<update id="custInspectionViewSave" parameterType="kr.co.e1ct.vo.SearchVo">
+		<![CDATA[
+			UPDATE
+				W_CUST_HD
+			SET
+				insp_stat = 'ED'
+			WHERE
+				cust_id = #{custId}
+		]]>
+	</update>
+	
+	<update id="custInspectionManageSave" parameterType="kr.co.e1ct.vo.SearchVo">
+		<![CDATA[
+			UPDATE
+				W_CUST_HD
+			SET
+		]]>
+		<if test='noticeDt == "미통보" or noticeDt == "검사신청미완료" or noticeDt == "품목미기재"'>
+			<![CDATA[
+				notice_dt = #{noticeDt},
+				adm_dt = ''
+			]]>
+		</if>
+		<if test='noticeDt != "미통보" and noticeDt != "검사신청미완료" and noticeDt != "품목미기재"'>
+			<![CDATA[
+				notice_dt = #{noticeDt},
+				adm_dt = #{nDate},
+				insp_stat = 'CS'
+			]]>
+		</if>
+		<![CDATA[
+			WHERE
+				cust_id = #{custId}
+		]]>
+	</update>
+	
+	<select id="custInsPvnt" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.WCustHdVo">
+		<![CDATA[
+			SELECT 
+				*
+			FROM
+				W_CUST_HD
+			WHERE
+				crt_dt BETWEEN TO_DATE( REPLACE( #{searchStartDt}, '-', '' ) || '000001', 'yyyymmddhh24miss' )
+				AND TO_DATE( REPLACE( #{searchEndDt}, '-', '' ) || '235959', 'yyyymmddhh24miss' )
+				AND cargo_type = 'PVN'
+				AND req_id = #{reqId}
+		]]>
+	</select>
+	
+	<select id="custInspectionSaveReadCount" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.WCustHdVo">
+		<![CDATA[
+			SELECT
+				nvl(insp_stat, 'XX') insp_stat,
+				cust_id
+			FROM
+				W_CUST_HD
+			WHERE
+				cargo_no = #{cargoNo}
+				AND banip_cd = #{banipCd}
+				AND cntr_no = #{cntrNo}
+				AND ( INSP_STAT IS NULL
+				OR INSP_STAT = 'RE' )
+				AND REQ_ID = #{reqId}
+				AND cargo_type = 'INS'
+			ORDER BY
+				CRT_DT DESC
+		]]>
+	</select>
+	
+	<select id="custinsPvntSaveReadCount" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.WCustHdVo">
+		<![CDATA[
+			SELECT
+				nvl(insp_stat, 'XX') insp_stat,
+				cust_id
+			FROM
+				W_CUST_HD
+			WHERE
+				cargo_no = #{cargoNo}
+				AND banip_cd = #{banipCd}
+				AND cntr_no = #{cntrNo}
+				AND ( INSP_STAT IS NULL
+				OR INSP_STAT = 'RE' )
+				AND REQ_ID = #{reqId}
+				AND cargo_type = 'PVN'
+			ORDER BY
+				CRT_DT DESC
+		]]>
+	</select>
+	
+	<update id="custInspectionSaveUpdate" parameterType="kr.co.e1ct.vo.SearchVo">
+		<![CDATA[
+			UPDATE
+				W_CUST_HD
+			SET
+				insp_type = #{inspType},
+				req_comp = #{reqComp},
+				req_tel = #{reqTel}
+			WHERE
+				cust_id = #{custId}
+		]]>
+	</update>
+	
+	<insert id="custInspectionSaveInsert" parameterType="kr.co.e1ct.vo.SearchVo">
+		<![CDATA[
+			INSERT INTO
+				W_CUST_HD (
+					cust_id,
+					cargo_no,
+					banip_cd,
+					cntr_no,
+					iso,
+					insp_type,
+					req_id,
+					req_comp,
+					req_tel,
+					notice_dt,
+					crt_dt,
+					cargo_type,
+					insp_gubun,
+					insp_stat
+				) VALUES (
+					cust_seq.nextval,
+					#{cargoNo},
+					#{banipCd},
+					#{cntrNo},
+					#{iso},
+					#{inspType},
+					#{reqId},
+					#{reqComp},
+					#{reqTel},
+					'미통보',
+					sysdate,
+					#{cargoType},
+					#{inspGubun},
+					''
+				)				
+		]]>
+	</insert>
+	
+	<select id="insPvntManage" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.WCustHdVo">
+		<![CDATA[
+			SELECT
+				*
+			FROM
+				W_CUST_HD
+			WHERE
+				crt_dt BETWEEN TO_DATE( REPLACE(#{searchStartDt}, '-', '') || '000001' , 'yyyymmddhh24miss') AND TO_DATE( REPLACE(#{searchEndDt}, '-', '') || '235959' , 'yyyymmddhh24miss')
+				AND cargo_type = 'PVN'
+				AND insp_stat IS NOT NULL
+		]]>
+		<if test='gubun == 1'>
+			<![CDATA[
+				AND notice_dt IS NOT NULL
+				AND notice_dt NOT IN ( '미통보', '품목미기재', '검사신청미완료' )
+			]]>
+		</if>
+		<if test='gubun == 2'>
+			<![CDATA[
+				AND notice_dt IN ( '미통보', '품목미기재', '검사신청미완료' )
+			]]>
+		</if>
+	</select>
+</mapper>

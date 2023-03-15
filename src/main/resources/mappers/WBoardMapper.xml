@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.e1ct.mappers.WBoardRepository">
+	<resultMap type="kr.co.e1ct.vo.WBoardVo" id="WBoardMap">
+		<result column="M_SEQ" property="MSeq" />
+		<result column="M_NAME" property="mName" />
+		<result column="M_EMAIL" property="mEmail" />
+		<result column="M_TEL" property="mTel"/>
+		<result column="M_TITLE" property="mTitle"/>
+		<result column="M_PWD" property="mPwd" />
+		<result column="M_WRITEDAY" property="mWriteday" />
+		<result column="M_TYPE" property="MType" />
+		<result column="M_FILENAME" property="mFilename" />
+		<result column="M_CONTENT" property="mContent" />
+		<result column="M_FILESIZE" property="mFilesize" />
+		<result column="M_IP" property="mIp" />
+		<result column="M_SECRET" property="mSecret" />
+		<result column="M_POP" property="mPop" />
+		<result column="M_PFROM" property="mPfrom" />
+		<result column="M_PTO" property="mPto" />
+		<result column="M_CONTENT2" property="mContent2" />
+		<result column="M_LOCAL" property="mLocal" />
+		<result column="M_PWIDTH" property="mPwidth" />
+		<result column="M_PHEIGHT" property="mPheight" />
+		<result column="M_READNUM" property="mReadnum" />
+		<association property="uploadFileVo" javaType="kr.co.e1ct.vo.UploadFileVo">
+			<result column="UF_IDX" property="ufIdx" />
+			<result column="UF_FILE_NAME" property="ufFileName" />
+			<result column="UF_SAVE_FILE_NAME" property="ufSaveFileName" />
+			<result column="UF_FILE_PATH" property="ufFilePath" />
+			<result column="UF_CONTENT" property="ufContent" />
+			<result column="UF_ENROL_DT" property="ufEnrolDt" />
+		</association>
+	</resultMap>
+	<select id="mainBoardList" resultType="kr.co.e1ct.vo.WBoardVo">
+		<![CDATA[
+			SELECT
+				*			
+			FROM
+				(
+				SELECT
+					M_SEQ,
+					M_NAME,
+					M_EMAIL,
+					M_TEL,
+					M_TITLE,
+					M_PWD,
+					M_WRITEDAY,
+					M_READNUM,
+					M_TYPE,
+					M_FILENAME,
+					REPLACE(M_CONTENT, CHR(10), '<BR>') M_CONTENT,
+					M_FILESIZE,
+					M_IP,
+					M_SECRET,
+					M_POP,
+					M_PFROM,
+					M_PTO,
+					REPLACE(M_CONTENT2, CHR(10), '<BR>') M_CONTENT2,
+					M_LOCAL,
+					M_PWIDTH,
+					M_PHEIGHT
+				FROM
+					W_BOARD
+				WHERE
+					m_type IN ('NT',
+					'DT')
+				ORDER BY
+					m_seq DESC )
+			WHERE
+				rownum < 13
+		]]>
+	</select>
+	
+	<select id="findPageByMType" parameterType="kr.co.e1ct.vo.WBoardVo" resultMap="WBoardMap">
+		<![CDATA[
+			SELECT
+				T.*
+			FROM
+			(
+				SELECT
+					ROW_NUMBER() OVER ( ORDER BY m_seq DESC ) num,
+					W.M_SEQ,
+					W.M_NAME,
+					W.M_EMAIL,
+					W.M_TEL,
+					W.M_TITLE,
+					W.M_PWD,
+					TO_DATE( W.M_WRITEDAY, 'yy-MM-dd hh24:mi:ss' ) M_WRITEDAY,
+					W.M_READNUM,
+					W.M_TYPE,
+					W.M_FILENAME,
+					REPLACE(W.M_CONTENT, CHR(10), '<BR>') M_CONTENT,
+					W.M_FILESIZE,
+					W.M_IP,
+					W.M_SECRET,
+					W.M_POP,
+					W.M_PFROM,
+					W.M_PTO,
+					REPLACE(W.M_CONTENT2, CHR(10), '<BR>') M_CONTENT2,
+					W.M_LOCAL,
+					WUF.UF_FILE_NAME,
+					WUF.UF_FILE_SIZE,
+					WUF.UF_IDX,
+					WUF.UF_SAVE_FILE_NAME,
+					W.M_PWIDTH,
+					W.M_PHEIGHT
+				FROM
+					W_BOARD W LEFT OUTER JOIN W_UPLOAD_FILE WUF ON W.M_FILENAME = WUF.UF_IDX
+				WHERE
+					m_type = #{MType}
+				ORDER BY
+					m_seq DESC
+			) T
+			WHERE
+				T.num BETWEEN ( ${pageNumber} * ${pageSize} ) + 1 AND ( ${pageNumber} + 1 ) * ${pageSize}
+		]]>
+	</select>
+	
+	<select id="findPageByMTypeCount" parameterType="kr.co.e1ct.vo.WBoardVo" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT
+				count(*)
+			FROM
+				W_BOARD
+			WHERE
+				m_type = #{MType}
+		]]>
+	</select>
+	
+	<select id="findOne" parameterType="kr.co.e1ct.vo.WBoardVo" resultMap="WBoardMap">
+		<![CDATA[
+			SELECT
+				WB.M_SEQ,
+				WB.M_NAME,
+				WB.M_EMAIL,
+				WB.M_TEL,
+				WB.M_TITLE,
+				WB.M_PWD,
+				TO_DATE( WB.M_WRITEDAY, 'yy-MM-dd hh24:mi:ss' ) M_WRITEDAY,
+				WB.M_READNUM,
+				WB.M_TYPE,
+				WB.M_FILENAME,
+				REPLACE(WB.M_CONTENT, CHR(10), '<BR>') M_CONTENT,
+				WB.M_FILESIZE,
+				WB.M_IP,
+				WB.M_SECRET,
+				WB.M_POP,
+				WB.M_PFROM,
+				WB.M_PTO,
+				REPLACE(WB.M_CONTENT2, CHR(10), '<BR>') M_CONTENT2,
+				WB.M_LOCAL,
+				WUF.UF_FILE_NAME,
+				WUF.UF_FILE_SIZE,
+				WUF.UF_IDX,
+				WUF.UF_SAVE_FILE_NAME,
+				WB.M_PWIDTH,
+				WB.M_PHEIGHT
+			FROM
+				W_BOARD WB LEFT OUTER JOIN W_UPLOAD_FILE WUF ON WB.M_FILENAME = WUF.UF_IDX
+			WHERE 
+				WB.m_seq = #{MSeq}
+		]]>
+	</select>
+	
+	<update id="readCountAdd" parameterType="kr.co.e1ct.vo.WBoardVo">
+		<![CDATA[
+			UPDATE
+				W_BOARD
+			SET
+				M_READNUM = M_READNUM + 1
+			WHERE
+				M_SEQ = #{MSeq}
+		]]>
+	</update>
+	
+	<insert id="insert" parameterType="kr.co.e1ct.vo.WBoardVo" useGeneratedKeys="true" keyProperty="mSeq">
+		<selectKey keyProperty="MSeq" order="BEFORE" resultType="long">
+			<![CDATA[
+				SELECT SEQ.NEXTVAL FROM DUAL
+			]]>
+		</selectKey>
+		<![CDATA[
+			INSERT
+				INTO
+					W_BOARD (
+						m_seq,
+						m_name,
+						m_email,
+						m_title,
+						m_writeday,
+						m_readnum,
+						m_type,
+						m_filename,
+						m_filesize,
+						m_content,
+						m_tel,
+						m_ip
+		]]>
+		<if test='mPop != null and mPop != ""'>
+			<![CDATA[
+						,m_pop,
+						m_pfrom,
+						m_pto,
+						m_pwidth,
+						m_pheight
+			]]>
+		</if>
+		<![CDATA[
+						
+					) VALUES (
+						#{MSeq},
+						#{mName},
+						#{mEmail},
+						#{mTitle},
+		]]>
+		<if test='MType == "NT"'>
+			<![CDATA[
+						TO_CHAR(SYSDATE, 'YY/MM/DD'),
+			]]>
+		</if>
+		<if test='MType != "NT"'>
+			<![CDATA[
+						SYSDATE,
+			]]>
+		</if>
+		<![CDATA[
+						0,
+						#{MType},
+						#{mFilename},
+						#{mFilesize},
+						#{mContent},
+						#{mTel},
+						#{mIp}
+		]]>
+		<if test='mPop != null and mPop != ""'>
+			<![CDATA[,
+						#{mPop},
+						#{mPfrom},
+						#{mPto},
+						#{mPwidth},
+						#{mPheight}
+			]]>
+		</if>
+		<![CDATA[
+					)
+		]]>
+	</insert>
+	
+	<update id="update" parameterType="kr.co.e1ct.vo.WBoardVo">
+		<![CDATA[
+			UPDATE
+				W_BOARD
+			SET
+				M_NAME = #{mName},
+				M_EMAIL = #{mEmail},
+				M_TEL = #{mTel},
+				M_TITLE = #{mTitle},
+				M_PWD = #{mPwd},
+				M_WRITEDAY = #{mWriteday},
+				M_READNUM = #{mReadnum},
+				M_TYPE = #{MType},
+				M_FILENAME = #{mFilename},
+				M_CONTENT = #{mContent},
+				M_FILESIZE = #{mFilesize},
+				M_IP = #{mIp},
+				M_PWIDTH = #{mPwidth},
+				M_PHEIGHT = #{mPheight},
+		]]>
+		<if test='mSecret != null and mSecret != ""'>
+			<![CDATA[
+				M_SECRET = #{mSecret},
+			]]>
+		</if>
+		<if test='mPop != null and mPop != ""'>
+			<![CDATA[
+					M_POP = #{mPop},
+					M_PFROM = #{mPfrom},
+					M_PTO = #{mPto}, 
+			]]>
+		</if>
+		<if test='mContent2 != null and mContent2 != ""'>
+			<![CDATA[
+				M_CONTENT2 = #{mContent2},
+			]]>
+		</if>
+		<![CDATA[
+				M_LOCAL = #{mLocal}
+			WHERE
+				M_SEQ = #{MSeq}
+		]]>
+	</update>
+	
+	<delete id="delete" parameterType="kr.co.e1ct.vo.WBoardVo">
+		<![CDATA[
+			DELETE FROM W_BOARD WHERE M_SEQ = #{MSeq}
+		]]>
+	</delete>
+	
+	<select id="findByMType" parameterType="kr.co.e1ct.vo.WBoardVo" resultType="kr.co.e1ct.vo.WBoardVo">
+		<![CDATA[
+			SELECT * FROM W_BOARD WHERE M_TYPE = #{MType}
+		]]>
+	</select>
+</mapper>

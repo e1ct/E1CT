@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html 
+	xmlns:th="http://www.w3.org/1999/xhtml"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+	layout:decorator="layout/adminLayout">
+	<body>
+		<section layout:fragment="content" id="main-content">
+			<section class="wrapper">
+				<div class="row mt">
+					<div class="col-lg-12">
+						<div class="form-panel">
+							<h4><i class="fa fa-angle-right"></i> 회원관리 <a th:href="@{'/admin/member/enrol'}"><button class="btn btn-theme pull-right">추가</button></a> </h4>
+							<table class="table table-bordered table-striped table-condensed">
+								<thead>
+									<tr>
+										<th>번호</th>
+										<th>아이디</th>
+										<th>비밀번호</th>
+										<th>기관명</th>
+										<th>그룹</th>
+										<th>비고</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="list, i:${list}">
+										<td th:text="${i.index}+1"></td>
+										<td th:text="${list.empNo}"></td>
+										<td th:text="${list.empPwd}"></td>
+										<td th:text="${list.empComp}"></td>
+										<td th:if="${list.jo} == 'S'" th:text="'관리자'"></td>
+										<td th:if="${list.jo} == 'O'" th:text="'선사'"></td>
+										<td th:if="${list.jo} == 'T'" th:text="'운송사'"></td>
+										<td th:if="${list.jo} == 'M'" th:text="'검수업체'"></td>
+										<td th:if="${list.jo} == 'P'" th:text="'수리업체'"></td>
+										<td th:if="${list.jo} == 'C'" th:text="'관세사'"></td>
+										<td th:if="${list.jo} == 'I'" th:text="'검역대행'"></td>
+										<td th:if="${list.jo} == 'G'" th:text="'E1CT일반'"></td>
+										<td th:if="${list.jo} == 'E'" th:text="'E1CT장비'"></td>
+										<td th:if="${list.jo} != 'S' and ${list.jo} != 'O' and ${list.jo} != 'T' and ${list.jo} != 'M' and ${list.jo} != 'P' and ${list.jo} != 'C' and ${list.jo} != 'I' and ${list.jo} != 'G' and ${list.jo} != 'E'"
+											th:text="'기타'"></td>
+										<td>
+											<a th:href="@{'/admin/member/oper/' + ${list.empNo}}">[선사등록]</a>
+											<a th:onclick="javascript:deleteMember([[${list.empNo}]])">[삭제]</a>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							
+							<script type="text/javascript">
+								function deleteMember( empNo ) {
+									if( confirm( "삭제하시겠습니까?" ) ) {
+										$.ajax({
+											type:'POST',
+											url: '/admin/member/delete',
+											data: {
+												'[[${_csrf.parameterName}]]': '[[${_csrf.token}]]',
+												'empNo': empNo
+											},
+											success: function( d ) {
+												alert(d.msg);
+												if( d.code == 200 ) {
+													location.reload();
+												}
+											}
+										});
+									}
+								}
+							</script>
+						</div>
+					</div>
+				</div>
+			</section>
+		</section>
+	</body>
+</html>
