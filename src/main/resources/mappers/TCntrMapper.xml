@@ -3493,7 +3493,7 @@
 		FROM
 			E1CT.T_CNTR A
 		WHERE
-			A.CNTR_NO = 'DYLU5122076'
+			A.CNTR_NO = #{cntrNo}
 		  AND A.DUP_NO = (
 			SELECT
 				MAX(DUP_NO)

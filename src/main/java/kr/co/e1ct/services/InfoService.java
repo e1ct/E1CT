@@ -5864,9 +5864,16 @@ public class InfoService {
 		List<ExportableInformationDTO> dtoList = new ArrayList<>();
 		for(String cntrNo : cntrNoList){
 			ExportableInformationDTO dto = tCntrRepository.getExportableInformation(cntrNo);
-			dto.setTrmnlCode("IT002");
-			dto.setRspnsScs("Y");
-			dto.setRspnsMsg(" ");
+			if(dto == null){
+				dto = new ExportableInformationDTO();
+				dto.setRspnsMsg(cntrNo + " not found");
+				dto.setRspnsScs("N");
+			}
+			else {
+				dto.setTrmnlCode("IT002");
+				dto.setRspnsScs("Y");
+				dto.setRspnsMsg(" ");
+			}
 			dtoList.add(dto);
 		}
 		if(dtoList.size() == 0){
