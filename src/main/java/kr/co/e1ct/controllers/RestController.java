@@ -28,11 +28,11 @@ public class RestController {
         IntegratedInformationResponse response = infoService.getIntegratedInformation(cntnrCode);
         if(response == null){
             response = new IntegratedInformationResponse();
-            response.setScs("n");
-            response.setMsg("NO_DATA");
+            response.setScs("N");
+            response.setMsg("컨테이너정보없음");
         }
         else{
-            response.setScs("y");
+            response.setScs("Y");
             response.setMsg(" ");
             response.setTrmnlCode("IT002");
             response.setXRay(" ");

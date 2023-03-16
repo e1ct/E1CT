@@ -5866,7 +5866,7 @@ public class InfoService {
 			ExportableInformationDTO dto = tCntrRepository.getExportableInformation(cntrNo);
 			if(dto == null){
 				dto = new ExportableInformationDTO();
-				dto.setRspnsMsg(cntrNo + " not found");
+				dto.setRspnsMsg("컨테이너정보없음");
 				dto.setRspnsScs("N");
 			}
 			else {
@@ -5877,11 +5877,11 @@ public class InfoService {
 			dtoList.add(dto);
 		}
 		if(dtoList.size() == 0){
-			response.setScs("n");
-			response.setMsg("NO_DATA");
+			response.setScs("N");
+			response.setMsg("컨테이너정보없음");
 			return response;
 		}
-		response.setScs("y");
+		response.setScs("Y");
 		response.setMsg("");
 		response.setCntrList(dtoList);
 		return response;
