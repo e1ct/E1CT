@@ -33,8 +33,12 @@ public class RestController {
         }
         else{
             response.setScs("y");
-            response.setMsg("");
+            response.setMsg(" ");
             response.setTrmnlCode("IT002");
+            response.setXRay(" ");
+            response.setRdoChck(" ");
+            response.setTkoutImprtyGroup(" ");
+            response.setTkoutImprtyCode(" ");
         }
         return ResponseEntity.ok(response);
     }

@@ -3328,151 +3328,180 @@
 
 	<select id="getIntegratedInformation" parameterType="String" resultType="kr.co.e1ct.response.IntegratedInformationResponse">
 		<![CDATA[
-        SELECT
-            NVL(A.CNTR_NO, '') cntnrCode,
-            NVL(A.SHIP_CD, '') || '-' || TRIM(TO_CHAR(NVL(A.CALL_NO, ''), '009')) || '-' || TRIM(TO_CHAR(NVL(A.CALL_YY, ''), '0009')) mtshVygNo,
-            NVL(A.SHIP_CD, '') shcmCode,
-            NVL(B.SHIP_NM, '') shcmName,
-            DECODE(
-                    SUBSTR(A.CUR_STAT, 1, 1),
-                    'I',
-                    '수입컨테이너',
-                    'X',
-                    '수출컨테이너',
-                    'S',
-                    '쉬프팅컨테이너',
-                    'M',
-                    '재유통컨테이너',
-                    '기타컨테이너'
-                ) xpimpDvsnName,
-            DECODE(
-                    SUBSTR(A.CUR_STAT, 2, 1),
-                    'B',
-                    DECODE(
-                            SUBSTR(A.CUR_STAT, 1, 1),
-                            'I',
-                            '수입미반입',
-                            'X',
-                            '수출미반입',
-                            'S',
-                            '쉬프팅예정'
-                        ),
-                    'G',
-                    '트럭상차상태',
-                    'Z',
-                    '컨테이너이적중',
-                    'O',
-                    'YT상차상태',
-                    'P',
-                    '반출상차요청',
-                    'Y',
-                    'YARD장치상태',
-                    'D',
-                    DECODE(
-                                SUBSTR(A.CUR_STAT, 1, 1) || A.TRN_OUT,
-                                'ID',
-                                'GATE 반출완료',
-                                'XD',
-                                'GATE 반출완료',
-                                'XS',
-                                '선적완료',
-                                'SS',
-                                '쉬프팅완료',
-                                'MD',
-                                'GATE 반출완료',
-                                '기타'
-                        )
-                ) cntnrLctn,
-            DECODE(A.FM_CD, 'F', 'Full컨테이너', 'M', 'Empty컨테이너') fcntnrEcntnrCode,
-            A.SZ_CD || '/' || A.TY_CD sizeType,
-            NVL(
-                    (
-                        SELECT
-                            CAR_NM
-                        FROM
-                            T_CAR
-                        WHERE
-                            TRUCKER_CD = NVL(A.TRUCKER_CD_OUT, A.TRUCKER_CD)
-                          AND CAR_NO = NVL(A.CAR_NO_OUT, A.CAR_NO)
-                    ),
-                    ' '
-                ) vhclNo,
-            A.WEIGHT * 1000 cntnrWght,
-            nvl(A.IMDG, ' ') imdgNo,
-            nvl(A.UNNO, ' ') UNNO,
-            DECODE (NVL(A.TEMP, 'N'), 'N', ' ', A.TEMP || A.TEMP_ID) rfrgrTmprt,
-            A.Y_TBLOCK || '-' || TRIM(TO_CHAR(NVL(A.Y_TBAY, ''), '09')) || '-' || TRIM(TO_CHAR(NVL(A.Y_TROW, ''), '09')) || '-' || TRIM(TO_CHAR(NVL(A.Y_TTIER, ''), '9')) yrdLctn,
-            nvl(A.POD, ' ') loadPrtCode,
-            nvl(A.POL, ' ') unldPrtCode,
-            DECODE(
-                    NVL(A.GIN_DT, '2999-12-31'),
-                    TO_DATE('2999-12-31', 'YYYY-MM-DD'),
-                    DECODE(
-                            NVL(A.GC_DDT, '2999-12-31'),
-                            TO_DATE('2999-12-31', 'YYYY-MM-DD'),
-                            ' ',
-                            '(' || TO_CHAR(A.GC_DDT, 'YYYY-MM-DD HH24:MI') || ')'
-                        ),
-                    TO_CHAR(A.GIN_DT, 'YYYY-MM-DD HH24:MI')
-                ) tkinDt,
-            DECODE(
-                    NVL(A.GOUT_DT, '2999-12-31'),
-                    TO_DATE('2999-12-31', 'YYYY-MM-DD'),
-                    DECODE(
-                            NVL(A.GC_LDT, '2999-12-31'),
-                            TO_DATE('2999-12-31', 'YYYY-MM-DD'),
-                            ' ',
-                            '(' || TO_CHAR(A.GC_LDT, 'YYYY-MM-DD HH24:MI') || ')'
-                        ),
-                    TO_CHAR(A.GOUT_DT, 'YYYY-MM-DD HH24:MI')
-                ) tkoutDt,
-            DECODE(NVL(A.HOLD_CD, 'N'), 'N', ' ', 'Y') tkoutImprtyYn,
-            nvl(
-                    SP_CNTR_HOLD_DESCRIPTION(A.CNTR_NO, A.DUP_NO),
-                    ' '
-                ) tkoutImprtyRsn,
-            DECODE(NVL(A.DMG_CD, 'N'), 'N', ' ', 'Y') dmg,
-            (
-                    TO_DATE(
-                            NVL(A.GOUT_DT, NVL(GC_LDT, SYSDATE)),
-                            'YYYY-MM-DD'
-                        ) - TO_DATE(NVL(GIN_DT, GC_DDT), 'YYYY-MM-DD')
-                ) + 1 stckDays,
-            DECODE(NVL(A.RTN_CD, 'N'), 'N', ' ', A.RTN_CD) cnCl
-        FROM
-            E1CT.T_CNTR A,
-            E1CT.T_VESSEL B,
-            E1CT.T_OPER C
-        WHERE
-            A.SHIP_CD = B.SHIP_CD
-          AND A.OPER_CD = C.OPER_CD
-          AND A.CNTR_NO = #{cntrNo}
-          AND A.DUP_NO = (
-            SELECT
-                MAX(DUP_NO)
-            FROM
-                T_CNTR
-            WHERE
-                CNTR_NO = A.CNTR_NO
-        )
+		SELECT
+			NVL(A.CNTR_NO, '') cntnrCode,
+			NVL(A.SHIP_CD, '') || '-' || TRIM(TO_CHAR(NVL(A.CALL_NO, ''), '009')) || '-' || TRIM(TO_CHAR(NVL(A.CALL_YY, ''), '0009')) mtshVygNo,
+			NVL(A.OPER_CD, '') shcmCode,
+			NVL(C.OPER_ENM, '') shcmName,
+			DECODE(
+					SUBSTR(A.CUR_STAT, 1, 1),
+					'I',
+					'수입컨테이너',
+					'X',
+					'수출컨테이너',
+					'S',
+					'쉬프팅컨테이너',
+					'M',
+					'재유통컨테이너',
+					'기타컨테이너'
+				) xpimpDvsnName,
+			DECODE(
+					SUBSTR(A.CUR_STAT, 2, 1),
+					'B',
+					DECODE(
+							SUBSTR(A.CUR_STAT, 1, 1),
+							'I',
+							'수입미반입',
+							'X',
+							'수출미반입',
+							'S',
+							'쉬프팅예정'
+						),
+					'G',
+					'트럭상차상태',
+					'Z',
+					'컨테이너이적중',
+					'O',
+					'YT상차상태',
+					'P',
+					'반출상차요청',
+					'Y',
+					'YARD장치상태',
+					'D',
+					DECODE(
+								SUBSTR(A.CUR_STAT, 1, 1) || A.TRN_OUT,
+								'ID',
+								'GATE 반출완료',
+								'XD',
+								'GATE 반출완료',
+								'XS',
+								'선적완료',
+								'SS',
+								'쉬프팅완료',
+								'MD',
+								'GATE 반출완료',
+								'기타'
+						)
+				) cntnrLctn,
+			DECODE(A.FM_CD, 'F', 'Full', 'M', 'Empty') fcntnrEcntnrCode,
+			A.SZ_CD || '/' || A.TY_CD sizeType,
+			NVL(
+					(
+						SELECT
+							CAR_NM
+						FROM
+							T_CAR
+						WHERE
+							TRUCKER_CD = NVL(A.TRUCKER_CD_OUT, A.TRUCKER_CD)
+						  AND CAR_NO = NVL(A.CAR_NO_OUT, A.CAR_NO)
+					),
+					' '
+				) vhclNo,
+			A.WEIGHT * 1000 cntnrWght,
+			nvl(A.IMDG, ' ') imdgNo,
+			nvl(A.UNNO, ' ') UNNO,
+			DECODE (
+					NVL(A.TEMP, 'N'),
+					'N',
+					' ',
+					A.TEMP || SUBSTR(A.TEMP_ID, 1, 1)
+				) rfrgrTmprt,
+			A.Y_TBLOCK || '-' || TRIM(TO_CHAR(NVL(A.Y_TBAY, ''), '09')) || '-' || TRIM(TO_CHAR(NVL(A.Y_TROW, ''), '09')) || '-' || TRIM(TO_CHAR(NVL(A.Y_TTIER, ''), '9')) yrdLctn,
+			nvl(A.POD, ' ') loadPrtCode,
+			nvl(A.POL, ' ') unldPrtCode,
+			DECODE(
+					NVL(A.GIN_DT, '2999-12-31'),
+					TO_DATE('2999-12-31', 'YYYY-MM-DD'),
+					DECODE(
+							NVL(A.GC_DDT, '2999-12-31'),
+							TO_DATE('2999-12-31', 'YYYY-MM-DD'),
+							' ',
+							'(' || TO_CHAR(A.GC_DDT, 'YYYY-MM-DD HH24:MI') || ')'
+						),
+					TO_CHAR(A.GIN_DT, 'YYYY-MM-DD HH24:MI')
+				) tkinDt,
+			DECODE(
+					NVL(A.GOUT_DT, '2999-12-31'),
+					TO_DATE('2999-12-31', 'YYYY-MM-DD'),
+					DECODE(
+							NVL(A.GC_LDT, '2999-12-31'),
+							TO_DATE('2999-12-31', 'YYYY-MM-DD'),
+							' ',
+							'(' || TO_CHAR(A.GC_LDT, 'YYYY-MM-DD HH24:MI') || ')'
+						),
+					TO_CHAR(A.GOUT_DT, 'YYYY-MM-DD HH24:MI')
+				) tkoutDt,
+			DECODE(NVL(A.HOLD_CD, 'N'), 'N', ' ', 'Y') tkoutImprtyYn,
+			nvl(
+					SP_CNTR_HOLD_DESCRIPTION(A.CNTR_NO, A.DUP_NO),
+					' '
+				) tkoutImprtyRsn,
+			DECODE(NVL(A.DMG_CD, 'N'), 'N', ' ', 'Y') dmg,
+			(
+					TO_DATE(NVL(A.GOUT_DT, NVL(GC_LDT, SYSDATE)), 'YYYY-MM-DD') - TO_DATE(NVL(GIN_DT, GC_DDT), 'YYYY-MM-DD')
+				) + 1 stckDays,
+			DECODE(NVL(A.RTN_CD, 'N'), 'N', ' ', A.RTN_CD) cnCl
+		FROM
+			E1CT.T_CNTR A,
+			E1CT.T_VESSEL B,
+			E1CT.T_OPER C
+		WHERE
+			A.SHIP_CD = B.SHIP_CD
+		  AND A.OPER_CD = C.OPER_CD
+		  AND A.CNTR_NO = #{cntrNo}
+		  AND A.DUP_NO = (
+			SELECT
+				MAX(DUP_NO)
+			FROM
+				T_CNTR
+			WHERE
+				CNTR_NO = A.CNTR_NO
+		)
 		]]>
     </select>
 
 	<select id="getExportableInformation" parameterType="String" resultType="kr.co.e1ct.response.ExportableInformationDTO">
 		<![CDATA[
 		SELECT
-			NVL(A.CNTR_NO,'') cntnrCode,
-			NVL(A.SHIP_CD,'') mtshCode,
-			TRIM(TO_CHAR(NVL(A.CALL_NO,''),'009')) mtshVygNo,
-			TRIM(TO_CHAR(NVL(A.CALL_YY,''),'0009')) mtshYr,
-			DECODE(NVL(A.HOLD_CD,'N'),'N',' ','Y' )  trmnlTkoutImprtyYn ,
-			nvl(SP_CNTR_HOLD_DESCRIPTION(A.CNTR_NO , A.DUP_NO ),' ') trmnlTkoutImprtyRsn ,
-			DECODE(FN_GET_CUSTOMS_APPROVE_STATE(A.CNTR_NO,A.DUP_NO),'미대상',' ','승인',' ','Y') cstmsTkoutImprtyYn,
-			DECODE(FN_GET_CUSTOMS_APPROVE_STATE(A.CNTR_NO,A.DUP_NO),'미대상',' ','승인',' ',FN_GET_CUSTOMS_APPROVE_STATE(A.CNTR_NO,A.DUP_NO) ) cstmsTkoutImprtyRsn,
-			TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS') regDt
-		FROM E1CT.T_CNTR A
-		WHERE A.CNTR_NO = #{cntrNo}
-		  AND A.DUP_NO = ( SELECT MAX(DUP_NO) FROM T_CNTR WHERE CNTR_NO = A.CNTR_NO )
+			NVL(A.CNTR_NO, '') cntnrCode,
+			NVL(A.SHIP_CD, '') mtshCode,
+			TRIM(TO_CHAR(NVL(A.CALL_NO, ''), '009')) mtshVygNo,
+			TRIM(TO_CHAR(NVL(A.CALL_YY, ''), '0009')) mtshYr,
+			TRIM(TO_CHAR(NVL(A.DUP_NO, ''), '9999')) cntnrIdntfNo,
+			DECODE(NVL(A.HOLD_CD, 'N'), 'N', 'N', 'Y') trmnlTkoutImprtyYn,
+			nvl(
+					SP_CNTR_HOLD_DESCRIPTION(A.CNTR_NO, A.DUP_NO),
+					' '
+				) trmnlTkoutImprtyRsn,
+			DECODE(
+					FN_GET_CUSTOMS_APPROVE_STATE(A.CNTR_NO, A.DUP_NO),
+					'미대상',
+					'N',
+					'승인',
+					'N',
+					'Y'
+				) cstmsTkoutImprtyYn,
+			DECODE(
+					FN_GET_CUSTOMS_APPROVE_STATE(A.CNTR_NO, A.DUP_NO),
+					'미대상',
+					' ',
+					'승인',
+					' ',
+					FN_GET_CUSTOMS_APPROVE_STATE(A.CNTR_NO, A.DUP_NO)
+				) cstmsTkoutImprtyRsn,
+			TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS') regDt
+		FROM
+			E1CT.T_CNTR A
+		WHERE
+			A.CNTR_NO = 'DYLU5122076'
+		  AND A.DUP_NO = (
+			SELECT
+				MAX(DUP_NO)
+			FROM
+				T_CNTR
+			WHERE
+				CNTR_NO = A.CNTR_NO
+		)
 		]]>
 	</select>
 </mapper>
