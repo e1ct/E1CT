@@ -29,6 +29,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
+		http.csrf().disable();
+		http.cors().disable();
+
 		http.authorizeRequests()
 				/*
 				.antMatchers( "/static/**" ).permitAll()
@@ -167,7 +170,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.exceptionHandling()
 				.accessDeniedPage( "/member/accessDenied" );
 		
-		http.csrf().and().cors().disable();
+//		http.csrf().and().cors().disable();
 	}
 	
 	@Override

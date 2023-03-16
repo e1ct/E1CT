@@ -13,7 +13,7 @@
 				AND stcking = 'Y'
 		]]>
 	</select>
-	
+
 	<select id="findByStckingAndYTblockANdYTbay" parameterType="kr.co.e1ct.vo.TCntrVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -30,7 +30,7 @@
 				AND y_tbay = #{yTbay}
 		]]>
 	</select>
-	
+
 	<select id="findByCurStatAndFmCdAndDoNo" parameterType="kr.co.e1ct.vo.TDodtlVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -56,7 +56,7 @@
 				a.y_ttier DESC
 		]]>
 	</select>
-	
+
 	<select id="cntrListGateInOut" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			select 
@@ -167,19 +167,19 @@
 				]]>
 			</if>
 	</select>
-	
+
 	<select id="findFnGetBknoByCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.TCntrVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
-			SELECT 
-				Nvl(FN_GET_BKNO( #{cntrNo},dup_no),' ') bk_no 
-			FROM 
-				t_cntr 
-			WHERE 
+			SELECT
+				Nvl(FN_GET_BKNO( #{cntrNo},dup_no),' ') bk_no
+			FROM
+				t_cntr
+			WHERE
 				cntr_no = #{cntrNo}
-				AND dup_no = #{dupNo} 
+				AND dup_no = #{dupNo}
 		]]>
 	</select>
-	
+
 	<select id="terminalByOperYardList" parameterType="kr.co.e1ct.vo.TCntrVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -207,7 +207,7 @@
 			ORDER BY y_tblock
 		]]>
 	</select>
-	
+
 	<select id="cntrListNotGateOut" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -271,7 +271,7 @@
 			]]>
 		</if>
 	</select>
-	
+
 	<select id="cntrListNotGateIn" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -395,7 +395,7 @@
 			]]>
 		</if>
 	</select>
-	
+
 	<select id="findYTblockAndYTbayByCntrNoAndStcking" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -408,13 +408,13 @@
 				AND stcking = 'Y'
 		]]>
 	</select>
-	
+
 	<select id="terminalYardStackData" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
-			SELECT cntr_no, cur_stat, sz_cd, y_trow, y_ttier from t_cntr WHERE stcking = 'Y' AND y_tblock = #{block} AND y_tbay = #{bay} 
+			SELECT cntr_no, cur_stat, sz_cd, y_trow, y_ttier from t_cntr WHERE stcking = 'Y' AND y_tblock = #{block} AND y_tbay = #{bay}
 		]]>
 	</select>
-	
+
 	<select id="cntrInfoDetailsDataList" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -528,7 +528,7 @@
 				a.dup_no ASC
 		]]>
 	</select>
-	
+
 	<select id="cntrInfoDetailsDataLatest" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -651,11 +651,11 @@
 						a.clean_cd ) T ) TT
 			WHERE
 				TT.num <= 1
-				
+
 		]]>
 	</select>
-	
-	
+
+
 	<select id="cntrInfoDetailsStockDays" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -673,7 +673,7 @@
 				AND a.dup_no = #{dupNo}
 		]]>
 	</select>
-	
+
 	<select id="cntrListCntrRehandlingList" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -733,7 +733,7 @@
 			ORDER BY SUBSTR(sz_cd,1,1), SUBSTR(cur_stat,1,1), fm_cd, cntr_no 
 		]]>
 	</select>
-	
+
 	<select id="cntrListReeferCargo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -823,7 +823,7 @@
 			]]>
 		</if>
 	</select>
-	
+
 	<select id="cntrListCntrDanger" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -910,7 +910,7 @@
 			ORDER BY c.ship_cd, c.call_no, c.call_yy, c.cntr_no
 		]]>
 	</select>
-	
+
 	<select id="cntrListCntrCancel" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -969,7 +969,7 @@
 			ORDER BY ship_cd, call_no, call_yy, cntr_no 
 		]]>
 	</select>
-	
+
 	<select id="cntrListLongStackRenewal" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -1066,7 +1066,7 @@
 			]]>
 		</if>
 	</select>
-	
+
 	<select id="cntrListLongStack" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -1173,7 +1173,7 @@
 			ORDER BY from_dt ASC
 		]]>
 	</select>
-	
+
 	<select id="cllOverStorage" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -1208,7 +1208,7 @@
 			]]>
 		</if>
 	</select>
-	
+
 	<select id="byVslDisLod" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -1292,7 +1292,7 @@
 			ORDER BY oper_cd, cntr_no
 		]]>
 	</select>
-	
+
 	<select id="cntrInfoStock" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -1330,10 +1330,10 @@
 			GROUP BY ship_cd, call_no, call_yy
 		]]>
 	</select>
-	
+
 	<select id="cntrInfoFreeTimeFindByCntrNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
-			SELECT 
+			SELECT
 				ship_cd,
 				to_char( call_no, '000' ) call_no,
 				call_yy
@@ -1341,10 +1341,10 @@
 				t_cntr
 			WHERE
 				cntr_no = #{cntrNo}
-				AND dup_no = ( SELECT max(dup_no) FROM t_cntr WHERE cntr_no = #{cntrNo} ) 
+				AND dup_no = ( SELECT max(dup_no) FROM t_cntr WHERE cntr_no = #{cntrNo} )
 		]]>
 	</select>
-	
+
 	<select id="findCntrInfoByShipCdAndCallNoAndCallYy" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -1357,7 +1357,7 @@
 				AND call_yy = #{callYy}
 		]]>
 	</select>
-	
+
 	<select id="findCountFromOnDockBookingList" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -1431,7 +1431,7 @@
 				a.cntr_no
 		]]>
 	</select>
-	
+
 	<select id="findCount1FromOnDockBookingList" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -1505,7 +1505,7 @@
 				a.cntr_no
 		]]>
 	</select>
-	
+
 	<select id="onDockStock" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -1688,7 +1688,7 @@
 				AND SUBSTR( a.sz_cd, 1, 1 ) IN ( '9', 'L' )
 					]]>
 				</if>
-				
+
 				<if test="tyCd == 'HG'">
 					<![CDATA[
 				AND a.ty_grp_cd = 'HG'
@@ -1762,7 +1762,7 @@
 				A.y_ttier DESC
 		]]>
 	</select>
-	
+
 	<select id="onDockFreeVanPool" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -1886,7 +1886,7 @@
 				DECODE(dmg_cd, 'Y', 'Y', 'N')
 		]]>
 	</select>
-	
+
 	<select id="onDockDamage" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -1947,7 +1947,7 @@
 				cntr_no
 		]]>
 	</select>
-	
+
 	<select id="onDockOverStock" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -2026,7 +2026,7 @@
 				AND SUBSTR( A.sz_cd, 1, 1 ) IN ( '9', 'L' )
 					]]>
 				</if>
-				
+
 				<if test='tyCd == "HG"'>
 					<![CDATA[
 				AND A.TY_GRP_CD = 'HG'
@@ -2142,43 +2142,43 @@
 			ORDER BY OverDays DESC
 		]]>
 	</select>
-	
+
 	<select id="ediByVslCllDetail" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
-			select 
-				NVL(dir_id, '') dir_id, 
-				NVL(cur_stat, '') cur_stat, 
-				NVL(to_char(gin_dt,'yyyy-mm-dd hh24:mi'), '') gin_dt 
-			from 
+			select
+				NVL(dir_id, '') dir_id,
+				NVL(cur_stat, '') cur_stat,
+				NVL(to_char(gin_dt,'yyyy-mm-dd hh24:mi'), '') gin_dt
+			from
 				t_cntr
-			WHERE 
-				cur_stat like 'X_' 
+			WHERE
+				cur_stat like 'X_'
 				and cntr_no = #{cntrNo}
-				AND ship_cd = #{shipCd} 
-				AND call_no = #{callNo} 
+				AND ship_cd = #{shipCd}
+				AND call_no = #{callNo}
 				AND call_yy = #{callYy}
-				AND oper_cd = #{operCd} 
-				AND fm_cd = #{fmCd} 
-				AND sz_cd like #{size} || '_' 
-				AND pod = #{pod} 
+				AND oper_cd = #{operCd}
+				AND fm_cd = #{fmCd}
+				AND sz_cd like #{size} || '_'
+				AND pod = #{pod}
 		]]>
 	</select>
-	
+
 	<update id="updatePickCdByCntrNoAndDupNoAndOperCdAndCurStat" parameterType="kr.co.e1ct.vo.TBklstVo">
 		<![CDATA[
 			UPDATE
 				t_cntr
-			SET 
+			SET
 				pick_cd = ''
 			WHERE
 				cntr_no = #{cntrNo}
 				AND dup_no = #{dupNo}
 				AND oper_cd = #{operCd}
 				AND ( cur_stat in ( 'MY', 'ML', 'MW', 'IY', 'IL', 'IW' ) OR ( cur_stat IN ( 'XY', 'XL', 'XW' ) AND rtn_cd = 'C' ) )
-				AND pick_cd IS NOT NULL  
+				AND pick_cd IS NOT NULL
 		]]>
 	</update>
-	
+
 	<select id="intraDamageCom" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -2228,7 +2228,7 @@
 				a.y_ttier DESC
 		]]>
 	</select>
-	
+
 	<select id="intraIntrDamage" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -2260,7 +2260,7 @@
 				a.y_ttier DESC
 		]]>
 	</select>
-	
+
 	<select id="intraDamageReqCurStat" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -2304,7 +2304,7 @@
 				AND a.dmg_cd IS NOT NULL
 				AND b.request_dt BETWEEN TO_DATE( #{searchStartDt} || '000000', 'yyyymmddhh24miss') AND TO_DATE( #{searchEndDt} || '235959', 'yyyymmddhh24miss')
 				AND b.accept_dt IS NULL
-			]]>		
+			]]>
 		</if>
 		<if test='curStat != "R"'>
 			<![CDATA[
@@ -2383,7 +2383,7 @@
 			ORDER BY a.y_tblock, a.y_tbay, a.y_trow, a.y_ttier DESC
 		]]>
 	</select>
-	
+
 	<select id="findOneByCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -2401,19 +2401,19 @@
 				AND dup_no = substr( #{cntrNo}, 12, 12 )
 		]]>
 	</select>
-	
+
 	<select id="findCurStatAndDirIdByShipCdAndCallYyAndCallNoAndCntrNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT NVL(cur_stat, '') cur_stat, NVL(dir_id, '') dir_id FROM t_cntr WHERE ship_cd = #{shipCd} and call_no = #{callNo} and call_yy = #{callYy} and cntr_no = #{cntrNo} and cur_stat NOT LIKE '%D'
 		]]>
 	</select>
-	
+
 	<select id="findMaxDupNoAndCurStatByCntrNoGroupByDupNoAndCurStatOrderByDupNoDesc" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT MAX(dup_no) dup_no, NVL( cur_stat, '' ) cur_stat FROM t_cntr where cntr_no = #{cntrNo} group by dup_no, cur_stat order by dup_no desc
 		]]>
 	</select>
-	
+
 	<select id="findSzCdAndTyCdAndOperCdAndTempAndTempIdAndPtiYnByCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT NVL(sz_cd, '') sz_cd, NVL(ty_cd, '') ty_cd, NVL(oper_cd, '') oper_cd, NVL(temp, '') temp, NVL(temp_id, '') temp_id, NVL(pti_yn, '') pti_yn from t_cntr
@@ -2422,46 +2422,46 @@
 			AND SUBSTR(cur_stat, 2, 1) = 'D'
 		]]>
 	</select>
-	
+
 	<select id="findByCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
-			SELECT NVL(cur_stat, '') cur_stat, NVL(ts_id, '') ts_id, NVL(ship_cd, '') ship_cd, NVL(to_char(call_no), '') call_no, NVL(to_char(call_yy), '') call_yy, 
-		   NVL(Rtn_CD, '') rtn_cd, NVL(Dir_ID, '') dir_id, NVL(to_char(GREQ_DT), '') greq_dt,  NVL(pod, '') pod, NVL(imdg, '') imdg, NVL(oper_cd, '') oper_cd, 
-		   NVL(fm_cd, '') fm_cd, NVL(bond_id, '') bond_id, NVL(sz_cd, '') sz_cd, NVL(ty_cd, '') ty_cd, NVL(hold_cd, '') hold_cd, NVL(pick_cd, '') pick_cd, NVL(temp, '') temp, NVL(temp_id, '') temp_id from t_cntr 
+			SELECT NVL(cur_stat, '') cur_stat, NVL(ts_id, '') ts_id, NVL(ship_cd, '') ship_cd, NVL(to_char(call_no), '') call_no, NVL(to_char(call_yy), '') call_yy,
+		   NVL(Rtn_CD, '') rtn_cd, NVL(Dir_ID, '') dir_id, NVL(to_char(GREQ_DT), '') greq_dt,  NVL(pod, '') pod, NVL(imdg, '') imdg, NVL(oper_cd, '') oper_cd,
+		   NVL(fm_cd, '') fm_cd, NVL(bond_id, '') bond_id, NVL(sz_cd, '') sz_cd, NVL(ty_cd, '') ty_cd, NVL(hold_cd, '') hold_cd, NVL(pick_cd, '') pick_cd, NVL(temp, '') temp, NVL(temp_id, '') temp_id from t_cntr
 		   WHERE cntr_no = #{cntrNo} and dup_no =#{pcDupno}
 		]]>
 	</select>
-	
+
 	<select id="afterCopinoFindCurStatAndFmCdByCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
-			SELECT substr(cur_stat,1,1) cur_stat, fm_cd 
-            FROM T_CNTR 
+			SELECT substr(cur_stat,1,1) cur_stat, fm_cd
+            FROM T_CNTR
             WHERE CNTR_NO = #{cntrNo}
-            AND DUP_NO = ${pcDupno}-1 
+            AND DUP_NO = ${pcDupno}-1
 		]]>
 	</select>
-	
+
 	<select id="findCurStatAndRtnCdAndGoutDtWithTCntrByCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
-			SELECT substr(cur_stat,1,1) cur_stat, NVL(rtn_cd,'') rtn_cd , ROUND(SYSDATE - gout_dt + 0.5) gout_dt, 
-            (SELECT nvl(igin_ilsu, 0) FROM t_oper WHERE oper_cd = t_cntr.oper_cd) ilsu from T_CNTR 
-            WHERE CNTR_NO = #{cntrNo} 
+			SELECT substr(cur_stat,1,1) cur_stat, NVL(rtn_cd,'') rtn_cd , ROUND(SYSDATE - gout_dt + 0.5) gout_dt,
+            (SELECT nvl(igin_ilsu, 0) FROM t_oper WHERE oper_cd = t_cntr.oper_cd) ilsu from T_CNTR
+            WHERE CNTR_NO = #{cntrNo}
             AND DUP_NO = ( ${pcDupno} - 1 )
 		]]>
 	</select>
-	
+
 	<select id="findBondIdFromSlcTCntrVyCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			select nvl(bond_id, '') bond_id from SLC.T_CNTR where cntr_no = #{cntrNo} and dup_no = FN_GET_OTHER_CY_DUPNO(#{cntrNo})
 		]]>
 	</select>
-	
+
 	<select id="findBondIdByCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			select nvl(bond_id, '') bond_id from T_CNTR where cntr_no = #{cntrNo} and dup_no = #{pcDupno}
 		]]>
 	</select>
-	
+
 	<select id="findCntrNoAndDupNoAndFnGetOverpriceExNewByCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="java.util.HashMap">
 		<![CDATA[
 			select CNTR_NO, DUP_NO, FN_GET_OVERPRICE_EX_NEW( CNTR_NO, DUP_NO, REPLACE(#{searchStartDt}, '-', '') ) cash
@@ -2475,16 +2475,16 @@
 			]]>
 		</foreach>
 	</select>
-	
+
 	<select id="findOneCntrNoAndDupNoAndFnGetOverpriceExNewByCntrNoAndDupNo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="java.util.HashMap">
 		<![CDATA[
 			select CNTR_NO, DUP_NO, FN_GET_OVERPRICE_EX_NEW( CNTR_NO, DUP_NO, REPLACE(#{searchStartDt}, '-', '') ) cash
 			FROM T_CNTR A
 			WHERE DUP_NO = (SELECT MAX(DUP_NO) FROM T_CNTR B WHERE B.CNTR_NO = A.CNTR_NO )
-			AND CNTR_NO = #{cntrNo} 
+			AND CNTR_NO = #{cntrNo}
 		]]>
 	</select>
-	
+
 	<update id="updateCopinoYnByCntrNoAndShipCdAndCallYyAndCallNo" parameterType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			UPDATE
@@ -2498,7 +2498,7 @@
 				AND call_no = #{callNo}
 		]]>
 	</update>
-	
+
 	<select id="onDockGatePassList" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -2573,13 +2573,13 @@
 			ORDER BY A.GIN_DT DESC, A.OPER_CD, A.CNTR_NO
 		]]>
 	</select>
-	
+
 	<select id="findDupNoAndCurStatByCntrNo" parameterType="kr.co.e1ct.vo.TCntrVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT MAX(dup_no) dup_no, NVL(cur_stat, '') cur_stat FROM t_cntr WHERE cntr_no = #{cntrNo} AND ROWNUM <= 1 group by DUP_NO,cur_stat ORDER BY DUP_NO DESC
 		]]>
 	</select>
-	
+
 	<select id="findYtblockAndVanAndTeuByYTblock" parameterType="kr.co.e1ct.vo.TCntrVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT 
@@ -2601,7 +2601,7 @@
 			GROUP BY y_tblock 
 		]]>
 	</select>
-	
+
 	<select id="popupCntrDetailTwo" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -2707,7 +2707,7 @@
 				a.dup_no DESC
 		]]>
 	</select>
-	
+
 	<select id="onDockInsertOrderSpareCheckTotalSum" parameterType="kr.co.e1ct.vo.SearchVo" resultType="java.lang.Integer">
 		<![CDATA[
 			SELECT
@@ -2814,7 +2814,7 @@
 			</otherwise>
 		</choose>
 	</select>
-	
+
 	<select id="onDockInsertOrderSpareCheckRequestSumCntr" parameterType="kr.co.e1ct.vo.SearchVo" resultType="java.lang.Integer">
 		<![CDATA[
 			SELECT
@@ -2913,7 +2913,7 @@
 			WHERE A.OPER_CD = B.OPER_CD
 		]]>
 	</select>
-	
+
 	<select id="onDockInsertOrderSpareCheckDeliverySumCntr" parameterType="kr.co.e1ct.vo.SearchVo" resultType="java.lang.Integer">
 		<![CDATA[
 			SELECT
@@ -3015,7 +3015,7 @@
 			WHERE A.OPER_CD = B.OPER_CD AND A.BK_NO = B.BK_NO AND EA_CNT <> AA_CNT
 		]]>
 	</select>
-	
+
 	<select id="onDockInsertOrderSpareCheckAppointSumCntr" parameterType="kr.co.e1ct.vo.SearchVo" resultType="java.lang.Integer">
 		<![CDATA[
 			SELECT
@@ -3108,7 +3108,7 @@
 			</otherwise>
 		</choose>
 	</select>
-	
+
 	<select id="findOneByCntrNoLastest" parameterType="kr.co.e1ct.vo.TCntrVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -3129,22 +3129,22 @@
 				dup_no DESC
 		]]>
 	</select>
-	
+
 	<select id="findOneFromCntrInfoDetails" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
-		
+
 		]]>
 	</select>
-	
+
 	<select id="terminalYardStackDoNoList" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			select a.cntr_no, FN_GET_SZTP(a.SZ_CD, a.TY_CD, 'GP') fnGetSztp, a.y_tblock, a.y_tbay, a.y_trow, a.y_ttier
 			from t_cntr a, t_dodtl b where a.cntr_no = b.cntr_no and
 			a.dup_no = b.dup_no and a.cur_stat = 'IY' and a.fm_cd = 'F' and b.do_no = #{doNo} order by a.y_tblock, a.y_tbay, a.y_trow ASC, a.y_ttier DESC
-			
+
 		]]>
 	</select>
-	
+
 	<select id="onDockDeliveryConfirmList" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -3187,7 +3187,7 @@
 				AND d.fm_cd = 'F'
 		]]>
 	</select>
-	
+
 	<select id="onDockDeliveryConfirmRs1" parameterType="kr.co.e1ct.vo.TCntrVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -3209,7 +3209,7 @@
 				A.DUP_NO DESC
 		]]>
 	</select>
-	
+
 	<select id="onDockDeliveryConfirmRss" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -3252,7 +3252,7 @@
 				AND d.cntr_no = #{cntrNo}
 		]]>
 	</select>
-	
+
 	<select id="findByShipCdAndCallNoAndCallYyAndFmCdAndCurStatAndCntrNoAndOperCd" parameterType="kr.co.e1ct.vo.TCntrVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -3292,13 +3292,13 @@
 				AND d.oper_cd IN ( #{operCd} )
 		]]>
 	</select>
-	
+
 	<update id="updateCopinoYnByCntrNoAndDupNoAndOperCd" parameterType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			UPDATE T_CNTR SET COPINO_YN = '' WHERE CNTR_NO = #{cntrNo} AND DUP_NO = #{dupNo} AND OPER_CD IN ( #{operCd} )
 		]]>
 	</update>
-	
+
 	<select id="terminalEmptyContainer" parameterType="kr.co.e1ct.vo.SearchVo" resultType="kr.co.e1ct.vo.TCntrVo">
 		<![CDATA[
 			SELECT
@@ -3323,6 +3323,156 @@
 				OPER_CD
 			ORDER BY
 				OPER_CD
+		]]>
+	</select>
+
+	<select id="getIntegratedInformation" parameterType="String" resultType="kr.co.e1ct.response.IntegratedInformationResponse">
+		<![CDATA[
+        SELECT
+            NVL(A.CNTR_NO, '') cntnrCode,
+            NVL(A.SHIP_CD, '') || '-' || TRIM(TO_CHAR(NVL(A.CALL_NO, ''), '009')) || '-' || TRIM(TO_CHAR(NVL(A.CALL_YY, ''), '0009')) mtshVygNo,
+            NVL(A.SHIP_CD, '') shcmCode,
+            NVL(B.SHIP_NM, '') shcmName,
+            DECODE(
+                    SUBSTR(A.CUR_STAT, 1, 1),
+                    'I',
+                    '수입컨테이너',
+                    'X',
+                    '수출컨테이너',
+                    'S',
+                    '쉬프팅컨테이너',
+                    'M',
+                    '재유통컨테이너',
+                    '기타컨테이너'
+                ) xpimpDvsnName,
+            DECODE(
+                    SUBSTR(A.CUR_STAT, 2, 1),
+                    'B',
+                    DECODE(
+                            SUBSTR(A.CUR_STAT, 1, 1),
+                            'I',
+                            '수입미반입',
+                            'X',
+                            '수출미반입',
+                            'S',
+                            '쉬프팅예정'
+                        ),
+                    'G',
+                    '트럭상차상태',
+                    'Z',
+                    '컨테이너이적중',
+                    'O',
+                    'YT상차상태',
+                    'P',
+                    '반출상차요청',
+                    'Y',
+                    'YARD장치상태',
+                    'D',
+                    DECODE(
+                                SUBSTR(A.CUR_STAT, 1, 1) || A.TRN_OUT,
+                                'ID',
+                                'GATE 반출완료',
+                                'XD',
+                                'GATE 반출완료',
+                                'XS',
+                                '선적완료',
+                                'SS',
+                                '쉬프팅완료',
+                                'MD',
+                                'GATE 반출완료',
+                                '기타'
+                        )
+                ) cntnrLctn,
+            DECODE(A.FM_CD, 'F', 'Full컨테이너', 'M', 'Empty컨테이너') fcntnrEcntnrCode,
+            A.SZ_CD || '/' || A.TY_CD sizeType,
+            NVL(
+                    (
+                        SELECT
+                            CAR_NM
+                        FROM
+                            T_CAR
+                        WHERE
+                            TRUCKER_CD = NVL(A.TRUCKER_CD_OUT, A.TRUCKER_CD)
+                          AND CAR_NO = NVL(A.CAR_NO_OUT, A.CAR_NO)
+                    ),
+                    ' '
+                ) vhclNo,
+            A.WEIGHT * 1000 cntnrWght,
+            nvl(A.IMDG, ' ') imdgNo,
+            nvl(A.UNNO, ' ') UNNO,
+            DECODE (NVL(A.TEMP, 'N'), 'N', ' ', A.TEMP || A.TEMP_ID) rfrgrTmprt,
+            A.Y_TBLOCK || '-' || TRIM(TO_CHAR(NVL(A.Y_TBAY, ''), '09')) || '-' || TRIM(TO_CHAR(NVL(A.Y_TROW, ''), '09')) || '-' || TRIM(TO_CHAR(NVL(A.Y_TTIER, ''), '9')) yrdLctn,
+            nvl(A.POD, ' ') loadPrtCode,
+            nvl(A.POL, ' ') unldPrtCode,
+            DECODE(
+                    NVL(A.GIN_DT, '2999-12-31'),
+                    TO_DATE('2999-12-31', 'YYYY-MM-DD'),
+                    DECODE(
+                            NVL(A.GC_DDT, '2999-12-31'),
+                            TO_DATE('2999-12-31', 'YYYY-MM-DD'),
+                            ' ',
+                            '(' || TO_CHAR(A.GC_DDT, 'YYYY-MM-DD HH24:MI') || ')'
+                        ),
+                    TO_CHAR(A.GIN_DT, 'YYYY-MM-DD HH24:MI')
+                ) tkinDt,
+            DECODE(
+                    NVL(A.GOUT_DT, '2999-12-31'),
+                    TO_DATE('2999-12-31', 'YYYY-MM-DD'),
+                    DECODE(
+                            NVL(A.GC_LDT, '2999-12-31'),
+                            TO_DATE('2999-12-31', 'YYYY-MM-DD'),
+                            ' ',
+                            '(' || TO_CHAR(A.GC_LDT, 'YYYY-MM-DD HH24:MI') || ')'
+                        ),
+                    TO_CHAR(A.GOUT_DT, 'YYYY-MM-DD HH24:MI')
+                ) tkoutDt,
+            DECODE(NVL(A.HOLD_CD, 'N'), 'N', ' ', 'Y') tkoutImprtyYn,
+            nvl(
+                    SP_CNTR_HOLD_DESCRIPTION(A.CNTR_NO, A.DUP_NO),
+                    ' '
+                ) tkoutImprtyRsn,
+            DECODE(NVL(A.DMG_CD, 'N'), 'N', ' ', 'Y') dmg,
+            (
+                    TO_DATE(
+                            NVL(A.GOUT_DT, NVL(GC_LDT, SYSDATE)),
+                            'YYYY-MM-DD'
+                        ) - TO_DATE(NVL(GIN_DT, GC_DDT), 'YYYY-MM-DD')
+                ) + 1 stckDays,
+            DECODE(NVL(A.RTN_CD, 'N'), 'N', ' ', A.RTN_CD) cnCl
+        FROM
+            E1CT.T_CNTR A,
+            E1CT.T_VESSEL B,
+            E1CT.T_OPER C
+        WHERE
+            A.SHIP_CD = B.SHIP_CD
+          AND A.OPER_CD = C.OPER_CD
+          AND A.CNTR_NO = #{cntrNo}
+          AND A.DUP_NO = (
+            SELECT
+                MAX(DUP_NO)
+            FROM
+                T_CNTR
+            WHERE
+                CNTR_NO = A.CNTR_NO
+        )
+		]]>
+    </select>
+
+	<select id="getExportableInformation" parameterType="String" resultType="kr.co.e1ct.response.ExportableInformationDTO">
+		<![CDATA[
+		SELECT
+			NVL(A.CNTR_NO,'') cntnrCode,
+			NVL(A.SHIP_CD,'') mtshCode,
+			TRIM(TO_CHAR(NVL(A.CALL_NO,''),'009')) mtshVygNo,
+			TRIM(TO_CHAR(NVL(A.CALL_YY,''),'0009')) mtshYr,
+			DECODE(NVL(A.HOLD_CD,'N'),'N',' ','Y' )  trmnlTkoutImprtyYn ,
+			nvl(SP_CNTR_HOLD_DESCRIPTION(A.CNTR_NO , A.DUP_NO ),' ') trmnlTkoutImprtyRsn ,
+			DECODE(FN_GET_CUSTOMS_APPROVE_STATE(A.CNTR_NO,A.DUP_NO),'미대상',' ','승인',' ','Y') cstmsTkoutImprtyYn,
+			DECODE(FN_GET_CUSTOMS_APPROVE_STATE(A.CNTR_NO,A.DUP_NO),'미대상',' ','승인',' ',FN_GET_CUSTOMS_APPROVE_STATE(A.CNTR_NO,A.DUP_NO) ) cstmsTkoutImprtyRsn,
+			TO_CHAR(SYSDATE,'YYYYMMDDHH24MISS') regDt
+		FROM E1CT.T_CNTR A
+		WHERE A.CNTR_NO = #{cntrNo}
+		  AND A.DUP_NO = ( SELECT MAX(DUP_NO) FROM T_CNTR WHERE CNTR_NO = A.CNTR_NO )
 		]]>
 	</select>
 </mapper>

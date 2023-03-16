@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import kr.co.e1ct.response.ExportableInformationDTO;
+import kr.co.e1ct.response.ExportableInformationResponse;
+import kr.co.e1ct.response.IntegratedInformationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -5850,6 +5853,32 @@ public class InfoService {
 	public List<TCntrVo> terminalEmptyContainer(SearchVo searchVo) {
 		// TODO Auto-generated method stub
 		return tCntrRepository.terminalEmptyContainer( searchVo );
+	}
+
+	public IntegratedInformationResponse getIntegratedInformation(String cntrNo){
+		return tCntrRepository.getIntegratedInformation(cntrNo);
+	}
+
+	public ExportableInformationResponse getExportableInformation(List<String> cntrNoList){
+		ExportableInformationResponse response = new ExportableInformationResponse();
+		List<ExportableInformationDTO> dtoList = new ArrayList<>();
+		for(String cntrNo : cntrNoList){
+			ExportableInformationDTO dto = tCntrRepository.getExportableInformation(cntrNo);
+			dto.setTrmnlCode("IT002");
+			dto.setCntnrIdntfNo("");
+			dto.setRspnsScs("Y");
+			dto.setRspnsMsg("");
+			dtoList.add(dto);
+		}
+		if(dtoList.size() == 0){
+			response.setScs("n");
+			response.setMsg("NO_DATA");
+			return response;
+		}
+		response.setScs("y");
+		response.setMsg("");
+		response.setCntrList(dtoList);
+		return response;
 	}
 
 }

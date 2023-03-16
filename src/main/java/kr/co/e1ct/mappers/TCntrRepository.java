@@ -3,6 +3,8 @@ package kr.co.e1ct.mappers;
 import java.util.List;
 import java.util.Map;
 
+import kr.co.e1ct.response.ExportableInformationDTO;
+import kr.co.e1ct.response.IntegratedInformationResponse;
 import org.apache.ibatis.annotations.Mapper;
 
 import kr.co.e1ct.vo.SearchVo;
@@ -73,4 +75,8 @@ public interface TCntrRepository {
 	public TCntrVo findByShipCdAndCallNoAndCallYyAndFmCdAndCurStatAndCntrNoAndOperCd(TCntrVo tCntrParam);
 	public int updateCopinoYnByCntrNoAndDupNoAndOperCd(TCntrVo cntrUpdateVo);
 	public List<TCntrVo> terminalEmptyContainer(SearchVo searchVo);
+	IntegratedInformationResponse getIntegratedInformation(String cntrNo);
+
+	ExportableInformationDTO getExportableInformation(String cntrNo);
+
 }
