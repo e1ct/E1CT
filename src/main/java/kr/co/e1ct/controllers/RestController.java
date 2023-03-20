@@ -1,7 +1,9 @@
 package kr.co.e1ct.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import kr.co.e1ct.constant.E1Constant;
 import kr.co.e1ct.mappers.TCntrRepository;
+import kr.co.e1ct.request.E1EslipReissueRequest;
 import kr.co.e1ct.request.ExportableInformationRequest;
 import kr.co.e1ct.response.ExportableInformationResponse;
 import kr.co.e1ct.response.IntegratedInformationResponse;
@@ -47,6 +49,14 @@ public class RestController {
     public ResponseEntity<ExportableInformationResponse> exportableInformation(@RequestBody ExportableInformationRequest request){
         ExportableInformationResponse response = infoService.getExportableInformation(request.getCntnrList());
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping(value = "/reissueEslip", consumes = "application/json;")
+    public void reissueEslip(@RequestBody E1EslipReissueRequest request){
+        if(!request.getApiKey().equals(E1Constant.ESLIP_API_KEY)){
+            return;
+        }
+        infoService.getEslipReissueInfomation(request);
     }
 
 

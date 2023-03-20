@@ -1,5 +1,6 @@
 package kr.co.e1ct.services;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -10,9 +11,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import com.google.gson.Gson;
+import kr.co.e1ct.request.E1EslipReissueRequest;
+import kr.co.e1ct.request.EslipReissueRequest;
 import kr.co.e1ct.response.ExportableInformationDTO;
 import kr.co.e1ct.response.ExportableInformationResponse;
 import kr.co.e1ct.response.IntegratedInformationResponse;
+import kr.co.e1ct.util.RetrofitClient;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -117,6 +123,8 @@ import kr.co.e1ct.vo.WCustHdVo;
 import kr.co.e1ct.vo.WCustItemVo;
 import kr.co.e1ct.vo.WSajunVo;
 import lombok.extern.slf4j.Slf4j;
+import retrofit2.Call;
+import retrofit2.Response;
 
 @Service
 @Slf4j
@@ -5885,6 +5893,22 @@ public class InfoService {
 		response.setMsg("");
 		response.setCntrList(dtoList);
 		return response;
+	}
+
+	public void getEslipReissueInfomation(E1EslipReissueRequest request){
+		EslipReissueRequest reissueRequest = tTruckerRepository.getEslipIssueInfomation(request);
+		reissueRequest.setApiKey(request.getApiKey());
+		reissueRequest.setIssuDvsnCode("R");
+		reissueRequest.setErrMsgCntnt(" ");
+		Call<Object> call = RetrofitClient.getEslipAPIService().eslipReissue(reissueRequest);
+		try {
+			Response<Object> response = call.execute();
+			if(response.isSuccessful()){
+				JSONObject result = new JSONObject(new Gson().toJson(response.body()));
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }
