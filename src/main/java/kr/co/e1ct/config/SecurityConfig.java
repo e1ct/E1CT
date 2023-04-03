@@ -3,6 +3,7 @@ package kr.co.e1ct.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -29,21 +30,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable();
-		http.cors().disable();
+		http.csrf().ignoringAntMatchers("/api/**").and().cors().disable();
 
 		http.authorizeRequests()
 				/*
 				.antMatchers( "/static/**" ).permitAll()
 				.anyRequest().authenticated()
 				*/
+
 				
 				.antMatchers( "/resources/**", "/static/**" ).permitAll()
 				
 				.antMatchers( "/admin/**", "/terminal/gallery/write" ).hasAnyRole( "S" )
 				
 				// 전체 사용자
-				.antMatchers( 
+				.antMatchers(
 						"/info/terminal/berthText",
 						"/info/terminal/berthGraphic",
 						"/info/terminal/vesselWork",
@@ -169,8 +170,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		
 		http.exceptionHandling()
 				.accessDeniedPage( "/member/accessDenied" );
-		
-//		http.csrf().and().cors().disable();
 	}
 	
 	@Override
